@@ -152,6 +152,14 @@ button:hover {
     justify-content: center;
 }
 
+.end-container {
+    display: grid;
+    background-color: #FFF;
+    grid-template-columns: 1fr 1fr;
+    padding: 3rem calc((100vw - 1300px) / 2);
+    height: 50vh;
+}
+
 @media screen and (max-width: 768px) {
     .hero-container {
         grid-template-columns: 1fr;
