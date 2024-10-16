@@ -39,7 +39,7 @@ nav a {
 .main-container {
     /* display: grid; */
     margin: auto;
-    width: 60%;
+    width: 70%;
     /* background-color: #000; */
     /* grid-template-columns: 1fr 1fr; */
     padding: 1rem calc((100vw - 1300px) / 2);
