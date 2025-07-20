@@ -213,13 +213,19 @@ button:hover {
         width: 100vw;
         max-width: 100vw;
         min-width: 0;
-        padding: 0.5rem 0rem;
+        padding: 0;
+        margin: 0;
     }
     .column-first, .blog-first, .blog-within {
         width: 100vw;
         max-width: 100vw;
         min-width: 0;
-        padding: 0rem 0.5vw;
+        padding: 0;
+        margin: 0;
+    }
+    .container-items {
+        padding: 0;
+        margin: 0;
     }
     .blog-first h1, .blog-within h1, .column-first h1 {
         font-size: 1.3rem;
