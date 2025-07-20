@@ -37,13 +37,12 @@ nav a {
 }
 
 .main-container {
-    /* display: grid; */
     margin: auto;
     width: 70%;
-    /* background-color: #000; */
-    /* grid-template-columns: 1fr 1fr; */
-    padding: 1rem calc((100vw - 1300px) / 2);
-    height: 40vh;
+    max-width: 900px;
+    min-width: 280px;
+    padding: 1rem 2vw;
+    height: auto;
 }
 
 .column-first {
@@ -156,12 +155,66 @@ button:hover {
     display: grid;
     background-color: #FFF;
     grid-template-columns: 1fr 1fr;
-    padding: 3rem calc((100vw - 1300px) / 2);
-    height: 50vh;
+    padding: 3rem 2vw;
+    height: auto;
+    max-width: 900px;
+    margin: auto;
+}
+
+@media screen and (max-width: 1024px) {
+    .main-container, .end-container {
+        width: 90%;
+        max-width: 98vw;
+        padding: 1rem 2vw;
+    }
+    .column-first, .blog-first, .blog-within {
+        max-width: 98vw;
+        padding: 0rem 2vw;
+    }
 }
 
 @media screen and (max-width: 768px) {
     .hero-container {
         grid-template-columns: 1fr;
+        padding: 2rem 2vw;
+        height: auto;
+    }
+    .main-container, .end-container {
+        width: 98vw;
+        max-width: 100vw;
+        padding: 1rem 1vw;
+        grid-template-columns: 1fr;
+    }
+    .column-first, .blog-first, .blog-within {
+        max-width: 100vw;
+        padding: 0rem 1vw;
+    }
+    .end-container {
+        grid-template-columns: 1fr;
+        padding: 2rem 1vw;
+    }
+    .blog-first h1, .blog-within h1, .column-first h1 {
+        font-size: 2rem;
+    }
+    .blog-first p, .blog-within p, .column-first p {
+        font-size: 0.95rem;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .main-container, .end-container {
+        width: 100vw;
+        max-width: 100vw;
+        padding: 0.5rem 0.5vw;
+    }
+    .column-first, .blog-first, .blog-within {
+        max-width: 100vw;
+        padding: 0rem 0.5vw;
+    }
+    .blog-first h1, .blog-within h1, .column-first h1 {
+        font-size: 1.3rem;
+    }
+    .blog-first p, .blog-within p, .column-first p {
+        font-size: 0.85rem;
     }
 }
