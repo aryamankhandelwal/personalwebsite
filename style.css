@@ -36,13 +36,13 @@ nav a {
     height: 30vh;
 }
 
-.main-container {
+.main-container, .end-container {
     margin: auto;
     width: 70%;
     max-width: 900px;
-    min-width: 280px;
     padding: 1rem 2vw;
     height: auto;
+    box-sizing: border-box;
 }
 
 .column-first {
@@ -161,6 +161,14 @@ button:hover {
     margin: auto;
 }
 
+.column-first, .blog-first, .blog-within {
+    margin: auto;
+    width: 100%;
+    max-width: 700px;
+    padding: 0rem 2vw;
+    box-sizing: border-box;
+}
+
 @media screen and (max-width: 1024px) {
     .main-container, .end-container {
         width: 90%;
@@ -183,7 +191,6 @@ button:hover {
         width: 98vw;
         max-width: 100vw;
         padding: 1rem 1vw;
-        grid-template-columns: 1fr;
     }
     .column-first, .blog-first, .blog-within {
         max-width: 100vw;
@@ -205,10 +212,13 @@ button:hover {
     .main-container, .end-container {
         width: 100vw;
         max-width: 100vw;
-        padding: 0.5rem 0.5vw;
+        min-width: 0;
+        padding: 0.5rem 0rem;
     }
     .column-first, .blog-first, .blog-within {
+        width: 100vw;
         max-width: 100vw;
+        min-width: 0;
         padding: 0rem 0.5vw;
     }
     .blog-first h1, .blog-within h1, .column-first h1 {
