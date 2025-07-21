@@ -51,7 +51,7 @@
     let totalLoaded = 0;
     async function fetchQuestions() {
         const skip = (page - 1) * limit;
-        const res = await fetch('https://personalwebsite-production-01d4.up.railway.app/questions?skip=' + skip + '&limit=' + limit);
+        const res = await fetch('http://127.0.0.1:8000/questions?skip=' + skip + '&limit=' + limit);
         const questions = await res.json();
         totalLoaded = questions.length;
         const list = document.getElementById('questionsList');
@@ -105,7 +105,7 @@
             return;
         }
         try {
-            const res = await fetch('https://personalwebsite-production-01d4.up.railway.app/questions', {
+            const res = await fetch('http://127.0.0.1:8000/questions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: question, nickname: nickname || null })
