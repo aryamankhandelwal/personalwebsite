@@ -1,0 +1,19 @@
+************* Module backend
+backend/__init__.py:1:0: C0304: Final newline missing (missing-final-newline)
+************* Module backend.models
+backend/models.py:27:0: C0304: Final newline missing (missing-final-newline)
+backend/models.py:8:0: R0903: Too few public methods (0/2) (too-few-public-methods)
+backend/models.py:20:0: R0903: Too few public methods (0/2) (too-few-public-methods)
+************* Module backend.database
+backend/database.py:24:0: C0304: Final newline missing (missing-final-newline)
+************* Module backend.main
+backend/main.py:116:0: C0301: Line too long (102/100) (line-too-long)
+backend/main.py:160:0: C0304: Final newline missing (missing-final-newline)
+backend/main.py:62:4: C0115: Missing class docstring (missing-class-docstring)
+backend/main.py:62:4: R0903: Too few public methods (0/2) (too-few-public-methods)
+backend/main.py:75:4: C0115: Missing class docstring (missing-class-docstring)
+backend/main.py:75:4: R0903: Too few public methods (0/2) (too-few-public-methods)
+
+------------------------------------------------------------------
+Your code has been rated at 9.17/10 (previous run: 9.10/10, +0.08)
+

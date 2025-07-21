@@ -21,6 +21,20 @@
         </div>
     </section>
 
+    <!-- Question Bar Start -->
+    <div class="question-bar">
+        <form id="questionForm">
+            <input type="text" id="questionInput" placeholder="ask me a question about uni or careers" required style="width:60%;padding:8px;">
+            <input type="text" id="nicknameInput" placeholder="Nickname (optional)" style="width:20%;padding:8px;">
+            <button type="submit" style="padding:8px 16px;">Submit</button>
+        </form>
+        <div id="questionStatus" style="margin-top:8px;color:#c00;"></div>
+        <div style="margin-top:12px;">
+            <a href="forum.html" id="forumLink">View the discussion forum</a>
+        </div>
+    </div>
+    <!-- Question Bar End -->
+
     <section class="main">
         <div class="main-container">
             <div class="column-first">
@@ -36,6 +50,7 @@
                     My experience and interests are primarily in fintech, deep tech, and sports / media.
                 <hr>
                 </p>
+
             </div>
 
             <div class="container-items">
@@ -55,4 +70,33 @@
         </div>
     </section>
 </body>
+<script>
+// --- Question Bar Submission Logic ---
+document.getElementById('questionForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const question = document.getElementById('questionInput').value.trim();
+    const nickname = document.getElementById('nicknameInput').value.trim();
+    const statusDiv = document.getElementById('questionStatus');
+    statusDiv.textContent = '';
+    if (!question) {
+        statusDiv.textContent = 'Please enter a question.';
+        return;
+    }
+    try {
+        const res = await fetch('http://127.0.0.1:8000/questions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: question, nickname: nickname || null })
+        });
+        if (!res.ok) throw new Error('Failed to submit question.');
+        document.getElementById('questionInput').value = '';
+        document.getElementById('nicknameInput').value = '';
+        statusDiv.style.color = '#090';
+        statusDiv.textContent = 'Question submitted! Check the forum soon for answers.';
+    } catch (err) {
+        statusDiv.style.color = '#c00';
+        statusDiv.textContent = 'Error: ' + err.message;
+    }
+});
+</script>
 </html>

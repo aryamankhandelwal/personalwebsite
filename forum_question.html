@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Thread</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .thread-container { max-width: 700px; margin: 40px auto; }
+        .question-main { background: #f8f8ff; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 18px; padding: 18px 22px; }
+        .reply { background: #fff; border-radius: 6px; box-shadow: 0 1px 4px #0001; margin-bottom: 12px; padding: 12px 16px; }
+        .admin-controls { margin-top: 18px; }
+        .admin-controls input { margin-right: 8px; }
+        .reply-form { margin-top: 24px; }
+        .reply-form textarea { width: 100%; min-height: 60px; padding: 8px; }
+        .reply-form button { margin-top: 8px; }
+        .delete-btn { color: #c00; background: none; border: none; cursor: pointer; margin-left: 8px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo"><a href="index.html">Khandelwal</a></div>
+    </nav>
+    <div class="thread-container">
+        <div id="questionBlock"></div>
+        <div id="repliesBlock"></div>
+        <div class="reply-form">
+            <h4>Leave a reply</h4>
+            <form id="replyForm">
+                <textarea id="replyInput" placeholder="Type your reply..." required></textarea><br>
+                <button type="submit">Submit Reply</button>
+            </form>
+            <div id="replyStatus" style="margin-top:8px;color:#c00;"></div>
+        </div>
+        <div class="admin-controls">
+            <h4>Admin Controls</h4>
+            <input type="password" id="adminTokenInput" placeholder="Admin token">
+            <button onclick="showAnswerBox()">Answer Question</button>
+            <button onclick="deleteThread()" class="delete-btn">Delete Thread</button>
+            <div id="answerBox" style="display:none;margin-top:12px;">
+                <textarea id="adminAnswerInput" placeholder="Type your answer..." style="width:100%;min-height:60px;"></textarea><br>
+                <button onclick="submitAnswer()">Submit Answer</button>
+                <button onclick="hideAnswerBox()">Cancel</button>
+            </div>
+            <div id="adminStatus" style="margin-top:8px;color:#c00;"></div>
+        </div>
+    </div>
+    <script>
+    // --- Helpers ---
+    function getQueryParam(name) {
+        const url = new URL(window.location.href);
+        return url.searchParams.get(name);
+    }
+    const qid = getQueryParam('id');
+    let questionData = null;
+    async function fetchThread() {
+        const res = await fetch(`http://127.0.0.1:8000/questions/${qid}`);
+        const data = await res.json();
+        questionData = data.question;
+        // Render question
+        document.getElementById('questionBlock').innerHTML = `
+            <div class="question-main">
+                <div style="font-weight:bold;font-size:1.1em;">${data.question.text}</div>
+                <div style="color:#666;font-size:0.95em;">
+                    Status: <span class="${data.question.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${data.question.status.charAt(0).toUpperCase() + data.question.status.slice(1)}</span>
+                    &nbsp;|&nbsp;
+                    ${data.question.nickname ? `by ${data.question.nickname} &nbsp;|&nbsp;` : ''}
+                    ${new Date(data.question.timestamp).toLocaleString()}
+                </div>
+                ${data.question.responder_answer ? `<div style='margin-top:12px;background:#e6ffe6;padding:10px;border-radius:6px;'><b>Official Answer:</b><br>${data.question.responder_answer}</div>` : ''}
+            </div>
+        `;
+        // Render replies
+        const repliesBlock = document.getElementById('repliesBlock');
+        repliesBlock.innerHTML = '<h4>Replies</h4>';
+        if (data.replies.length === 0) {
+            repliesBlock.innerHTML += '<p>No replies yet.</p>';
+        }
+        data.replies.forEach(r => {
+            repliesBlock.innerHTML += `<div class="reply">${r.reply_text}<br><span style='color:#888;font-size:0.9em;'>${new Date(r.timestamp).toLocaleString()}</span> <button class='delete-btn' onclick='deleteReply(${r.id})'>Delete</button></div>`;
+        });
+    }
+    fetchThread();
+    // --- Reply submission ---
+    document.getElementById('replyForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const reply = document.getElementById('replyInput').value.trim();
+        const statusDiv = document.getElementById('replyStatus');
+        statusDiv.textContent = '';
+        if (!reply) {
+            statusDiv.textContent = 'Please enter a reply.';
+            return;
+        }
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}/reply`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reply_text: reply })
+            });
+            if (!res.ok) throw new Error('Failed to submit reply.');
+            document.getElementById('replyInput').value = '';
+            statusDiv.style.color = '#090';
+            statusDiv.textContent = 'Reply submitted!';
+            fetchThread();
+        } catch (err) {
+            statusDiv.style.color = '#c00';
+            statusDiv.textContent = 'Error: ' + err.message;
+        }
+    });
+    // --- Admin controls ---
+    function showAnswerBox() {
+        document.getElementById('answerBox').style.display = 'block';
+    }
+    function hideAnswerBox() {
+        document.getElementById('answerBox').style.display = 'none';
+    }
+    window.showAnswerBox = showAnswerBox;
+    window.hideAnswerBox = hideAnswerBox;
+    async function submitAnswer() {
+        const answer = document.getElementById('adminAnswerInput').value.trim();
+        const token = document.getElementById('adminTokenInput').value.trim();
+        const statusDiv = document.getElementById('adminStatus');
+        statusDiv.textContent = '';
+        if (!answer || !token) {
+            statusDiv.textContent = 'Answer and admin token required.';
+            return;
+        }
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}/answer`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+                body: JSON.stringify({ responder_answer: answer })
+            });
+            if (!res.ok) throw new Error('Failed to submit answer.');
+            statusDiv.style.color = '#090';
+            statusDiv.textContent = 'Answer submitted!';
+            hideAnswerBox();
+            fetchThread();
+        } catch (err) {
+            statusDiv.style.color = '#c00';
+            statusDiv.textContent = 'Error: ' + err.message;
+        }
+    }
+    window.submitAnswer = submitAnswer;
+    async function deleteThread() {
+        const token = document.getElementById('adminTokenInput').value.trim();
+        const statusDiv = document.getElementById('adminStatus');
+        if (!token) {
+            statusDiv.textContent = 'Admin token required.';
+            return;
+        }
+        if (!confirm('Are you sure you want to delete this thread?')) return;
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}`, {
+                method: 'DELETE',
+                headers: { 'x-admin-token': token }
+            });
+            if (!res.ok) throw new Error('Failed to delete thread.');
+            window.location = 'forum.html';
+        } catch (err) {
+            statusDiv.textContent = 'Error: ' + err.message;
+        }
+    }
+    window.deleteThread = deleteThread;
+    async function deleteReply(rid) {
+        const token = document.getElementById('adminTokenInput').value.trim();
+        const statusDiv = document.getElementById('adminStatus');
+        if (!token) {
+            statusDiv.textContent = 'Admin token required to delete replies.';
+            return;
+        }
+        if (!confirm('Delete this reply?')) return;
+        try {
+            const res = await fetch(`http://127.0.0.1:8000/replies/${rid}`, {
+                method: 'DELETE',
+                headers: { 'x-admin-token': token }
+            });
+            if (!res.ok) throw new Error('Failed to delete reply.');
+            fetchThread();
+        } catch (err) {
+            statusDiv.textContent = 'Error: ' + err.message;
+        }
+    }
+    window.deleteReply = deleteReply;
+    </script>
+</body>
+</html> 
