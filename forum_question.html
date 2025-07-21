@@ -54,7 +54,7 @@
     const qid = getQueryParam('id');
     let questionData = null;
     async function fetchThread() {
-        const res = await fetch(`http://127.0.0.1:8000/questions/${qid}`);
+        const res = await fetch(`https://personalwebsite-production-01d4.up.railway.app/questions/${qid}`);
         const data = await res.json();
         questionData = data.question;
         // Render question
@@ -92,7 +92,7 @@
             return;
         }
         try {
-            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}/reply`, {
+            const res = await fetch(`https://personalwebsite-production-01d4.up.railway.app/questions/${qid}/reply`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reply_text: reply })
@@ -126,7 +126,7 @@
             return;
         }
         try {
-            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}/answer`, {
+            const res = await fetch(`https://personalwebsite-production-01d4.up.railway.app/questions/${qid}/answer`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
                 body: JSON.stringify({ responder_answer: answer })
@@ -151,7 +151,7 @@
         }
         if (!confirm('Are you sure you want to delete this thread?')) return;
         try {
-            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}`, {
+            const res = await fetch(`https://personalwebsite-production-01d4.up.railway.app/questions/${qid}`, {
                 method: 'DELETE',
                 headers: { 'x-admin-token': token }
             });
@@ -171,7 +171,7 @@
         }
         if (!confirm('Delete this reply?')) return;
         try {
-            const res = await fetch(`http://127.0.0.1:8000/replies/${rid}`, {
+            const res = await fetch(`https://personalwebsite-production-01d4.up.railway.app/replies/${rid}`, {
                 method: 'DELETE',
                 headers: { 'x-admin-token': token }
             });
