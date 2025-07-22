@@ -36,9 +36,10 @@ nav a {
     height: 8vh; /* reduced from 30vh */
 }
 
-.main-container, .end-container {
-    margin: auto;
-    width: 70%;
+.main-container, .end-container, .forum-container, .thread-container {
+    margin-left: 60px;
+    margin-right: auto;
+    width: auto;
     max-width: 900px;
     padding: 1rem 2vw;
     height: auto;
@@ -196,12 +197,14 @@ button:hover {
 }
 
 @media screen and (max-width: 1024px) {
-    .main-container, .end-container {
+    .main-container, .end-container, .forum-container, .thread-container {
+        margin-left: auto;
+        margin-right: auto;
         width: 90%;
         max-width: 98vw;
         padding: 1rem 2vw;
     }
-    .column-first, .blog-first, .blog-within {
+    .column-first, .blog-first, .blog-within, .container-items {
         max-width: 98vw;
         padding: 0rem 2vw;
     }
