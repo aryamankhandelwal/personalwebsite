@@ -49,7 +49,6 @@ class QuestionOut(BaseModel):
     status: str
     responder_answer: Optional[str] = None
     reply_count: int
-    edited: int
     class Config:
         from_attributes = True
 
@@ -61,8 +60,6 @@ class ReplyOut(BaseModel):
     question_id: int
     reply_text: str
     timestamp: datetime  # Accept datetime, not str
-    edited: int
-    admin_reply: Optional[dict] = None
     class Config:
         from_attributes = True
 
