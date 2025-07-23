@@ -1,6 +1,7 @@
 import os
-from fastapi import FastAPI, Depends, HTTPException, Header, Request, JSONResponse
+from fastapi import FastAPI, Depends, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from dotenv import load_dotenv
