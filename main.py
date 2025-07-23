@@ -39,7 +39,7 @@ async def admin_auth(x_admin_token: str = Header(None)):
 
 class QuestionCreate(BaseModel):
     text: str
-    nickname: str = None
+    nickname: Optional[str] = None
 
 class QuestionOut(BaseModel):
     id: int
