@@ -83,7 +83,7 @@ document.getElementById('questionForm').addEventListener('submit', async functio
         return;
     }
     try {
-        const res = await fetch('http://127.0.0.1:8000/questions', {
+        const res = await fetch('https://personalwebsite-xzmk.onrender.com/questions', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text: question, nickname: nickname || null })
