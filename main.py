@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, Depends, HTTPException, Header
+from fastapi import FastAPI, Depends, HTTPException, Header, Request, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -9,12 +9,16 @@ from models import Base, Question, Reply
 from database import engine, get_db
 from typing import Optional
 from datetime import datetime
+import logging
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
 ADMIN_TOKEN = os.getenv('ADMIN_TOKEN')
 
 app = FastAPI()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("fastapi.error")
 
 @app.get("/", include_in_schema=False)
 @app.head("/", include_in_schema=False)
@@ -87,10 +91,20 @@ async def list_questions(skip: int = 0, limit: int = 10, db: AsyncSession = Depe
 
 @app.get("/questions/{question_id}")
 async def get_question(question_id: int, db: AsyncSession = Depends(get_db)):
-    question = await db.get(Question, question_id)
-    if not question:
-        raise HTTPException(status_code=404, detail="Question not found")
-    return question
+    try:
+        question = await db.get(Question, question_id)
+        if not question:
+            raise HTTPException(status_code=404, detail="Question not found")
+        # Fetch replies
+        result = await db.execute(select(Reply).where(Reply.question_id == question_id).order_by(Reply.timestamp))
+        replies = result.scalars().all()
+        return {
+            "question": QuestionOut.model_validate(question),
+            "replies": [ReplyOut.model_validate(r) for r in replies],
+        }
+    except Exception as e:
+        logger.error(f"Error in GET /questions/{{question_id}}: {e}", exc_info=True)
+        raise
 
 @app.post("/questions/{question_id}/answer", dependencies=[Depends(admin_auth)])
 async def answer_question(question_id: int, answer: AnswerCreate, db: AsyncSession = Depends(get_db)):
@@ -131,4 +145,12 @@ async def delete_reply(reply_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Reply not found")
     await db.delete(reply)
     await db.commit()
-    return {"status": "deleted"} 
+    return {"status": "deleted"}
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    logger.error(f"Unhandled error: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error", "error": str(exc)},
+    ) 
