@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 from models import Base, Question, Reply
 from database import engine, get_db
+from typing import Optional
+from datetime import datetime
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
@@ -45,10 +47,10 @@ class QuestionCreate(BaseModel):
 class QuestionOut(BaseModel):
     id: int
     text: str
-    nickname: str = None
-    timestamp: str
+    nickname: Optional[str] = None
+    timestamp: datetime  # Accept datetime, not str
     status: str
-    responder_answer: str = None
+    responder_answer: Optional[str] = None
     reply_count: int
     class Config:
         from_attributes = True
@@ -60,7 +62,7 @@ class ReplyOut(BaseModel):
     id: int
     question_id: int
     reply_text: str
-    timestamp: str
+    timestamp: datetime  # Accept datetime, not str
     class Config:
         from_attributes = True
 
