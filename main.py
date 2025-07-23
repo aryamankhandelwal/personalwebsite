@@ -10,21 +10,12 @@ from models import Base, Question, Reply
 from database import engine, get_db
 from typing import Optional
 from datetime import datetime
-import logging
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
 ADMIN_TOKEN = os.getenv('ADMIN_TOKEN')
 
 app = FastAPI()
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("fastapi.error")
-
-@app.get("/", include_in_schema=False)
-@app.head("/", include_in_schema=False)
-def root():
-    return {"status": "ok", "message": "Ask Me Anything API is running."}
 
 app.add_middleware(
     CORSMiddleware,
@@ -104,54 +95,4 @@ async def get_question(question_id: int, db: AsyncSession = Depends(get_db)):
             "replies": [ReplyOut.model_validate(r) for r in replies],
         }
     except Exception as e:
-        logger.error(f"Error in GET /questions/{{question_id}}: {e}", exc_info=True)
-        raise
-
-@app.post("/questions/{question_id}/answer", dependencies=[Depends(admin_auth)])
-async def answer_question(question_id: int, answer: AnswerCreate, db: AsyncSession = Depends(get_db)):
-    question = await db.get(Question, question_id)
-    if not question:
-        raise HTTPException(status_code=404, detail="Question not found")
-    question.responder_answer = answer.responder_answer
-    question.status = "answered"
-    await db.commit()
-    await db.refresh(question)
-    return {"status": "ok"}
-
-@app.post("/questions/{question_id}/reply", response_model=ReplyOut)
-async def add_reply(question_id: int, reply: ReplyCreate, db: AsyncSession = Depends(get_db)):
-    question = await db.get(Question, question_id)
-    if not question:
-        raise HTTPException(status_code=404, detail="Question not found")
-    new_reply = Reply(question_id=question_id, reply_text=reply.reply_text)
-    db.add(new_reply)
-    question.reply_count += 1
-    await db.commit()
-    await db.refresh(new_reply)
-    return new_reply
-
-@app.delete("/questions/{question_id}", dependencies=[Depends(admin_auth)])
-async def delete_question(question_id: int, db: AsyncSession = Depends(get_db)):
-    question = await db.get(Question, question_id)
-    if not question:
-        raise HTTPException(status_code=404, detail="Question not found")
-    await db.delete(question)
-    await db.commit()
-    return {"status": "deleted"}
-
-@app.delete("/replies/{reply_id}", dependencies=[Depends(admin_auth)])
-async def delete_reply(reply_id: int, db: AsyncSession = Depends(get_db)):
-    reply = await db.get(Reply, reply_id)
-    if not reply:
-        raise HTTPException(status_code=404, detail="Reply not found")
-    await db.delete(reply)
-    await db.commit()
-    return {"status": "deleted"}
-
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    logger.error(f"Unhandled error: {exc}", exc_info=True)
-    return JSONResponse(
-        status_code=500,
-        content={"detail": "Internal server error", "error": str(exc)},
-    ) 
+        raise 
