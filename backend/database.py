@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
-DATABASE_URL = 'sqlite+aiosqlite:///./backend/forum.db'
+DATABASE_URL = 'sqlite+aiosqlite:///forum.db'
 
 engine = create_async_engine(DATABASE_URL, echo=True, future=True)
 
