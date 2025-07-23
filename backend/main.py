@@ -8,8 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from .models import Base, Question, Reply
-from .database import engine, get_db
+from backend.models import Base, Question, Reply
+from backend.database import engine, get_db
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 
