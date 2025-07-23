@@ -15,6 +15,7 @@ class Question(Base):
     status = Column(String(20), default='unanswered')
     responder_answer = Column(Text, nullable=True)
     reply_count = Column(Integer, default=0)
+    edited = Column(Integer, default=0)  # 0 = not edited, 1 = edited
     replies = relationship('Reply', back_populates='question', cascade='all, delete-orphan')
 
 class Reply(Base):
@@ -24,4 +25,16 @@ class Reply(Base):
     question_id = Column(Integer, ForeignKey('questions.id'), nullable=False)
     reply_text = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
-    question = relationship('Question', back_populates='replies') 
+    edited = Column(Integer, default=0)  # 0 = not edited, 1 = edited
+    question = relationship('Question', back_populates='replies')
+    admin_reply = relationship('AdminReply', back_populates='reply', uselist=False, cascade='all, delete-orphan')
+
+class AdminReply(Base):
+    """Database model for an admin reply to a reply."""
+    __tablename__ = 'admin_replies'
+    id = Column(Integer, primary_key=True, index=True)
+    reply_id = Column(Integer, ForeignKey('replies.id'), nullable=False, unique=True)
+    admin_answer = Column(Text, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow)
+    edited = Column(Integer, default=0)  # 0 = not edited, 1 = edited
+    reply = relationship('Reply', back_populates='admin_reply') 

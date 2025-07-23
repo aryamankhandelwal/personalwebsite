@@ -49,6 +49,7 @@ class QuestionOut(BaseModel):
     status: str
     responder_answer: Optional[str] = None
     reply_count: int
+    edited: int
     class Config:
         from_attributes = True
 
@@ -60,11 +61,31 @@ class ReplyOut(BaseModel):
     question_id: int
     reply_text: str
     timestamp: datetime  # Accept datetime, not str
+    edited: int
+    admin_reply: Optional[dict] = None
     class Config:
         from_attributes = True
 
 class AnswerCreate(BaseModel):
     responder_answer: str
+
+class QuestionEdit(BaseModel):
+    text: str
+
+class ReplyEdit(BaseModel):
+    reply_text: str
+
+class AdminReplyOut(BaseModel):
+    id: int
+    reply_id: int
+    admin_answer: str
+    timestamp: datetime
+    edited: int
+    class Config:
+        from_attributes = True
+
+class AdminReplyCreate(BaseModel):
+    admin_answer: str
 
 @app.post("/questions", response_model=QuestionOut)
 async def create_question(q: QuestionCreate, db: AsyncSession = Depends(get_db)):
@@ -90,9 +111,17 @@ async def get_question(question_id: int, db: AsyncSession = Depends(get_db)):
         # Fetch replies
         result = await db.execute(select(Reply).where(Reply.question_id == question_id).order_by(Reply.timestamp))
         replies = result.scalars().all()
+        # Fetch admin replies for each reply
+        from models import AdminReply
+        reply_ids = [r.id for r in replies]
+        admin_replies = {}
+        if reply_ids:
+            admin_results = await db.execute(select(AdminReply).where(AdminReply.reply_id.in_(reply_ids)))
+            for ar in admin_results.scalars().all():
+                admin_replies[ar.reply_id] = AdminReplyOut.model_validate(ar).dict()
         return {
             "question": QuestionOut.model_validate(question),
-            "replies": [ReplyOut.model_validate(r) for r in replies],
+            "replies": [dict(ReplyOut.model_validate(r).dict(), admin_reply=admin_replies.get(r.id)) for r in replies],
         }
     except Exception as e:
         raise 
@@ -107,6 +136,49 @@ async def answer_question(question_id: int, answer: AnswerCreate, db: AsyncSessi
     await db.commit()
     await db.refresh(question)
     return {"status": "ok"}
+
+@app.patch("/questions/{question_id}")
+async def edit_question(question_id: int, q: QuestionEdit, db: AsyncSession = Depends(get_db)):
+    question = await db.get(Question, question_id)
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+    question.text = q.text
+    question.edited = 1
+    await db.commit()
+    await db.refresh(question)
+    return QuestionOut.model_validate(question)
+
+@app.patch("/replies/{reply_id}")
+async def edit_reply(reply_id: int, r: ReplyEdit, db: AsyncSession = Depends(get_db)):
+    reply = await db.get(Reply, reply_id)
+    if not reply:
+        raise HTTPException(status_code=404, detail="Reply not found")
+    reply.reply_text = r.reply_text
+    reply.edited = 1
+    await db.commit()
+    await db.refresh(reply)
+    return ReplyOut.model_validate(reply)
+
+@app.post("/replies/{reply_id}/admin_answer", dependencies=[Depends(admin_auth)])
+async def admin_answer_reply(reply_id: int, a: AdminReplyCreate, db: AsyncSession = Depends(get_db)):
+    reply = await db.get(Reply, reply_id)
+    if not reply:
+        raise HTTPException(status_code=404, detail="Reply not found")
+    # Only one admin reply per reply
+    from models import AdminReply
+    existing = await db.execute(select(AdminReply).where(AdminReply.reply_id == reply_id))
+    existing_admin = existing.scalars().first()
+    if existing_admin:
+        existing_admin.admin_answer = a.admin_answer
+        existing_admin.edited = 1
+        await db.commit()
+        await db.refresh(existing_admin)
+        return AdminReplyOut.model_validate(existing_admin)
+    admin_reply = AdminReply(reply_id=reply_id, admin_answer=a.admin_answer)
+    db.add(admin_reply)
+    await db.commit()
+    await db.refresh(admin_reply)
+    return AdminReplyOut.model_validate(admin_reply)
 
 @app.delete("/questions/{question_id}", dependencies=[Depends(admin_auth)])
 async def delete_question(question_id: int, db: AsyncSession = Depends(get_db)):

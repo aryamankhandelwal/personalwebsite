@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Question Thread</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="images/header.png">
     <style>
         .thread-container { max-width: 700px; margin: 40px auto; }
         .question-main { background: #f8f8ff; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 18px; padding: 18px 22px; }
@@ -15,11 +16,16 @@
         .reply-form textarea { width: 100%; min-height: 60px; padding: 8px; }
         .reply-form button { margin-top: 8px; }
         .delete-btn { color: #c00; background: none; border: none; cursor: pointer; margin-left: 8px; }
+        .back-btn { position: absolute; left: 0; top: 60px; margin-left: 16px; background: #f4f8fc; color: #4169e1; border: none; border-radius: 4px; padding: 8px 16px; font-size: 1em; cursor: pointer; }
+        .edit-btn { color: #4169e1; background: none; border: none; cursor: pointer; margin-left: 8px; }
+        .edited-label { color: #888; font-size: 0.9em; margin-left: 6px; }
+        .admin-reply-block { background: #e6ffe6; padding: 10px; border-radius: 6px; margin-top: 8px; }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="logo"><a href="index.html">Khandelwal</a></div>
+    <nav style="position:relative;">
+        <div class="logo" style="display:inline-block;"><a href="index.html">Khandelwal</a></div>
+        <button class="back-btn" onclick="window.location='forum.html'">&larr; Back to the Courtyard</button>
     </nav>
     <div class="thread-container" style="text-align:left;">
         <div id="questionBlock"></div>
@@ -53,23 +59,30 @@
     }
     const qid = getQueryParam('id');
     let questionData = null;
+    let adminToken = '';
+
     async function fetchThread() {
         const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`);
         const data = await res.json();
         questionData = data.question;
         // Render question
-        document.getElementById('questionBlock').innerHTML = `
-            <div class="question-main">
-                <div style="font-weight:bold;font-size:1.1em;">${data.question.text}</div>
-                <div style="color:#666;font-size:0.95em;">
-                    Status: <span class="${data.question.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${data.question.status.charAt(0).toUpperCase() + data.question.status.slice(1)}</span>
-                    &nbsp;|&nbsp;
-                    ${data.question.nickname ? `by ${data.question.nickname} &nbsp;|&nbsp;` : ''}
-                    ${new Date(data.question.timestamp).toLocaleString()}
-                </div>
-                ${data.question.responder_answer ? `<div style='margin-top:12px;background:#e6ffe6;padding:10px;border-radius:6px;'><b>Official Answer:</b><br>${data.question.responder_answer}</div>` : ''}
+        let questionHtml = `<div class="question-main">
+            <div style="font-weight:bold;font-size:1.1em;display:flex;align-items:center;">
+                <span id='questionText'>${data.question.text}</span>
+                <button class='edit-btn' onclick='showEditQuestion()'>Edit</button>
+                ${data.question.edited ? '<span class="edited-label">(Edited)</span>' : ''}
             </div>
-        `;
+            <div style="color:#666;font-size:0.95em;">
+                Status: <span class="${data.question.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${data.question.status.charAt(0).toUpperCase() + data.question.status.slice(1)}</span>
+                &nbsp;|&nbsp;
+                ${data.question.nickname ? `by ${data.question.nickname} &nbsp;|&nbsp;` : ''}
+                ${new Date(data.question.timestamp).toLocaleString()}
+            </div>
+            ${data.question.responder_answer ? `<div style='margin-top:12px;background:#e6ffe6;padding:10px;border-radius:6px;'><b>Official Answer:</b> <span id='answerText'>${data.question.responder_answer}</span> <button class='edit-btn' onclick='showEditAnswer()'>Edit</button> ${data.question.edited && data.question.responder_answer ? '<span class=\'edited-label\'>(Edited)</span>' : ''}</div>` : ''}
+            <div id='editQuestionBox' style='display:none;margin-top:10px;'><textarea id='editQuestionInput' style='width:100%;min-height:40px;'>${data.question.text}</textarea><br><button onclick='submitEditQuestion()'>Save</button> <button onclick='hideEditQuestion()'>Cancel</button></div>
+            <div id='editAnswerBox' style='display:none;margin-top:10px;'><textarea id='editAnswerInput' style='width:100%;min-height:40px;'>${data.question.responder_answer || ''}</textarea><br><button onclick='submitEditAnswer()'>Save</button> <button onclick='hideEditAnswer()'>Cancel</button></div>
+        </div>`;
+        document.getElementById('questionBlock').innerHTML = questionHtml;
         // Render replies
         const repliesBlock = document.getElementById('repliesBlock');
         repliesBlock.innerHTML = '<h4>Replies</h4>';
@@ -77,7 +90,15 @@
             repliesBlock.innerHTML += '<p>No replies yet.</p>';
         }
         data.replies.forEach(r => {
-            repliesBlock.innerHTML += `<div class="reply">${r.reply_text}<br><span style='color:#888;font-size:0.9em;'>${new Date(r.timestamp).toLocaleString()}</span> <button class='delete-btn' onclick='deleteReply(${r.id})'>Delete</button></div>`;
+            repliesBlock.innerHTML += `<div class="reply" id="reply-${r.id}">
+                <span id='replyText-${r.id}'>${r.reply_text}</span>
+                <button class='edit-btn' onclick='showEditReply(${r.id}, "${r.reply_text.replace(/"/g, '&quot;')}")'>Edit</button>
+                ${r.edited ? '<span class="edited-label">(Edited)</span>' : ''}
+                <br><span style='color:#888;font-size:0.9em;'>${new Date(r.timestamp).toLocaleString()}</span>
+                <button class='delete-btn' onclick='deleteReply(${r.id})'>Delete</button>
+                ${r.admin_reply ? `<div class='admin-reply-block'><b>Admin Answer:</b> <span id='adminReplyText-${r.id}'>${r.admin_reply.admin_answer}</span> <button class='edit-btn' onclick='showEditAdminReply(${r.id}, "${r.admin_reply.admin_answer.replace(/"/g, '&quot;')}")'>Edit</button> ${r.admin_reply.edited ? '<span class=\'edited-label\'>(Edited)</span>' : ''}</div>` : (adminToken ? `<button class='edit-btn' onclick='showAdminReplyBox(${r.id})'>Answer Reply</button><div id='adminReplyBox-${r.id}' style='display:none;margin-top:8px;'><textarea id='adminReplyInput-${r.id}' style='width:100%;min-height:40px;'></textarea><br><button onclick='submitAdminReply(${r.id})'>Submit</button> <button onclick='hideAdminReplyBox(${r.id})'>Cancel</button></div>` : '')}
+                <div id='editReplyBox-${r.id}' style='display:none;margin-top:8px;'><textarea id='editReplyInput-${r.id}' style='width:100%;min-height:40px;'>${r.reply_text}</textarea><br><button onclick='submitEditReply(${r.id})'>Save</button> <button onclick='hideEditReply(${r.id})'>Cancel</button></div>
+            </div>`;
         });
     }
     fetchThread();
@@ -182,6 +203,83 @@
         }
     }
     window.deleteReply = deleteReply;
+    // Add JS functions for edit/admin reply/back button logic
+    window.showEditQuestion = function() {
+        document.getElementById('editQuestionBox').style.display = 'block';
+    };
+    window.hideEditQuestion = function() {
+        document.getElementById('editQuestionBox').style.display = 'none';
+    };
+    window.submitEditQuestion = async function() {
+        const newText = document.getElementById('editQuestionInput').value.trim();
+        if (!newText) return;
+        await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`, {
+            method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: newText })
+        });
+        fetchThread();
+        hideEditQuestion();
+    };
+    window.showEditAnswer = function() {
+        document.getElementById('editAnswerBox').style.display = 'block';
+    };
+    window.hideEditAnswer = function() {
+        document.getElementById('editAnswerBox').style.display = 'none';
+    };
+    window.submitEditAnswer = async function() {
+        const newAnswer = document.getElementById('editAnswerInput').value.trim();
+        if (!newAnswer) return;
+        const token = document.getElementById('adminTokenInput').value.trim();
+        await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}/answer`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-token': token }, body: JSON.stringify({ responder_answer: newAnswer })
+        });
+        fetchThread();
+        hideEditAnswer();
+    };
+    window.showEditReply = function(rid, text) {
+        document.getElementById(`editReplyBox-${rid}`).style.display = 'block';
+        document.getElementById(`editReplyInput-${rid}`).value = text;
+    };
+    window.hideEditReply = function(rid) {
+        document.getElementById(`editReplyBox-${rid}`).style.display = 'none';
+    };
+    window.submitEditReply = async function(rid) {
+        const newText = document.getElementById(`editReplyInput-${rid}`).value.trim();
+        if (!newText) return;
+        await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${rid}`, {
+            method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reply_text: newText })
+        });
+        fetchThread();
+        hideEditReply(rid);
+    };
+    window.showAdminReplyBox = function(rid) {
+        document.getElementById(`adminReplyBox-${rid}`).style.display = 'block';
+    };
+    window.hideAdminReplyBox = function(rid) {
+        document.getElementById(`adminReplyBox-${rid}`).style.display = 'none';
+    };
+    window.submitAdminReply = async function(rid) {
+        const answer = document.getElementById(`adminReplyInput-${rid}`).value.trim();
+        const token = document.getElementById('adminTokenInput').value.trim();
+        if (!answer || !token) return;
+        await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${rid}/admin_answer`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json', 'x-admin-token': token }, body: JSON.stringify({ admin_answer: answer })
+        });
+        fetchThread();
+        hideAdminReplyBox(rid);
+    };
+    window.showEditAdminReply = function(rid, text) {
+        // For editing admin reply, reuse the admin reply box
+        document.getElementById(`adminReplyInput-${rid}`).value = text;
+        document.getElementById(`adminReplyBox-${rid}`).style.display = 'block';
+    };
+    // Add logic to update adminToken on input
+    const adminTokenInput = document.getElementById('adminTokenInput');
+    if (adminTokenInput) {
+        adminTokenInput.addEventListener('input', function(e) {
+            adminToken = e.target.value.trim();
+            fetchThread();
+        });
+    }
     </script>
 </body>
 </html> 
