@@ -96,3 +96,23 @@ async def get_question(question_id: int, db: AsyncSession = Depends(get_db)):
         }
     except Exception as e:
         raise 
+
+@app.post("/questions/{question_id}/answer", dependencies=[Depends(admin_auth)])
+async def answer_question(question_id: int, answer: AnswerCreate, db: AsyncSession = Depends(get_db)):
+    question = await db.get(Question, question_id)
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+    question.responder_answer = answer.responder_answer
+    question.status = "answered"
+    await db.commit()
+    await db.refresh(question)
+    return {"status": "ok"}
+
+@app.delete("/questions/{question_id}", dependencies=[Depends(admin_auth)])
+async def delete_question(question_id: int, db: AsyncSession = Depends(get_db)):
+    question = await db.get(Question, question_id)
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+    await db.delete(question)
+    await db.commit()
+    return {"status": "deleted"} 
