@@ -98,5 +98,13 @@ document.getElementById('questionForm').addEventListener('submit', async functio
         statusDiv.textContent = 'Error: ' + err.message;
     }
 });
+
+// --- BEGIN: Wake up backend on page load ---
+(function wakeBackend() {
+    // This fetches a harmless endpoint to wake up the Render backend/database
+    // It runs in the background and does not block UI or affect state
+    fetch('https://personalwebsite-xzmk.onrender.com/ping').catch(() => {});
+})();
+// --- END: Wake up backend on page load ---
 </script>
 </html>
