@@ -185,3 +185,13 @@ async def delete_question(question_id: int, db: AsyncSession = Depends(get_db)):
     await db.delete(question)
     await db.commit()
     return {"status": "deleted"} 
+
+@app.get("/ping", include_in_schema=False)
+def ping():
+    """Health check endpoint for Render wake-up pings."""
+    return JSONResponse({"status": "ok", "message": "pong"})
+
+@app.head("/", include_in_schema=False)
+def root_head():
+    # Prevent 404 for HEAD / requests (Render health checks)
+    return JSONResponse({"status": "ok"}) 
