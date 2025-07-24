@@ -191,6 +191,11 @@ def ping():
     """Health check endpoint for Render wake-up pings."""
     return JSONResponse({"status": "ok", "message": "pong"})
 
+@app.get("/", include_in_schema=False)
+def root():
+    # Root GET endpoint for Render and browser requests
+    return JSONResponse({"status": "ok", "message": "Ask Me Anything API is running."})
+
 @app.head("/", include_in_schema=False)
 def root_head():
     # Prevent 404 for HEAD / requests (Render health checks)
