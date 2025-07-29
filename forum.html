@@ -4,45 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jester's Courtyard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
         .forum-container { max-width: 700px; margin: 40px auto; }
-        .question-card { background: #f8f8ff; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 18px; padding: 18px 22px; }
-        .question-card .meta { font-size: 0.95em; color: #666; margin-top: 6px; }
-        .status-unanswered { color: #c00; font-weight: bold; }
-        .status-answered { color: #090; font-weight: bold; }
-        .sticky-add-btn { position: fixed; bottom: 32px; right: 32px; background: #6699cc; color: #fff; border: none; border-radius: 50px; padding: 16px 28px; font-size: 1.1em; cursor: pointer; box-shadow: 0 2px 8px #0002; z-index: 100; }
-        .sticky-add-btn:hover { background: #336699; }
+        .question-card { background: #333; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 12px; padding: 12px 16px; }
+        .question-card .meta { font-size: 0.75rem; color: #fff; margin-top: 4px; }
+        .status-unanswered { color: #c00; }
+        .status-answered { color: #090; }
+        .sticky-add-btn { position: fixed; bottom: 32px; right: 32px; background: #fff; color: #000; border: none; border-radius: 50px; padding: 10px 20px; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 8px #0002; z-index: 100; }
+        .sticky-add-btn:hover { background: #000; color: #fff; border: 1px solid #fff; }
         .pagination { text-align: center; margin: 24px 0; }
-        .pagination button { margin: 0 6px; padding: 6px 14px; }
+        .pagination a { color: #fff !important; text-decoration: underline; font-size: 0.85rem; margin: 0 4px; }
+        .pagination a:hover { color: #8bb3ff !important; }
+        .pagination span { color: #fff; font-size: 0.85rem; margin: 0 2px; }
         .reply-count { color: #555; }
+        .back-link {
+            color: #fff !important;
+            text-decoration: underline;
+            font-size: 0.85rem;
+        }
+        .back-link:hover {
+            color: #8bb3ff !important;
+        }
+        .modal-btn:hover {
+            color: #8bb3ff !important;
+        }
     </style>
 </head>
 <body>
     <nav>
-        <div class="logo"><a href="index.html">Khandelwal</a></div>
+        <div class="logo"><a href="index.html">Aryaman Khandelwal</a></div>
     </nav>
-    <div class="forum-container" style="text-align:left;">
-        <h2>Jester's Courtyard</h2>
-        <div id="questionsList"></div>
-        <div class="pagination">
-            <button id="prevPage">Previous</button>
-            <span id="pageInfo"></span>
-            <button id="nextPage">Next</button>
+    <section class="main">
+        <div class="main-container">
+            <div class="blog-first" style="margin-top:2rem;">
+                <div style="margin-bottom:1rem;">
+                    <span style="color:#fff;font-size:0.85rem;">< </span><a href="index.html" class="back-link">Back</a>
+                </div>
+                <h1 style="font-size:0.85rem;font-weight:normal;margin-bottom:0.5em;">[Jester's Courtyard]</h1>
+                <div class="forum-container" style="text-align:left;">
+                    <div id="questionsList"></div>
+                    <div class="pagination">
+                        <span style="color:#fff;font-size:0.85rem;"><</span><a href="#" id="prevPage">Newer</a>
+                        <span id="pageInfo"></span>
+                        <a href="#" id="nextPage">Older</a><span style="color:#fff;font-size:0.85rem;">></span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <button class="sticky-add-btn" onclick="openAddModal()">Add a question</button>
+    </section>
+    <button class="sticky-add-btn" onclick="openAddModal()">+ Add a question</button>
     <!-- Modal for adding question -->
     <div id="addModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:200;align-items:center;justify-content:center;">
-        <div style="background:#fff;padding:32px 24px;border-radius:10px;max-width:400px;width:90vw;">
-            <h3>Ask a Question</h3>
+        <div style="background:#000;padding:32px 24px;border-radius:10px;max-width:400px;width:90vw;border:1px solid #333;">
+            <h3 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Ask a Question</h3>
             <form id="modalQuestionForm">
-                <input type="text" id="modalQuestionInput" placeholder="Your question..." required style="width:100%;padding:8px;margin-bottom:10px;">
-                <input type="text" id="modalNicknameInput" placeholder="Nickname (optional)" style="width:100%;padding:8px;margin-bottom:10px;">
-                <button type="submit" style="padding:8px 16px;">Submit</button>
-                <button type="button" onclick="closeAddModal()" style="padding:8px 16px;margin-left:8px;">Cancel</button>
+                <input type="text" id="modalQuestionInput" placeholder="Your question..." required style="width:100%;padding:8px;margin-bottom:10px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;">
+                <input type="text" id="modalNicknameInput" placeholder="Nickname (optional)" style="width:100%;padding:8px;margin-bottom:10px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;">
+                <button type="submit" class="modal-btn" style="padding:8px 16px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Submit</button>
+                <button type="button" onclick="closeAddModal()" class="modal-btn" style="padding:8px 16px;margin-left:8px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Cancel</button>
             </form>
-            <div id="modalStatus" style="margin-top:8px;color:#c00;"></div>
+            <div id="modalStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
         </div>
     </div>
     <script>
@@ -57,17 +82,17 @@
         const list = document.getElementById('questionsList');
         list.innerHTML = '';
         if (questions.length === 0) {
-            list.innerHTML = '<p>No questions yet. Be the first to ask!</p>';
+            list.innerHTML = '<p style="color:#fff;font-size:0.85rem;">No questions yet. Be the first to ask!</p>';
         }
         questions.forEach(q => {
             const card = document.createElement('div');
             card.className = 'question-card';
             card.innerHTML = `
-                <div style="font-weight:bold;font-size:1.1em;cursor:pointer;" onclick="window.location='forum_question.html?id=${q.id}'">${q.text}</div>
+                <div style="font-size:0.85rem;cursor:pointer;color:#fff;" onclick="window.location='forum_question.html?id=${q.id}'">${q.text}</div>
                 <div class="meta">
                     <span class="${q.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${q.status.charAt(0).toUpperCase() + q.status.slice(1)}</span>
                     &nbsp;|&nbsp;
-                    <span class="reply-count">${q.reply_count} replies</span>
+                    <span style="color:#fff;">${q.reply_count} replies</span>
                     &nbsp;|&nbsp;
                     <span>${new Date(q.timestamp).toLocaleString()}</span>
                     ${q.nickname ? `&nbsp;|&nbsp;<span>by ${q.nickname}</span>` : ''}
@@ -77,10 +102,12 @@
         });
         document.getElementById('pageInfo').textContent = `Page ${page}`;
     }
-    document.getElementById('prevPage').onclick = function() {
+    document.getElementById('prevPage').onclick = function(e) {
+        e.preventDefault();
         if (page > 1) { page--; fetchQuestions(); }
     };
-    document.getElementById('nextPage').onclick = function() {
+    document.getElementById('nextPage').onclick = function(e) {
+        e.preventDefault();
         if (totalLoaded === limit) { page++; fetchQuestions(); }
     };
     fetchQuestions();

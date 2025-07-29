@@ -4,33 +4,38 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'IBM Plex Mono', 'Courier New', monospace;
+}
+
+body {
+    background-color: #000;
+    color: #fff;
 }
 
 nav {
     height: 50px;
-    /* background: #000; */
+    background: #000;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 0rem calc((100vw - 1300px) / 2);
 }
 
 .logo {
-    color: #000;
-    font-size: 1.25rem;
+    color: #fff;
+    font-size: 1rem;
     font-weight: bold;
 }
 
 nav a {
     text-decoration: none;
-    color: #000;
+    color: #fff;
     padding: 0 1.5rem;
 }
 
 .hero-container {
     display: grid;
-    background-color: #4169e1;
+    background-color: #1a1a1a;
     grid-template-columns: 1fr 1fr;
     padding: 1.2rem calc((100vw - 1300px) / 2); /* reduced from 3rem */
     height: 8vh; /* reduced from 30vh */
@@ -40,8 +45,8 @@ nav a {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
-    max-width: 700px;
-    padding: 0rem 2vw;
+    max-width: 800px;
+    padding: 0rem 24px;
     box-sizing: border-box;
     text-align: left;
 }
@@ -52,20 +57,21 @@ nav a {
     /* flex-direction: column; */
     justify-content: center;
     align-items: flex-start;
-    color: #000;
-    padding: 0rem 2rem;
+    color: #fff;
+    padding: 0rem 0rem;
 }
 
 .column-first h1 {
     margin-bottom: 1rem;
-    font-size: 2.5rem;
+    font-size: 1rem;
+    color: #fff;
 }
 
 .column-first p {
     margin-bottom: 2rem;
-    color: #4169e1;
-    font-weight: bold;
-    font-size: 1.125rem;
+    color: #fff;
+    font-weight: normal;
+    font-size: 0.95rem;
     justify-content: center;
 }
 
@@ -74,16 +80,16 @@ nav a {
     /* display: flex; */
     /* flex-direction: column; */
     /* align-items: flex-start; */
-    color: #000;
-    padding: 0rem 2rem;
+    color: #fff;
+    padding: 0rem 0rem;
     text-align: left;
 }
 
 .container-items p {
     margin-bottom: 2rem;
-    color: #4169e1;
-    font-weight: bold;
-    font-size: 1rem;
+    color: #fff;
+    font-weight: normal;
+    font-size: 0.9rem;
     justify-content: left;
 }
 
@@ -110,19 +116,20 @@ button:hover {
     /* flex-direction: column; */
     justify-content: center;
     align-items: flex-start;
-    color: #000;
-    padding: 0rem 2rem;
+    color: #fff;
+    padding: 0rem 0rem;
 }
 
 .blog-first h1 {
     margin-bottom: 1rem;
     font-size: 2.5rem;
+    color: #fff;
 }
 
 .blog-first p {
     margin-bottom: 2rem;
-    color: #000;
-    font-weight: bold;
+    color: #fff;
+    font-weight: normal;
     font-size: 1rem;
     justify-content: center;
 }
@@ -135,18 +142,19 @@ button:hover {
     /* flex-direction: column; */
     justify-content: center;
     align-items: flex-start;
-    color: #000;
-    padding: 0rem 2rem;
+    color: #fff;
+    padding: 0rem 0rem;
 }
 
 .blog-within h1 {
     margin-bottom: 1rem;
     font-size: 2.5rem;
+    color: #fff;
 }
 
 .blog-within p {
     margin-bottom: 2rem;
-    color: #000;
+    color: #fff;
     /* font-weight: bold; */
     font-size: 1rem;
     justify-content: center;
@@ -154,7 +162,7 @@ button:hover {
 
 .end-container {
     display: grid;
-    background-color: #FFF;
+    background-color: #1a1a1a;
     grid-template-columns: 1fr 1fr;
     padding: 3rem 2vw;
     height: auto;
@@ -165,35 +173,358 @@ button:hover {
 .column-first, .blog-first, .blog-within {
     margin: auto;
     width: 100%;
-    max-width: 700px;
-    padding: 0rem 2vw;
+    max-width: 800px;
+    padding: 0rem 0rem;
     box-sizing: border-box;
 }
 
 /* --- Question Bar Styles --- */
 .question-bar {
-    background: #f4f8fc;
+    background: transparent;
     border-radius: 10px;
-    box-shadow: 0 2px 8px #0001;
-    padding: 18px 24px;
-    margin: 32px 0 0 0;
-    max-width: 700px;
+    box-shadow: none;
+    padding: 12px 24px;
+    margin: 20px 0 20px 0;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+    border: none;
 }
 .question-bar input, .question-bar button {
-    font-size: 1em;
+    font-size: 0.85rem;
     margin-right: 8px;
+    display: inline-block;
+    white-space: nowrap;
 }
-.question-bar button {
-    background: #6699cc;
+
+.question-bar a {
+    font-size: 0.75rem;
+}
+.question-bar input {
+    background: transparent;
     color: #fff;
     border: none;
-    border-radius: 4px;
+    border-bottom: 1px solid #555;
+    border-radius: 0;
+    outline: none;
+}
+.question-bar input::placeholder {
+    color: #aaa;
+}
+.question-bar button {
+    background: transparent;
+    color: #fff;
+    border: none;
+    border-radius: 0;
     cursor: pointer;
+    transition: color 0.2s ease;
 }
 .question-bar button:hover {
-    background: #336699;
+    color: #6699cc;
+}
+
+/* Update link colors for dark mode */
+a {
+    color: #6699CC;
+}
+
+a:hover {
+    color: #8bb3ff;
+}
+
+/* About content links should be white by default */
+.about-content a {
+    color: #fff;
+}
+
+.about-content a:hover {
+    color: #8bb3ff;
+}
+
+/* --- About Collapsible Styles --- */
+.about-collapsible {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+}
+.about-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.85rem;
+    outline: none;
+    transition: color 0.2s;
+}
+.about-toggle:hover {
+    color: #8bb3ff;
+}
+.about-content {
+    margin-top: 0.5em;
+    font-size: 0.85rem;
+    color: #fff;
+    transition: max-height 0.2s ease;
+    margin-left: 1.5em;
+}
+
+.about-toggle span {
+    transition: transform 0.2s;
+}
+
+/* --- Interests Collapsible Styles --- */
+.interests-collapsible {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+}
+.interests-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.85rem;
+    outline: none;
+    transition: color 0.2s;
+}
+.interests-toggle:hover {
+    color: #8bb3ff;
+}
+.interests-content {
+    margin-top: 0.5em;
+    font-size: 0.85rem;
+    color: #fff;
+    transition: max-height 0.2s ease;
+    margin-left: 1.5em;
+}
+
+.interests-toggle span {
+    transition: transform 0.2s;
+}
+
+/* --- Previously Collapsible Styles --- */
+.previously-collapsible {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+}
+.previously-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.85rem;
+    outline: none;
+    transition: color 0.2s;
+}
+.previously-toggle:hover {
+    color: #8bb3ff;
+}
+.previously-content {
+    margin-top: 0.5em;
+    font-size: 0.85rem;
+    color: #fff;
+    transition: max-height 0.2s ease;
+    margin-left: 1.5em;
+}
+
+.previously-toggle span {
+    transition: transform 0.2s;
+}
+
+/* --- Blog Collapsible Styles --- */
+.blog-collapsible {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+}
+.blog-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.85rem;
+    outline: none;
+    transition: color 0.2s;
+}
+.blog-toggle:hover {
+    color: #8bb3ff;
+}
+
+.blog-toggle span {
+    transition: transform 0.2s;
+}
+
+/* --- Mentoring Collapsible Styles --- */
+.mentoring-collapsible {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+}
+.mentoring-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.85rem;
+    outline: none;
+    transition: color 0.2s;
+}
+.mentoring-toggle:hover {
+    color: #8bb3ff;
+}
+.mentoring-content {
+    margin-top: 0.5em;
+    font-size: 0.85rem;
+    color: #fff;
+    transition: max-height 0.2s ease;
+    margin-left: 1.5em;
+}
+
+.mentoring-toggle span {
+    transition: transform 0.2s;
+}
+
+.mentoring-content button:hover {
+    color: #8bb3ff;
+}
+
+.mentoring-content #missionToggle:hover {
+    color: #8bb3ff;
+}
+
+.mentoring-content a:hover {
+    color: #8bb3ff;
+}
+
+.mentoring-content #missionContent a:hover {
+    color: #8bb3ff;
+}
+
+/* More specific selectors to ensure hover works */
+#missionToggle:hover {
+    color: #8bb3ff;
+}
+
+.mentoring-content span a:hover {
+    color: #8bb3ff;
+}
+
+#missionContent a:hover {
+    color: #8bb3ff;
+}
+
+/* Override global link color for mentoring section */
+#missionToggle {
+    color: #fff;
+}
+
+.mentoring-content span a {
+    color: #fff;
+}
+
+#missionContent a {
+    color: #fff;
+}
+
+/* --- Tracker Collapsible Styles --- */
+.tracker-collapsible {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+}
+.tracker-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0.85rem;
+    outline: none;
+    transition: color 0.2s;
+}
+.tracker-toggle:hover {
+    color: #8bb3ff;
+}
+.tracker-content {
+    margin-top: 0.5em;
+    font-size: 0.85rem;
+    color: #fff;
+    transition: max-height 0.2s ease;
+    margin-left: 1.5em;
+}
+
+.tracker-toggle span {
+    transition: transform 0.2s;
+}
+
+/* Override global link color for tracker section */
+.tracker-content a {
+    color: #fff;
+}
+
+.tracker-content a:hover {
+    color: #8bb3ff;
+}
+
+/* Social Links Styles */
+.social-links {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+}
+
+.social-links a {
+    color: #fff;
+    text-decoration: underline;
+    font-size: 0.85rem;
+    transition: color 0.2s ease;
+}
+
+.social-links a:hover {
+    color: #8bb3ff;
 }
 
 @media screen and (max-width: 1024px) {

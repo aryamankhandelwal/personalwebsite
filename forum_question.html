@@ -4,45 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Question Thread</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="images/header.png">
     <style>
         .thread-container { max-width: 700px; margin: 40px auto; }
-        .question-main { background: #f8f8ff; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 18px; padding: 18px 22px; }
-        .reply { background: #fff; border-radius: 6px; box-shadow: 0 1px 4px #0001; margin-bottom: 12px; padding: 12px 16px; }
+        .question-main { background: #333; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 18px; padding: 12px 16px; }
+        .reply { background: #333; border-radius: 6px; box-shadow: 0 1px 4px #0001; margin-bottom: 12px; padding: 12px 16px; }
         .admin-controls { margin-top: 18px; }
-        .admin-controls input { margin-right: 8px; }
+        .admin-controls input { margin-right: 8px; background: #000; border: 1px solid #333; color: #fff; padding: 8px; font-size: 0.85rem; }
         .reply-form { margin-top: 24px; }
-        .reply-form textarea { width: 100%; min-height: 60px; padding: 8px; }
-        .reply-form button { margin-top: 8px; }
-        .delete-btn { color: #c00; background: none; border: none; cursor: pointer; margin-left: 8px; }
-        .back-btn { position: absolute; left: 0; top: 60px; margin-left: 16px; background: #f4f8fc; color: #4169e1; border: none; border-radius: 4px; padding: 8px 16px; font-size: 1em; cursor: pointer; }
-        .edit-btn { color: #4169e1; background: none; border: none; cursor: pointer; margin-left: 8px; }
+        .reply-form textarea { width: 100%; min-height: 60px; padding: 8px; background: #000; border: 1px solid #333; color: #fff; font-size: 0.85rem; }
+        .reply-form button { margin-top: 8px; background: transparent; border: 1px solid #fff; color: #fff; padding: 8px 16px; font-size: 0.85rem; cursor: pointer; }
+        .delete-btn { color: #c00; background: none; border: none; cursor: pointer; margin-left: 8px; font-size: 0.85rem; }
+        .edit-btn { color: #4169e1; background: none; border: none; cursor: pointer; margin-left: 8px; font-size: 0.85rem; }
         .edited-label { color: #888; font-size: 0.9em; margin-left: 6px; }
-        .admin-reply-block { background: #e6ffe6; padding: 10px; border-radius: 6px; margin-top: 8px; }
+        .admin-reply-block { background: #333; padding: 10px; border-radius: 6px; margin-top: 8px; color: #fff; }
+        .back-link {
+            color: #fff !important;
+            text-decoration: underline;
+            font-size: 0.85rem;
+        }
+        .back-link:hover {
+            color: #8bb3ff !important;
+        }
+        .admin-btn:hover {
+            color: #8bb3ff !important;
+        }
     </style>
 </head>
 <body>
-    <nav style="position:relative;">
-        <div class="logo" style="display:inline-block;"><a href="index.html">Khandelwal</a></div>
-        <button class="back-btn" onclick="window.location='forum.html'">&lt; Back to the Courtyard</button>
+    <nav>
+        <div class="logo"><a href="index.html">Aryaman Khandelwal</a></div>
     </nav>
-    <div class="thread-container" style="text-align:left;">
-        <div id="questionBlock"></div>
-        <!-- Replies and reply form removed -->
-        <div class="admin-controls">
-            <h4>Admin Controls</h4>
-            <input type="password" id="adminTokenInput" placeholder="Admin token">
-            <button onclick="showAnswerBox()">Answer Question</button>
-            <button onclick="deleteThread()" class="delete-btn">Delete Thread</button>
-            <div id="answerBox" style="display:none;margin-top:12px;">
-                <textarea id="adminAnswerInput" placeholder="Type your answer..." style="width:100%;min-height:60px;"></textarea><br>
-                <button onclick="submitAnswer()">Submit Answer</button>
-                <button onclick="hideAnswerBox()">Cancel</button>
+    <section class="main">
+        <div class="main-container">
+            <div class="blog-first" style="margin-top:2rem;">
+                <div style="margin-bottom:1rem;">
+                    <span style="color:#fff;font-size:0.85rem;">< </span><a href="forum.html" class="back-link">Back</a>
+                </div>
+                <div class="thread-container" style="text-align:left;">
+                    <div id="questionBlock"></div>
+                    <!-- Replies and reply form removed -->
+                    <div class="admin-controls">
+                        <h4 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Admin Controls</h4>
+                        <input type="password" id="adminTokenInput" placeholder="Admin token">
+                        <button onclick="showAnswerBox()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;">Answer Question</button>
+                        <button onclick="deleteThread()" class="delete-btn">Delete Thread</button>
+                        <div id="answerBox" style="display:none;margin-top:12px;">
+                            <textarea id="adminAnswerInput" placeholder="Type your answer..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
+                            <button onclick="submitAnswer()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">Submit Answer</button>
+                            <button onclick="hideAnswerBox()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;margin-left:8px;">Cancel</button>
+                        </div>
+                        <div id="adminStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+                    </div>
+                </div>
             </div>
-            <div id="adminStatus" style="margin-top:8px;color:#c00;"></div>
         </div>
-    </div>
+    </section>
     <script>
     // --- Helpers ---
     function getQueryParam(name) {
@@ -59,14 +80,14 @@
         questionData = data.question;
         // Render question
         let questionHtml = `<div class="question-main">
-            <div style="font-weight:bold;font-size:1.1em;">${data.question.text}</div>
-            <div style="color:#666;font-size:0.95em;">
+            <div style="font-size:0.85rem;color:#fff;">${data.question.text}</div>
+            <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
                 Status: <span class="${data.question.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${data.question.status.charAt(0).toUpperCase() + data.question.status.slice(1)}</span>
                 &nbsp;|&nbsp;
                 ${data.question.nickname ? `by ${data.question.nickname} &nbsp;|&nbsp;` : ''}
                 ${new Date(data.question.timestamp).toLocaleString()}
             </div>
-            ${data.question.responder_answer ? `<div style='margin-top:12px;background:#e6ffe6;padding:10px;border-radius:6px;'><b>Official Answer:</b><br>${data.question.responder_answer}</div>` : ''}
+            ${data.question.responder_answer ? `<div style='margin-top:12px;background:#333;padding:10px;border-radius:6px;color:#fff;font-size:0.85rem;'><b>Official Answer:</b><br>${data.question.responder_answer}</div>` : ''}
         </div>`;
         document.getElementById('questionBlock').innerHTML = questionHtml;
     }

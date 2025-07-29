@@ -3,72 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Khandelwal</title>
+    <title>Aryaman Khandelwal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="images/header.png">
-    <style>a {color: #6699CC;}</style>
 </head>
 
 <body>
     <nav>
-        <div class="logo"><a href="index.html">Khandelwal</a></div>
+        <div class="logo"><a href="index.html">Aryaman Khandelwal</a></div>
         <div class="nav-items">
             <!-- <a href="blog.html">Blog<a> -->
         </div>
     </nav>
-    <section class="hero">
-        <div class="hero-container">
-        </div>
-    </section>
-
-    <!-- Question Bar Start -->
-    <div class="question-bar">
-        <form id="questionForm">
-            <input type="text" id="questionInput" placeholder="Ask me a question about uni or careers (soon)" required style="width:60%;padding:8px;">
-            <input type="text" id="nicknameInput" placeholder="Nickname (optional)" style="width:20%;padding:8px;">
-            <button type="submit" style="padding:8px 16px;">Submit</button>
-        </form>
-        <div id="questionStatus" style="margin-top:8px;color:#c00;"></div>
-        <div style="margin-top:12px;">
-            <a href="forum.html" id="forumLink">View full discussion forum</a>
-        </div>
-    </div>
-    <!-- Question Bar End -->
 
     <section class="main">
         <div class="main-container">
+            <div class="about-collapsible" style="margin-bottom:1.5rem;margin-top:2rem;">
+                <button id="aboutToggle" class="about-toggle" aria-expanded="true" style="background:none;border:none;font-size:0.85rem;display:flex;align-items:center;cursor:pointer;padding:0;">
+                    [About]
+                </button>
+                <div id="aboutContent" class="about-content" style="margin-top:0.5em;">
+                    I'm currently in a corporate development and product leadership role at Astra Tech, where I am building MENA's largest AI-native finance platform.<br><br>
+                    I began my career as a tech investment banker at Nomura in SF, advising exciting companies on acquisitions and capital raises. I went to UCLA, where I studied Statistics and Economics.<br><br>
+                    I'm passionate about the intersection of product and finance. My experience and areas of interest lie primarily in fintech, deep tech, and sports + media.<br><br>
+                    I'm originally from India and currently live in Dubai.
+                </div>
+            </div>
+            <!-- About Collapsible End -->
+            
+            <div class="mentoring-collapsible" style="margin-bottom:1.5rem;">
+                <button id="mentoringToggle" class="mentoring-toggle" aria-expanded="true" style="background:none;border:none;font-size:0.85rem;display:flex;align-items:center;cursor:pointer;padding:0;">
+                    [Jester in a Patagonia]
+                </button>
+                <div id="mentoringContent" class="mentoring-content" style="margin-top:0.5em;">
+                    <form id="questionForm">
+                        <input type="text" id="questionInput" placeholder="Ask me a question about uni or careers (soon)" required style="width:58%;padding:8px;background:transparent;color:#fff;border:none;border-bottom:1px solid #555;border-radius:0;outline:none;">
+                        <input type="text" id="nicknameInput" placeholder="Nickname (optional)" style="width:25%;padding:8px;background:transparent;color:#fff;border:none;border-bottom:1px solid #555;border-radius:0;outline:none;">
+                        <button type="submit" style="padding:8px 16px;background:transparent;border:none;border-radius:0;cursor:pointer;transition:color 0.2s ease;font-size:0.85rem;">Submit</button>
+                    </form>
+                    <div id="questionStatus" style="margin-top:8px;color:#c00;"></div>
+                    <div style="margin-top:12px;">
+                        <span id="missionToggle" style="text-decoration:underline;font-size:0.85rem;cursor:pointer;">Mission</span>
+                        <span style="margin-left:20px;">
+                            <a href="forum.html" style="text-decoration:underline;font-size:0.85rem;">Jester's Courtyard</a>
+                        </span>
+                        <div id="missionContent" style="display:none;margin-top:8px;margin-left:1.5em;font-size:0.85rem;color:#fff;">
+                            When I was recruiting for finance and tech, I was lost. I started this to be the "big brother" I wish I had. 3 years on, I've mentored over 50 students, with several receiving offers from institutions such as Bank of America, BCG, and Province Firm.<br><br>
+                            > 1-on-1 mentoring sessions<br>
+                            > Resume building help<br>
+                            > Interview guidance and prep<br>
+                            > Networking opportunities<br><br>
+                            <a href="https://www.linkedin.com/company/jesterinapatagonia/" target="_blank" style="text-decoration:underline;">LinkedIn</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Mentoring Collapsible End -->
+            
             <div class="column-first" style="text-align:left;">
-                <h1>
-                    🐻
-                    <br> Aryaman Khandelwal</h1>
                 <p>
-                    At <a href="https://astratech.ae/"> Astra Tech,</a> I'm building MENA's largest AI-native finance platform.
-                    Before this, I was an investment banker at <a href="https://www.nomuraholdings.com/services/wholesale/ib.html"> 
-                        Nomura</a> in San Francisco. Previously, I studied at <a href="https://www.ucla.edu/"> UCLA</a>. <br> <br>
+                    <!-- About text moved to collapsible section above -->
+                </p>
 
+            </div>
+            
+            <div class="blog-collapsible" style="margin-bottom:1.5rem;">
+                <button id="blogToggle" class="blog-toggle" aria-expanded="false" style="background:none;border:none;font-size:0.85rem;display:flex;align-items:center;cursor:pointer;padding:0;">
+                    [Blog]
+                </button>
+            </div>
+            <!-- Blog Collapsible End -->
+            
+            <div class="interests-collapsible" style="margin-bottom:1.5rem;">
+                <button id="interestsToggle" class="interests-toggle" aria-expanded="false" style="background:none;border:none;font-size:0.85rem;display:flex;align-items:center;cursor:pointer;padding:0;">
+                    [Interests]
+                </button>
+                <div id="interestsContent" class="interests-content" style="margin-top:0.5em;display:none;">
                     I'm a generalist by nature with specific focus areas through nurture.
                     My experience and interests are primarily in fintech, deep tech, and sports / media.
-                <hr>
-                </p>
-
+                </div>
             </div>
-
-            <div class="container-items" style="text-align:left;">
-                <p>
-                    📍 Dubai <br> <br>
-                    ✏️ Here's my <a href="blog.html"> blog</a> for some of my random thoughts <br> <br>
-                    🐦 I'm less serious on <a href="https://www.x.com/khandelwalinnit">Twitter</a> <br> <br>
-                    🃏 If you're a high school or university student wondering if a career in finance / tech is for you, you may find my mentoring platform, <a href="https://www.linkedin.com/company/jesterinapatagonia/">Jester in a Patagonia</a>, to be of interest<br><br>
-                    📈 A <a href="tracker.html"> tracker</a> for companies I would invest in an early<br> <br>
-                    🗞️ Information is scattered everywhere... <a href="news.html">here's</a> a few places I go to look for mine <br><br>
-                </p>
+            <!-- Interests Collapsible End -->
+            
+            <div class="tracker-collapsible" style="margin-bottom:1.5rem;">
+                <button id="trackerToggle" class="tracker-toggle" aria-expanded="false" style="background:none;border:none;font-size:0.85rem;display:flex;align-items:center;cursor:pointer;padding:0;">
+                    [Tracker]
+                </button>
+                <div id="trackerContent" class="tracker-content" style="margin-top:0.5em;display:none;margin-left:1.5em;font-size:0.85rem;">
+                    As an aspiring early stage tech investor, I like to keep an eye on exciting emerging tech companies.<br><br>
+                    > Fintech: <a href="peekmoney.html">Peek Money</a><br>
+                    > Deep tech: <a href="aliceandbob.html">Alice & Bob</a><br>
+                    > Media: <a href="qloo.html">Qloo</a><br>
+                    > <a href="archive.html">Archive</a>
+                </div>
+                        </div>
+            <!-- Tracker Collapsible End -->
+            
+            <div class="social-links" style="text-align:left;margin-bottom:1.5rem;">
+                <a href="https://x.com/khandelwalinnit" target="_blank" style="text-decoration:underline;font-size:0.85rem;">X</a> 
+                <a href="https://www.linkedin.com/in/aryamankhandelwal/" target="_blank" style="text-decoration:underline;font-size:0.85rem;">LinkedIn</a> 
+                <a href="https://github.com/aryamankhandelwal" target="_blank" style="text-decoration:underline;font-size:0.85rem;">Github</a>
             </div>
+            
+ 
 
-    </section>
-
-    <section class="end">
-        <div class="end-container">
-        </div>
     </section>
 </body>
 <script>
@@ -93,7 +134,7 @@ document.getElementById('questionForm').addEventListener('submit', async functio
         document.getElementById('questionInput').value = '';
         document.getElementById('nicknameInput').value = '';
         statusDiv.style.color = '#090';
-        statusDiv.textContent = 'Question submitted! Check the forum soon for answers.';
+        statusDiv.textContent = 'Question submitted! Check the Courtyard soon for answers.';
     } catch (err) {
         statusDiv.style.color = '#c00';
         statusDiv.textContent = 'Error: ' + err.message;
@@ -107,5 +148,98 @@ document.getElementById('questionForm').addEventListener('submit', async functio
     fetch('https://personalwebsite-xzmk.onrender.com/ping').catch(() => {});
 })();
 // --- END: Wake up backend on page load ---
+
+// --- About Collapsible Toggle ---
+(function() {
+    const toggleBtn = document.getElementById('aboutToggle');
+    const aboutContent = document.getElementById('aboutContent');
+    let open = true;
+    toggleBtn.addEventListener('click', function() {
+        open = !open;
+        if (open) {
+            aboutContent.style.display = '';
+            toggleBtn.setAttribute('aria-expanded', 'true');
+        } else {
+            aboutContent.style.display = 'none';
+            toggleBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+})();
+
+// --- Mentoring Collapsible Toggle ---
+(function() {
+    const toggleBtn = document.getElementById('mentoringToggle');
+    const mentoringContent = document.getElementById('mentoringContent');
+    let open = true;
+    toggleBtn.addEventListener('click', function() {
+        open = !open;
+        if (open) {
+            mentoringContent.style.display = '';
+            toggleBtn.setAttribute('aria-expanded', 'true');
+        } else {
+            mentoringContent.style.display = 'none';
+            toggleBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+})();
+
+// --- Mission Toggle ---
+(function() {
+    const toggleBtn = document.getElementById('missionToggle');
+    const missionContent = document.getElementById('missionContent');
+    let open = false;
+    toggleBtn.addEventListener('click', function() {
+        open = !open;
+        if (open) {
+            missionContent.style.display = '';
+        } else {
+            missionContent.style.display = 'none';
+        }
+    });
+})();
+
+// --- Blog Collapsible Toggle ---
+(function() {
+    const toggleBtn = document.getElementById('blogToggle');
+    toggleBtn.addEventListener('click', function() {
+        window.location.href = 'blog.html';
+    });
+})();
+
+// --- Interests Collapsible Toggle ---
+(function() {
+    const toggleBtn = document.getElementById('interestsToggle');
+    const interestsContent = document.getElementById('interestsContent');
+    let open = false; // Starts closed
+    toggleBtn.addEventListener('click', function() {
+        open = !open;
+        if (open) {
+            interestsContent.style.display = '';
+            toggleBtn.setAttribute('aria-expanded', 'true');
+        } else {
+            interestsContent.style.display = 'none';
+            toggleBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+})();
+
+// --- Tracker Collapsible Toggle ---
+(function() {
+    const toggleBtn = document.getElementById('trackerToggle');
+    const trackerContent = document.getElementById('trackerContent');
+    let open = false; // Starts closed
+    toggleBtn.addEventListener('click', function() {
+        open = !open;
+        if (open) {
+            trackerContent.style.display = '';
+            toggleBtn.setAttribute('aria-expanded', 'true');
+        } else {
+            trackerContent.style.display = 'none';
+            toggleBtn.setAttribute('aria-expanded', 'false');
+        }
+    });
+})();
+
+
 </script>
 </html>

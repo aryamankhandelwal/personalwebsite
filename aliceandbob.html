@@ -3,12 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep tech / Alice & Bob </title>
-    <link rel="icon" type="image/x-icon" href="images/header.png">
+    <title>Deep tech / Alice & Bob</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <style>a {color: #5f5e5e;
-    text-decoration-line: underline;
-    text-decoration-thickness: 0.5px;}
+    <link rel="icon" type="image/x-icon" href="images/header.png">
+    <style>
+        .blog-within a {
+            color: #fff !important;
+            text-decoration: underline;
+        }
+        .blog-within a:hover {
+            color: #8bb3ff !important;
+        }
+        .back-link {
+            color: #fff !important;
+            text-decoration: underline;
+            font-size: 0.85rem;
+        }
+        .back-link:hover {
+            color: #8bb3ff !important;
+        }
     </style>
 </head>
 <body>
@@ -21,9 +37,13 @@
 
     <section class="main">
         <div class="main-container">
-            <div class="blog-within">
-                <h1>🐈<br>Deep tech: Alice & Bob</h1>
-                <p>
+            <div class="blog-within" style="margin-top:2rem;">
+                <div style="margin-bottom:1rem;">
+                    <span style="color:#fff;font-size:0.85rem;">< </span><a href="index.html" class="back-link">Back</a>
+                </div>
+                <h1 style="font-size:0.85rem;font-weight:normal;margin-bottom:0.5em;">[Deep tech: Alice & Bob]</h1>
+                <p style="font-size:0.85rem;">
+                <div style="margin-left:1.5em;font-size:0.85rem;">
                     HQ: Paris, France <br><br>
                     - Error corrected cat qubits reduce hardware requirements by up to 200x vs. fault-tolerant quantum computing at scale <br><br>
                     - Business model is based around exponentially powered quantum computing as a service <br><br>
@@ -32,17 +52,14 @@
                     - Raised $30M in a Series A co-led by Elaia, Bpifrance, and Supernova Invest along with Breega in 2022 <br><br>
                     - Cats (that's not a typo, that's is the entire point) <br><br>
 
-                    <hr> <br>
+                    <hr style="border: none; height: 1px; background-color: #fff; margin: 0.5rem 0;"><br>
 
-                    <a href="https://alice-bob.com/">Company Website</a>
+                    <a href="https://alice-bob.com/" target="_blank">Company Website</a>
                     
-                    <br><br><br><br>                
+                    <br><br><br><br>
+                </div>
                 </p>
             </div>
-    </section>
-
-    <section class="end">
-        <div class="end-container">
         </div>
     </section>
 </body>
