@@ -682,3 +682,22 @@ a:hover {
         white-space: nowrap;
     }
 }
+
+/* Desktop Question Form Layout - Keep original inline layout */
+@media screen and (min-width: 769px) {
+    .mobile-form-row {
+        display: inline;
+    }
+    
+    #questionForm {
+        display: inline;
+    }
+    
+    #questionInput {
+        width: 58% !important;
+    }
+    
+    #nicknameInput {
+        width: 25% !important;
+    }
+}
