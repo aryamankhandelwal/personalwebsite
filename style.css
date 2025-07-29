@@ -58,7 +58,7 @@ nav a {
     justify-content: center;
     align-items: flex-start;
     color: #fff;
-    padding: 0rem 0rem;
+    padding: 0rem 24px;
 }
 
 .column-first h1 {
@@ -81,7 +81,7 @@ nav a {
     /* flex-direction: column; */
     /* align-items: flex-start; */
     color: #fff;
-    padding: 0rem 0rem;
+    padding: 0rem 24px;
     text-align: left;
 }
 
@@ -117,7 +117,7 @@ button:hover {
     justify-content: center;
     align-items: flex-start;
     color: #fff;
-    padding: 0rem 0rem;
+    padding: 0rem 24px;
 }
 
 .blog-first h1 {
@@ -143,7 +143,7 @@ button:hover {
     justify-content: center;
     align-items: flex-start;
     color: #fff;
-    padding: 0rem 0rem;
+    padding: 0rem 24px;
 }
 
 .blog-within h1 {
@@ -554,7 +554,7 @@ a:hover {
     }
     .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible {
         max-width: 100vw;
-        padding: 0 5vw;
+        padding: 0 3vw;
         text-align: left;
     }
     .end-container {
@@ -574,14 +574,14 @@ a:hover {
         width: 100vw;
         max-width: 100vw;
         min-width: 0;
-        padding: 0 5vw;
+        padding: 0 3vw;
         margin: 0;
     }
     .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible {
         width: 100vw;
         max-width: 100vw;
         min-width: 0;
-        padding: 0 5vw;
+        padding: 0 3vw;
         margin: 0;
         text-align: left;
     }
