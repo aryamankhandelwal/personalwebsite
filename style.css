@@ -339,6 +339,15 @@ a:hover {
     transition: transform 0.2s;
 }
 
+/* Override global link color for interests section */
+.interests-content a {
+    color: #fff !important;
+}
+
+.interests-content a:hover {
+    color: #8bb3ff !important;
+}
+
 /* --- Previously Collapsible Styles --- */
 .previously-collapsible {
     width: 100%;
