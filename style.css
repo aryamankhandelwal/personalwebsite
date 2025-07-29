@@ -533,43 +533,43 @@ a:hover {
 
 @media screen and (max-width: 1024px) {
     nav {
-        padding: 0rem 24px;
+        padding: 0rem 16px;
     }
     .main-container, .end-container, .forum-container, .thread-container {
         margin-left: auto;
         margin-right: auto;
         width: 100%;
         max-width: 800px;
-        padding: 0rem 24px;
+        padding: 0rem 16px;
     }
     .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
         max-width: 800px;
-        padding: 0rem 24px;
+        padding: 0rem 16px;
     }
 }
 
 @media screen and (max-width: 768px) {
     nav {
-        padding: 0rem 24px;
+        padding: 0rem 12px;
     }
     .hero-container {
         grid-template-columns: 1fr;
-        padding: 2rem 24px;
+        padding: 2rem 12px;
         height: auto;
     }
     .main-container, .end-container {
         width: 100%;
         max-width: 100%;
-        padding: 0rem 24px;
+        padding: 0rem 12px;
     }
     .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
         max-width: 100%;
-        padding: 0rem 24px;
+        padding: 0rem 12px;
         text-align: left;
     }
     .end-container {
         grid-template-columns: 1fr;
-        padding: 2rem 24px;
+        padding: 2rem 12px;
     }
     .blog-first h1, .blog-within h1, .column-first h1 {
         font-size: 2rem;
@@ -581,18 +581,18 @@ a:hover {
 
 @media screen and (max-width: 480px) {
     nav {
-        padding: 0rem 24px;
+        padding: 0rem 8px;
     }
     .main-container, .end-container {
         width: 100%;
         max-width: 100%;
-        padding: 0rem 24px;
+        padding: 0rem 8px;
         margin: 0;
     }
     .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
         width: 100%;
         max-width: 100%;
-        padding: 0rem 24px;
+        padding: 0rem 8px;
         margin: 0;
         text-align: left;
     }
