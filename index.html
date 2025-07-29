@@ -197,15 +197,20 @@ document.getElementById('questionForm').addEventListener('submit', async functio
 (function() {
     const toggleBtn = document.getElementById('aboutToggle');
     const aboutContent = document.getElementById('aboutContent');
+    const arrow = toggleBtn.querySelector('.square-arrow');
     let open = true;
     toggleBtn.addEventListener('click', function() {
         open = !open;
         if (open) {
             aboutContent.style.display = '';
             toggleBtn.setAttribute('aria-expanded', 'true');
+            arrow.classList.remove('collapsed');
+            arrow.classList.add('expanded');
         } else {
             aboutContent.style.display = 'none';
             toggleBtn.setAttribute('aria-expanded', 'false');
+            arrow.classList.remove('expanded');
+            arrow.classList.add('collapsed');
         }
     });
 })();
@@ -214,15 +219,20 @@ document.getElementById('questionForm').addEventListener('submit', async functio
 (function() {
     const toggleBtn = document.getElementById('mentoringToggle');
     const mentoringContent = document.getElementById('mentoringContent');
+    const arrow = toggleBtn.querySelector('.square-arrow');
     let open = true;
     toggleBtn.addEventListener('click', function() {
         open = !open;
         if (open) {
             mentoringContent.style.display = '';
             toggleBtn.setAttribute('aria-expanded', 'true');
+            arrow.classList.remove('collapsed');
+            arrow.classList.add('expanded');
         } else {
             mentoringContent.style.display = 'none';
             toggleBtn.setAttribute('aria-expanded', 'false');
+            arrow.classList.remove('expanded');
+            arrow.classList.add('collapsed');
         }
     });
 })();
@@ -254,15 +264,20 @@ document.getElementById('questionForm').addEventListener('submit', async functio
 (function() {
     const toggleBtn = document.getElementById('interestsToggle');
     const interestsContent = document.getElementById('interestsContent');
+    const arrow = toggleBtn.querySelector('.square-arrow');
     let open = false; // Starts closed
     toggleBtn.addEventListener('click', function() {
         open = !open;
         if (open) {
             interestsContent.style.display = '';
             toggleBtn.setAttribute('aria-expanded', 'true');
+            arrow.classList.remove('collapsed');
+            arrow.classList.add('expanded');
         } else {
             interestsContent.style.display = 'none';
             toggleBtn.setAttribute('aria-expanded', 'false');
+            arrow.classList.remove('expanded');
+            arrow.classList.add('collapsed');
         }
     });
 })();
@@ -271,15 +286,20 @@ document.getElementById('questionForm').addEventListener('submit', async functio
 (function() {
     const toggleBtn = document.getElementById('trackerToggle');
     const trackerContent = document.getElementById('trackerContent');
+    const arrow = toggleBtn.querySelector('.square-arrow');
     let open = false; // Starts closed
     toggleBtn.addEventListener('click', function() {
         open = !open;
         if (open) {
             trackerContent.style.display = '';
             toggleBtn.setAttribute('aria-expanded', 'true');
+            arrow.classList.remove('collapsed');
+            arrow.classList.add('expanded');
         } else {
             trackerContent.style.display = 'none';
             toggleBtn.setAttribute('aria-expanded', 'false');
+            arrow.classList.remove('expanded');
+            arrow.classList.add('collapsed');
         }
     });
 })();
