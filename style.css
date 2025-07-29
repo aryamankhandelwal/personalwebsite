@@ -27,6 +27,15 @@ nav {
     font-weight: bold;
 }
 
+.logo a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.logo.show {
+    opacity: 1;
+}
+
 nav a {
     text-decoration: none;
     color: #fff;
@@ -224,6 +233,17 @@ button:hover {
 }
 .question-bar button:hover {
     color: #6699cc;
+}
+
+/* Blinking Cursor Animation */
+.blinking-cursor {
+    color: #fff;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
 }
 
 /* Update link colors for dark mode */

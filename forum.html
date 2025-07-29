@@ -71,6 +71,48 @@
         </div>
     </div>
     <script>
+    // Typewriter Animation
+    function typeWriter(element, text, speed = 100) {
+        let i = 0;
+        element.innerHTML = '';
+        element.style.opacity = '1';
+        element.style.whiteSpace = 'nowrap';
+        element.style.overflow = 'hidden';
+        
+        function type() {
+            if (i < text.length) {
+                element.innerHTML = text.substring(0, i + 1) + '<span class="blinking-cursor">_</span>';
+                i++;
+                setTimeout(type, speed);
+            } else {
+                // Keep the blinking cursor after typing is complete
+                element.innerHTML = text + '<span class="blinking-cursor">_</span>';
+                
+                // Remove the cursor after 10 seconds
+                setTimeout(() => {
+                    element.innerHTML = text;
+                }, 10000);
+            }
+        }
+        
+        type();
+    }
+
+    // Initialize typewriter effect when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoElement = document.querySelector('.logo a');
+        if (logoElement) {
+            const originalText = logoElement.textContent;
+            logoElement.textContent = '';
+            logoElement.style.opacity = '1';
+            logoElement.style.borderRight = '2px solid #fff';
+            logoElement.style.whiteSpace = 'nowrap';
+            logoElement.style.overflow = 'hidden';
+            
+            typeWriter(logoElement, originalText, 120); // 120ms per character for ~2 seconds total
+        }
+    });
+
     let page = 1;
     const limit = 10;
     let totalLoaded = 0;
