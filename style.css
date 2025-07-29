@@ -10,7 +10,6 @@
 body {
     background-color: #000;
     color: #fff;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
 }
 
 nav {
@@ -19,12 +18,7 @@ nav {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0 20px; /* Consistent padding */
-    position: fixed; /* Fix header position */
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
+    padding: 0rem calc((100vw - 1300px) / 2);
 }
 
 .logo {
@@ -43,26 +37,29 @@ nav a {
     display: grid;
     background-color: #1a1a1a;
     grid-template-columns: 1fr 1fr;
-    padding: 1.2rem 20px; /* Consistent padding */
-    height: 8vh;
-    margin-top: 50px; /* Account for fixed nav */
+    padding: 1.2rem calc((100vw - 1300px) / 2); /* reduced from 3rem */
+    height: 8vh; /* reduced from 30vh */
 }
 
 .main-container, .end-container, .forum-container, .thread-container, .column-first, .container-items, .blog-within {
-    margin: 0 auto; /* Center horizontally */
+    margin-left: auto;
+    margin-right: auto;
     width: 100%;
     max-width: 800px;
-    padding: 0 20px; /* Consistent padding */
+    padding: 0rem 24px;
     box-sizing: border-box;
     text-align: left;
+    margin-top: 2rem;
 }
 
 .column-first {
-    margin: 0 auto; /* Center horizontally */
+    margin: auto;
+    /* display: flex; */
+    /* flex-direction: column; */
     justify-content: center;
     align-items: flex-start;
     color: #fff;
-    padding: 0 20px; /* Consistent padding */
+    padding: 0rem 24px;
 }
 
 .column-first h1 {
@@ -80,8 +77,12 @@ nav a {
 }
 
 .container-items {
+    /* margin: auto; */
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* align-items: flex-start; */
     color: #fff;
-    padding: 0 20px; /* Consistent padding */
+    padding: 0rem 24px;
     text-align: left;
 }
 
@@ -111,11 +112,14 @@ button:hover {
 /* Blog */
 
 .blog-first {
-    margin: 0 auto; /* Center horizontally */
+    margin: auto;
+    /* display: flex; */
+    /* flex-direction: column; */
     justify-content: center;
     align-items: flex-start;
     color: #fff;
-    padding: 0 20px; /* Consistent padding */
+    padding: 0rem 24px;
+    margin-top: 2rem;
 }
 
 .blog-first h1 {
@@ -135,11 +139,14 @@ button:hover {
 /* Within */
 
 .blog-within {
-    margin: 0 auto; /* Center horizontally */
+    margin: auto;
+    /* display: flex; */
+    /* flex-direction: column; */
     justify-content: center;
     align-items: flex-start;
     color: #fff;
-    padding: 0 20px; /* Consistent padding */
+    padding: 0rem 24px;
+    margin-top: 2rem;
 }
 
 .blog-within h1 {
@@ -160,17 +167,17 @@ button:hover {
     display: grid;
     background-color: #1a1a1a;
     grid-template-columns: 1fr 1fr;
-    padding: 3rem 20px; /* Consistent padding */
+    padding: 3rem 2vw;
     height: auto;
     max-width: 900px;
-    margin: 0 auto; /* Center horizontally */
+    margin: auto;
 }
 
 .column-first, .blog-first, .blog-within {
-    margin: 0 auto; /* Center horizontally */
+    margin: auto;
     width: 100%;
     max-width: 800px;
-    padding: 0 20px; /* Consistent padding */
+    padding: 0rem 0rem;
     box-sizing: border-box;
 }
 
@@ -179,9 +186,11 @@ button:hover {
     background: transparent;
     border-radius: 10px;
     box-shadow: none;
-    padding: 12px 20px; /* Consistent padding */
-    margin: 20px auto; /* Center horizontally */
+    padding: 12px 24px;
+    margin: 20px 0 20px 0;
     max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
     border: none;
 }
 .question-bar input, .question-bar button {
@@ -239,7 +248,10 @@ a:hover {
 .about-collapsible {
     width: 100%;
     max-width: 800px;
-    margin: 0 auto 1.5rem auto; /* Center horizontally */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+    margin-top: 2rem;
 }
 .about-toggle {
     background: none;
@@ -274,7 +286,9 @@ a:hover {
 .interests-collapsible {
     width: 100%;
     max-width: 800px;
-    margin: 0 auto 1.5rem auto; /* Center horizontally */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
 }
 .interests-toggle {
     background: none;
@@ -309,7 +323,9 @@ a:hover {
 .previously-collapsible {
     width: 100%;
     max-width: 800px;
-    margin: 0 auto 1.5rem auto; /* Center horizontally */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
 }
 .previously-toggle {
     background: none;
@@ -344,7 +360,9 @@ a:hover {
 .blog-collapsible {
     width: 100%;
     max-width: 800px;
-    margin: 0 auto 1.5rem auto; /* Center horizontally */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
 }
 .blog-toggle {
     background: none;
@@ -372,7 +390,9 @@ a:hover {
 .mentoring-collapsible {
     width: 100%;
     max-width: 800px;
-    margin: 0 auto 1.5rem auto; /* Center horizontally */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
 }
 .mentoring-toggle {
     background: none;
@@ -449,7 +469,9 @@ a:hover {
 .tracker-collapsible {
     width: 100%;
     max-width: 800px;
-    margin: 0 auto 1.5rem auto; /* Center horizontally */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
 }
 .tracker-toggle {
     background: none;
@@ -493,7 +515,9 @@ a:hover {
 .social-links {
     width: 100%;
     max-width: 800px;
-    margin: 0 auto 1.5rem auto; /* Center horizontally */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
 }
 
 .social-links a {
@@ -507,44 +531,45 @@ a:hover {
     color: #8bb3ff;
 }
 
-/* Main section to account for fixed nav */
-.main {
-    margin-top: 50px; /* Account for fixed nav */
-    padding-top: 20px;
-}
-
 @media screen and (max-width: 1024px) {
+    nav {
+        padding: 0rem 24px;
+    }
     .main-container, .end-container, .forum-container, .thread-container {
-        margin: 0 auto; /* Center horizontally */
+        margin-left: auto;
+        margin-right: auto;
         width: 100%;
         max-width: 800px;
-        padding: 0 20px; /* Consistent padding */
+        padding: 0rem 24px;
     }
     .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
         max-width: 800px;
-        padding: 0 20px; /* Consistent padding */
+        padding: 0rem 24px;
     }
 }
 
 @media screen and (max-width: 768px) {
+    nav {
+        padding: 0rem 24px;
+    }
     .hero-container {
         grid-template-columns: 1fr;
-        padding: 2rem 20px; /* Consistent padding */
+        padding: 2rem 24px;
         height: auto;
     }
     .main-container, .end-container {
         width: 100%;
         max-width: 100%;
-        padding: 0 20px; /* Consistent padding */
+        padding: 0rem 24px;
     }
     .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
         max-width: 100%;
-        padding: 0 20px; /* Consistent padding */
+        padding: 0rem 24px;
         text-align: left;
     }
     .end-container {
         grid-template-columns: 1fr;
-        padding: 2rem 20px; /* Consistent padding */
+        padding: 2rem 24px;
     }
     .blog-first h1, .blog-within h1, .column-first h1 {
         font-size: 2rem;
@@ -555,16 +580,19 @@ a:hover {
 }
 
 @media screen and (max-width: 480px) {
+    nav {
+        padding: 0rem 24px;
+    }
     .main-container, .end-container {
         width: 100%;
         max-width: 100%;
-        padding: 0 20px; /* Consistent padding */
+        padding: 0rem 24px;
         margin: 0;
     }
     .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
         width: 100%;
         max-width: 100%;
-        padding: 0 20px; /* Consistent padding */
+        padding: 0rem 24px;
         margin: 0;
         text-align: left;
     }
