@@ -283,6 +283,7 @@ a:hover {
     gap: 0.5em;
     cursor: pointer;
     padding: 0;
+    font-size: 0.85rem;
     outline: none;
     transition: color 0.2s;
 }
@@ -291,6 +292,7 @@ a:hover {
 }
 .about-content {
     margin-top: 0.5em;
+    font-size: 0.85rem;
     color: #fff;
     transition: max-height 0.2s ease;
     margin-left: 1.5em;
@@ -318,6 +320,7 @@ a:hover {
     gap: 0.5em;
     cursor: pointer;
     padding: 0;
+    font-size: 0.85rem;
     outline: none;
     transition: color 0.2s;
 }
@@ -326,6 +329,7 @@ a:hover {
 }
 .interests-content {
     margin-top: 0.5em;
+    font-size: 0.85rem;
     color: #fff;
     transition: max-height 0.2s ease;
     margin-left: 1.5em;
@@ -399,6 +403,7 @@ a:hover {
     gap: 0.5em;
     cursor: pointer;
     padding: 0;
+    font-size: 0.85rem;
     outline: none;
     transition: color 0.2s;
 }
@@ -428,6 +433,7 @@ a:hover {
     gap: 0.5em;
     cursor: pointer;
     padding: 0;
+    font-size: 0.85rem;
     outline: none;
     transition: color 0.2s;
 }
@@ -436,6 +442,7 @@ a:hover {
 }
 .mentoring-content {
     margin-top: 0.5em;
+    font-size: 0.85rem;
     color: #fff;
     transition: max-height 0.2s ease;
     margin-left: 1.5em;
@@ -505,6 +512,7 @@ a:hover {
     gap: 0.5em;
     cursor: pointer;
     padding: 0;
+    font-size: 0.85rem;
     outline: none;
     transition: color 0.2s;
 }
@@ -513,6 +521,7 @@ a:hover {
 }
 .tracker-content {
     margin-top: 0.5em;
+    font-size: 0.85rem;
     color: #fff;
     transition: max-height 0.2s ease;
     margin-left: 1.5em;
@@ -635,6 +644,16 @@ a:hover {
     }
     .about-content, .interests-content, .mentoring-content, .tracker-content {
         font-size: 0.85rem !important;
+    }
+}
+
+/* Landscape mode on phones - scales with other text */
+@media screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
+    .about-toggle, .interests-toggle, .blog-toggle, .mentoring-toggle, .tracker-toggle {
+        font-size: 0.95rem !important;
+    }
+    .about-content, .interests-content, .mentoring-content, .tracker-content {
+        font-size: 0.95rem !important;
     }
 }
 
