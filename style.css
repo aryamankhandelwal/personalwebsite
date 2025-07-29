@@ -535,7 +535,7 @@ a:hover {
         max-width: 98vw;
         padding: 1rem 2vw;
     }
-    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible {
+    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
         max-width: 98vw;
         padding: 0rem 2vw;
     }
@@ -552,7 +552,7 @@ a:hover {
         max-width: 100vw;
         padding: 1rem 1vw;
     }
-    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible {
+    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
         max-width: 100vw;
         padding: 0 3vw;
         text-align: left;
@@ -577,7 +577,7 @@ a:hover {
         padding: 0 3vw;
         margin: 0;
     }
-    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible {
+    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
         width: 100vw;
         max-width: 100vw;
         min-width: 0;
