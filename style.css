@@ -606,6 +606,13 @@ a:hover {
     .blog-first p, .blog-within p, .column-first p {
         font-size: 0.95rem;
     }
+    /* Responsive font sizing for toggle buttons */
+    .about-toggle, .interests-toggle, .blog-toggle, .mentoring-toggle, .tracker-toggle {
+        font-size: 0.95rem !important;
+    }
+    .about-content, .interests-content, .mentoring-content, .tracker-content {
+        font-size: 0.95rem !important;
+    }
 }
 
 @media screen and (max-width: 480px) {
@@ -630,6 +637,13 @@ a:hover {
     }
     .blog-first p, .blog-within p, .column-first p {
         font-size: 0.85rem;
+    }
+    /* Responsive font sizing for toggle buttons */
+    .about-toggle, .interests-toggle, .blog-toggle, .mentoring-toggle, .tracker-toggle {
+        font-size: 0.85rem !important;
+    }
+    .about-content, .interests-content, .mentoring-content, .tracker-content {
+        font-size: 0.85rem !important;
     }
 }
 
