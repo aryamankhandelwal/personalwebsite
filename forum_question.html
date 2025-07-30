@@ -81,6 +81,18 @@
             <div id="modalReplyStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
         </div>
     </div>
+    <!-- Modal for editing question -->
+    <div id="editQuestionModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:200;align-items:center;justify-content:center;">
+        <div style="background:#000;padding:32px 24px;border-radius:10px;max-width:400px;width:90vw;border:1px solid #333;">
+            <h3 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Edit Question</h3>
+            <form id="modalEditForm">
+                <textarea id="modalEditInput" placeholder="Edit your question..." required style="width:100%;min-height:80px;padding:8px;margin-bottom:10px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;resize:vertical;"></textarea>
+                <button type="submit" class="modal-btn" style="padding:8px 16px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Submit</button>
+                <button type="button" onclick="closeEditQuestionModal()" class="modal-btn" style="padding:8px 16px;margin-left:8px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Cancel</button>
+            </form>
+            <div id="modalEditStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+        </div>
+    </div>
     <script>
     // --- Helpers ---
     function getQueryParam(name) {
@@ -98,9 +110,9 @@
         // Render question
         let questionHtml = `<div class="question-main" style="position:relative;">
             <div style="position:absolute;top:8px;right:8px;display:flex;gap:8px;">
-                <button onclick="showQuestionEditBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#ffd700'" onmouseout="this.style.color='#fff'">/</button>
-                <button onclick="showQuestionAnswerBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
-                <button onclick="deleteThread()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#c00'" onmouseout="this.style.color='#fff'">×</button>
+                <button onclick="showQuestionEditBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#ffd700'" onmouseout="this.style.color='#fff'">/</button>
+                <button onclick="showQuestionAnswerBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
+                <button onclick="deleteThread()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#c00'" onmouseout="this.style.color='#fff'">×</button>
             </div>
             <div style="font-size:0.85rem;color:#fff;">${data.question.text}</div>
             <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
@@ -116,11 +128,7 @@
                 <button onclick="submitQuestionAnswer()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">Submit Answer</button>
                 <button onclick="hideQuestionAnswerBox()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;margin-left:8px;">Cancel</button>
             </div>
-            <div id="questionEditBox" style="display:none;margin-top:12px;">
-                <textarea id="questionEditInput" placeholder="Edit your question..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
-                <button onclick="submitQuestionEdit()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">Submit Edit</button>
-                <button onclick="hideQuestionEditBox()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;margin-left:8px;">Cancel</button>
-            </div>
+
         </div>`;
         document.getElementById('questionBlock').innerHTML = questionHtml;
         
@@ -212,25 +220,34 @@
     // --- Question edit functions ---
     function showQuestionEditBox() {
         // Pre-fill the textarea with current question text
-        document.getElementById('questionEditInput').value = questionData.text;
-        document.getElementById('questionEditBox').style.display = 'block';
+        document.getElementById('modalEditInput').value = questionData.text;
+        document.getElementById('editQuestionModal').style.display = 'flex';
     }
     window.showQuestionEditBox = showQuestionEditBox;
     
-    function hideQuestionEditBox() {
-        document.getElementById('questionEditBox').style.display = 'none';
-        document.getElementById('questionEditInput').value = '';
+    function closeEditQuestionModal() {
+        document.getElementById('editQuestionModal').style.display = 'none';
+        document.getElementById('modalEditInput').value = '';
+        document.getElementById('modalEditStatus').textContent = '';
     }
-    window.hideQuestionEditBox = hideQuestionEditBox;
+    window.closeEditQuestionModal = closeEditQuestionModal;
     
-    async function submitQuestionEdit() {
-        const newText = document.getElementById('questionEditInput').value.trim();
-        const statusDiv = document.getElementById('adminStatus');
+    // Handle edit modal form submission
+    document.getElementById('modalEditForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newText = document.getElementById('modalEditInput').value.trim();
+        const statusDiv = document.getElementById('modalEditStatus');
         
         if (!newText) {
             statusDiv.textContent = 'Please enter question text.';
             return;
         }
+        
+        submitQuestionEdit(newText);
+    });
+    
+    async function submitQuestionEdit(newText) {
+        const statusDiv = document.getElementById('modalEditStatus');
         
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`, {
@@ -243,12 +260,13 @@
             
             statusDiv.style.color = '#090';
             statusDiv.textContent = 'Question updated!';
+            document.getElementById('modalEditInput').value = '';
             
-            // Hide the edit box and clear the input
-            hideQuestionEditBox();
-            
-            // Refresh the thread to show the updated question
-            fetchThread();
+            // Close modal and refresh the thread
+            setTimeout(() => {
+                closeEditQuestionModal();
+                fetchThread();
+            }, 1000);
         } catch (err) {
             statusDiv.style.color = '#c00';
             statusDiv.textContent = 'Error: ' + err.message;
