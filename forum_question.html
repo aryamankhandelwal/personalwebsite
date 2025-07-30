@@ -98,8 +98,8 @@
         // Render question
         let questionHtml = `<div class="question-main" style="position:relative;">
             <div style="position:absolute;top:8px;right:8px;display:flex;gap:8px;">
-                <button onclick="showQuestionAnswerBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
                 <button onclick="showQuestionEditBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#ffd700'" onmouseout="this.style.color='#fff'">/</button>
+                <button onclick="showQuestionAnswerBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
                 <button onclick="deleteThread()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#c00'" onmouseout="this.style.color='#fff'">×</button>
             </div>
             <div style="font-size:0.85rem;color:#fff;">${data.question.text}</div>
@@ -211,11 +211,6 @@
     
     // --- Question edit functions ---
     function showQuestionEditBox() {
-        const token = document.getElementById('adminTokenInput').value.trim();
-        if (!token) {
-            document.getElementById('adminStatus').textContent = 'Admin token required to edit questions.';
-            return;
-        }
         // Pre-fill the textarea with current question text
         document.getElementById('questionEditInput').value = questionData.text;
         document.getElementById('questionEditBox').style.display = 'block';
@@ -230,7 +225,6 @@
     
     async function submitQuestionEdit() {
         const newText = document.getElementById('questionEditInput').value.trim();
-        const token = document.getElementById('adminTokenInput').value.trim();
         const statusDiv = document.getElementById('adminStatus');
         
         if (!newText) {
@@ -241,7 +235,7 @@
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: newText })
             });
             
