@@ -59,10 +59,12 @@
                         <div id="repliesList"></div>
                     </div>
                     
-                    <div class="admin-controls">
-                        <h4 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Admin Controls</h4>
-                        <input type="password" id="adminTokenInput" placeholder="Admin token">
-                        <div id="adminStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+                    <div style="text-align:center;margin-top:24px;">
+                        <a href="#" onclick="showAdminInput()" style="color:#fff;text-decoration:underline;font-size:0.85rem;">Admin key</a>
+                        <div id="adminInputContainer" style="display:none;margin-top:12px;">
+                            <input type="password" id="adminTokenInput" placeholder="Enter admin key" style="width:200px;padding:8px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;text-align:center;">
+                            <div id="adminStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -286,6 +288,17 @@
         }
     }
     window.submitQuestionEdit = submitQuestionEdit;
+    
+    // --- Admin input functions ---
+    function showAdminInput() {
+        const container = document.getElementById('adminInputContainer');
+        if (container.style.display === 'none') {
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
+    }
+    window.showAdminInput = showAdminInput;
     
     // --- Reply edit functions ---
     function showReplyEditBox(replyId) {
