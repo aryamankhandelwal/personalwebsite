@@ -62,13 +62,7 @@
                     <div class="admin-controls">
                         <h4 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Admin Controls</h4>
                         <input type="password" id="adminTokenInput" placeholder="Admin token">
-                        <button onclick="showAnswerBox()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;">Answer Question</button>
                         <button onclick="deleteThread()" class="delete-btn">Delete Thread</button>
-                        <div id="answerBox" style="display:none;margin-top:12px;">
-                            <textarea id="adminAnswerInput" placeholder="Type your answer..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
-                            <button onclick="submitAnswer()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">Submit Answer</button>
-                            <button onclick="hideAnswerBox()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;margin-left:8px;">Cancel</button>
-                        </div>
                         <div id="adminStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
                     </div>
                 </div>
@@ -103,7 +97,10 @@
         const data = await res.json();
         questionData = data.question;
         // Render question
-        let questionHtml = `<div class="question-main">
+        let questionHtml = `<div class="question-main" style="position:relative;">
+            <div style="position:absolute;top:8px;right:8px;">
+                <button onclick="showQuestionAnswerBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
+            </div>
             <div style="font-size:0.85rem;color:#fff;">${data.question.text}</div>
             <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
                 Status: <span class="${data.question.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${data.question.status.charAt(0).toUpperCase() + data.question.status.slice(1)}</span>
@@ -112,6 +109,11 @@
                 ${new Date(data.question.timestamp).toLocaleString()}
             </div>
             ${data.question.responder_answer ? `<div style='margin-top:12px;background:#333;padding:10px;border-radius:6px;color:#fff;font-size:0.85rem;'><b>Official Answer:</b><br>${data.question.responder_answer}</div>` : ''}
+            <div id="questionAnswerBox" style="display:none;margin-top:12px;">
+                <textarea id="questionAnswerInput" placeholder="Type your answer..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
+                <button onclick="submitQuestionAnswer()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">Submit Answer</button>
+                <button onclick="hideQuestionAnswerBox()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;margin-left:8px;">Cancel</button>
+            </div>
         </div>`;
         document.getElementById('questionBlock').innerHTML = questionHtml;
         
@@ -136,7 +138,7 @@
                 </div>
                 ${reply.admin_reply ? `<div style='margin-top:8px;background:#333;padding:8px;border-radius:4px;color:#fff;font-size:0.8rem;'><b>Official Answer:</b><br>${reply.admin_reply.admin_answer}</div>` : ''}
                 <div style="position:absolute;top:8px;right:8px;">
-                    <button onclick="showReplyAnswerBox(${reply.id})" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;">+</button>
+                    <button onclick="showReplyAnswerBox(${reply.id})" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
                 </div>
                 <div id="replyAnswerBox${reply.id}" style="display:none;margin-top:12px;">
                     <textarea id="replyAnswerInput${reply.id}" placeholder="Type your answer..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
@@ -148,41 +150,56 @@
         repliesList.innerHTML = repliesHtml;
     }
     fetchThread();
-    // --- Admin controls ---
-    function showAnswerBox() {
-        document.getElementById('answerBox').style.display = 'block';
-    }
-    function hideAnswerBox() {
-        document.getElementById('answerBox').style.display = 'none';
-    }
-    window.showAnswerBox = showAnswerBox;
-    window.hideAnswerBox = hideAnswerBox;
-    async function submitAnswer() {
-        const answer = document.getElementById('adminAnswerInput').value.trim();
+    // --- Question answer functions ---
+    function showQuestionAnswerBox() {
         const token = document.getElementById('adminTokenInput').value.trim();
-        const statusDiv = document.getElementById('adminStatus');
-        statusDiv.textContent = '';
-        if (!answer || !token) {
-            statusDiv.textContent = 'Answer and admin token required.';
+        if (!token) {
+            document.getElementById('adminStatus').textContent = 'Admin token required to answer questions.';
             return;
         }
+        document.getElementById('questionAnswerBox').style.display = 'block';
+    }
+    window.showQuestionAnswerBox = showQuestionAnswerBox;
+    
+    function hideQuestionAnswerBox() {
+        document.getElementById('questionAnswerBox').style.display = 'none';
+        document.getElementById('questionAnswerInput').value = '';
+    }
+    window.hideQuestionAnswerBox = hideQuestionAnswerBox;
+    
+    async function submitQuestionAnswer() {
+        const answer = document.getElementById('questionAnswerInput').value.trim();
+        const token = document.getElementById('adminTokenInput').value.trim();
+        const statusDiv = document.getElementById('adminStatus');
+        
+        if (!answer) {
+            statusDiv.textContent = 'Please enter an answer.';
+            return;
+        }
+        
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}/answer`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
                 body: JSON.stringify({ responder_answer: answer })
             });
+            
             if (!res.ok) throw new Error('Failed to submit answer.');
+            
             statusDiv.style.color = '#090';
             statusDiv.textContent = 'Answer submitted!';
-            hideAnswerBox();
+            
+            // Hide the answer box and clear the input
+            hideQuestionAnswerBox();
+            
+            // Refresh the thread to show the new answer
             fetchThread();
         } catch (err) {
             statusDiv.style.color = '#c00';
             statusDiv.textContent = 'Error: ' + err.message;
         }
     }
-    window.submitAnswer = submitAnswer;
+    window.submitQuestionAnswer = submitQuestionAnswer;
     async function deleteThread() {
         const token = document.getElementById('adminTokenInput').value.trim();
         const statusDiv = document.getElementById('adminStatus');
