@@ -62,7 +62,6 @@
                     <div class="admin-controls">
                         <h4 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Admin Controls</h4>
                         <input type="password" id="adminTokenInput" placeholder="Admin token">
-                        <button onclick="deleteThread()" class="delete-btn">Delete Thread</button>
                         <div id="adminStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
                     </div>
                 </div>
@@ -98,8 +97,9 @@
         questionData = data.question;
         // Render question
         let questionHtml = `<div class="question-main" style="position:relative;">
-            <div style="position:absolute;top:8px;right:8px;">
+            <div style="position:absolute;top:8px;right:8px;display:flex;gap:8px;">
                 <button onclick="showQuestionAnswerBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
+                <button onclick="deleteThread()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#c00'" onmouseout="this.style.color='#fff'">×</button>
             </div>
             <div style="font-size:0.85rem;color:#fff;">${data.question.text}</div>
             <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
