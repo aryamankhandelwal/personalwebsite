@@ -33,6 +33,11 @@
         .admin-btn:hover {
             color: #8bb3ff !important;
         }
+        .sticky-add-btn { position: fixed; bottom: 32px; right: 32px; background: #fff; color: #000; border: none; border-radius: 50px; padding: 10px 20px; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 8px #0002; z-index: 100; }
+        .sticky-add-btn:hover { background: #000; color: #fff; border: 1px solid #fff; }
+        .modal-btn:hover {
+            color: #8bb3ff !important;
+        }
     </style>
 </head>
 <body>
@@ -52,13 +57,6 @@
                     <div id="repliesSection" style="margin-top: 24px;">
                         <h3 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Replies</h3>
                         <div id="repliesList"></div>
-                        
-                        <!-- Add Reply Form -->
-                        <div class="reply-form" style="margin-top: 16px;">
-                            <textarea id="replyInput" placeholder="Add your reply..." style="width:100%;min-height:60px;padding:8px;background:#000;border:1px solid #333;color:#fff;font-size:0.85rem;"></textarea>
-                            <button onclick="submitReply()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">+ Add a reply</button>
-                        </div>
-                        <div id="replyStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
                     </div>
                     
                     <div class="admin-controls">
@@ -77,6 +75,19 @@
             </div>
         </div>
     </section>
+    <button class="sticky-add-btn" onclick="openAddReplyModal()">+ Add a reply</button>
+    <!-- Modal for adding reply -->
+    <div id="addReplyModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:200;align-items:center;justify-content:center;">
+        <div style="background:#000;padding:32px 24px;border-radius:10px;max-width:400px;width:90vw;border:1px solid #333;">
+            <h3 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Add a Reply</h3>
+            <form id="modalReplyForm">
+                <textarea id="modalReplyInput" placeholder="Your reply..." required style="width:100%;min-height:80px;padding:8px;margin-bottom:10px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;resize:vertical;"></textarea>
+                <button type="submit" class="modal-btn" style="padding:8px 16px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Submit</button>
+                <button type="button" onclick="closeAddReplyModal()" class="modal-btn" style="padding:8px 16px;margin-left:8px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Cancel</button>
+            </form>
+            <div id="modalReplyStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+        </div>
+    </div>
     <script>
     // --- Helpers ---
     function getQueryParam(name) {
@@ -123,9 +134,14 @@
                     ${new Date(reply.timestamp).toLocaleString()}
                     ${reply.edited ? '<span class="edited-label">(edited)</span>' : ''}
                 </div>
-                ${reply.admin_reply ? `<div style='margin-top:8px;background:#333;padding:8px;border-radius:4px;color:#fff;font-size:0.8rem;'><b>Admin Reply:</b><br>${reply.admin_reply.admin_answer}</div>` : ''}
+                ${reply.admin_reply ? `<div style='margin-top:8px;background:#333;padding:8px;border-radius:4px;color:#fff;font-size:0.8rem;'><b>Official Answer:</b><br>${reply.admin_reply.admin_answer}</div>` : ''}
                 <div style="margin-top:8px;">
-                    <button onclick="answerReply(${reply.id})" class="edit-btn">Answer Reply</button>
+                    <button onclick="showReplyAnswerBox(${reply.id})" class="edit-btn">Answer Reply</button>
+                    <div id="replyAnswerBox${reply.id}" style="display:none;margin-top:12px;">
+                        <textarea id="replyAnswerInput${reply.id}" placeholder="Type your answer..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
+                        <button onclick="submitReplyAnswer(${reply.id})" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">Submit Answer</button>
+                        <button onclick="hideReplyAnswerBox(${reply.id})" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;margin-left:8px;">Cancel</button>
+                    </div>
                 </div>
             </div>`;
         });
@@ -188,15 +204,37 @@
     }
     window.deleteThread = deleteThread;
     
-    // --- Reply functions ---
-    async function submitReply() {
-        const replyText = document.getElementById('replyInput').value.trim();
-        const statusDiv = document.getElementById('replyStatus');
+
+    
+    // --- Modal functions ---
+    function openAddReplyModal() {
+        document.getElementById('addReplyModal').style.display = 'flex';
+    }
+    window.openAddReplyModal = openAddReplyModal;
+    
+    function closeAddReplyModal() {
+        document.getElementById('addReplyModal').style.display = 'none';
+        document.getElementById('modalReplyInput').value = '';
+        document.getElementById('modalReplyStatus').textContent = '';
+    }
+    window.closeAddReplyModal = closeAddReplyModal;
+    
+    // Handle modal form submission
+    document.getElementById('modalReplyForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const replyText = document.getElementById('modalReplyInput').value.trim();
+        const statusDiv = document.getElementById('modalReplyStatus');
         
         if (!replyText) {
             statusDiv.textContent = 'Please enter a reply.';
             return;
         }
+        
+        submitReplyFromModal(replyText);
+    });
+    
+    async function submitReplyFromModal(replyText) {
+        const statusDiv = document.getElementById('modalReplyStatus');
         
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}/replies`, {
@@ -209,34 +247,44 @@
             
             statusDiv.style.color = '#090';
             statusDiv.textContent = 'Reply submitted!';
-            document.getElementById('replyInput').value = '';
+            document.getElementById('modalReplyInput').value = '';
             
-            // Refresh the thread to show the new reply
-            fetchThread();
+            // Close modal and refresh the thread
+            setTimeout(() => {
+                closeAddReplyModal();
+                fetchThread();
+            }, 1000);
         } catch (err) {
             statusDiv.style.color = '#c00';
             statusDiv.textContent = 'Error: ' + err.message;
         }
     }
-    window.submitReply = submitReply;
     
-    function answerReply(replyId) {
+    function showReplyAnswerBox(replyId) {
         const token = document.getElementById('adminTokenInput').value.trim();
         if (!token) {
             document.getElementById('adminStatus').textContent = 'Admin token required to answer replies.';
             return;
         }
-        
-        const answer = prompt('Enter your answer to this reply:');
-        if (!answer) return;
-        
-        submitReplyAnswer(replyId, answer);
+        document.getElementById(`replyAnswerBox${replyId}`).style.display = 'block';
     }
-    window.answerReply = answerReply;
+    window.showReplyAnswerBox = showReplyAnswerBox;
     
-    async function submitReplyAnswer(replyId, answer) {
+    function hideReplyAnswerBox(replyId) {
+        document.getElementById(`replyAnswerBox${replyId}`).style.display = 'none';
+        document.getElementById(`replyAnswerInput${replyId}`).value = '';
+    }
+    window.hideReplyAnswerBox = hideReplyAnswerBox;
+    
+    async function submitReplyAnswer(replyId) {
+        const answer = document.getElementById(`replyAnswerInput${replyId}`).value.trim();
         const token = document.getElementById('adminTokenInput').value.trim();
         const statusDiv = document.getElementById('adminStatus');
+        
+        if (!answer) {
+            statusDiv.textContent = 'Please enter an answer.';
+            return;
+        }
         
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}/admin_answer`, {
@@ -250,6 +298,9 @@
             statusDiv.style.color = '#090';
             statusDiv.textContent = 'Reply answer submitted!';
             
+            // Hide the answer box and clear the input
+            hideReplyAnswerBox(replyId);
+            
             // Refresh the thread to show the new admin reply
             fetchThread();
         } catch (err) {
@@ -257,6 +308,7 @@
             statusDiv.textContent = 'Error: ' + err.message;
         }
     }
+    window.submitReplyAnswer = submitReplyAnswer;
     
     // --- BEGIN: Wake up backend on page load ---
     (function wakeBackend() {
