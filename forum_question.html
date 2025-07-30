@@ -93,6 +93,18 @@
             <div id="modalEditStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
         </div>
     </div>
+    <!-- Modal for editing reply -->
+    <div id="editReplyModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:200;align-items:center;justify-content:center;">
+        <div style="background:#000;padding:32px 24px;border-radius:10px;max-width:400px;width:90vw;border:1px solid #333;">
+            <h3 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Edit Reply</h3>
+            <form id="modalReplyEditForm">
+                <textarea id="modalReplyEditInput" placeholder="Edit your reply..." required style="width:100%;min-height:80px;padding:8px;margin-bottom:10px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;resize:vertical;"></textarea>
+                <button type="submit" class="modal-btn" style="padding:8px 16px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Submit</button>
+                <button type="button" onclick="closeEditReplyModal()" class="modal-btn" style="padding:8px 16px;margin-left:8px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Cancel</button>
+            </form>
+            <div id="modalReplyEditStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+        </div>
+    </div>
     <script>
     // --- Helpers ---
     function getQueryParam(name) {
@@ -145,14 +157,15 @@
         
         let repliesHtml = '';
         replies.forEach(reply => {
-            repliesHtml += `<div class="reply" style="position:relative;">
-                <div style="font-size:0.85rem;color:#fff;">${reply.reply_text}</div>
+            repliesHtml += `<div class="reply" style="position:relative;" data-reply-id="${reply.id}">
+                <div class="reply-text" style="font-size:0.85rem;color:#fff;">${reply.reply_text}</div>
                 <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
                     ${new Date(reply.timestamp).toLocaleString()}
                     ${reply.edited ? '<span class="edited-label">(edited)</span>' : ''}
                 </div>
                 ${reply.admin_reply ? `<div style='margin-top:8px;background:#333;padding:8px;border-radius:4px;color:#fff;font-size:0.8rem;'><b>Official Answer:</b><br>${reply.admin_reply.admin_answer}</div>` : ''}
                 <div style="position:absolute;top:8px;right:8px;display:flex;gap:8px;">
+                    <button onclick="showReplyEditBox(${reply.id})" style="background:none;border:none;color:#fff;font-size:0.9rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#ffd700'" onmouseout="this.style.color='#fff'">/</button>
                     <button onclick="showReplyAnswerBox(${reply.id})" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
                     <button onclick="deleteReply(${reply.id})" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#c00'" onmouseout="this.style.color='#fff'">×</button>
                 </div>
@@ -273,6 +286,70 @@
         }
     }
     window.submitQuestionEdit = submitQuestionEdit;
+    
+    // --- Reply edit functions ---
+    function showReplyEditBox(replyId) {
+        // Get the reply text from the DOM
+        const replyElement = document.querySelector(`[data-reply-id="${replyId}"]`);
+        if (replyElement) {
+            const replyText = replyElement.querySelector('.reply-text').textContent;
+            document.getElementById('modalReplyEditInput').value = replyText;
+            document.getElementById('editReplyModal').style.display = 'flex';
+            // Store the reply ID for submission
+            document.getElementById('editReplyModal').setAttribute('data-reply-id', replyId);
+        }
+    }
+    window.showReplyEditBox = showReplyEditBox;
+    
+    function closeEditReplyModal() {
+        document.getElementById('editReplyModal').style.display = 'none';
+        document.getElementById('modalReplyEditInput').value = '';
+        document.getElementById('modalReplyEditStatus').textContent = '';
+    }
+    window.closeEditReplyModal = closeEditReplyModal;
+    
+    // Handle reply edit modal form submission
+    document.getElementById('modalReplyEditForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const newText = document.getElementById('modalReplyEditInput').value.trim();
+        const statusDiv = document.getElementById('modalReplyEditStatus');
+        const replyId = document.getElementById('editReplyModal').getAttribute('data-reply-id');
+        
+        if (!newText) {
+            statusDiv.textContent = 'Please enter reply text.';
+            return;
+        }
+        
+        submitReplyEdit(replyId, newText);
+    });
+    
+    async function submitReplyEdit(replyId, newText) {
+        const statusDiv = document.getElementById('modalReplyEditStatus');
+        
+        try {
+            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reply_text: newText })
+            });
+            
+            if (!res.ok) throw new Error('Failed to update reply.');
+            
+            statusDiv.style.color = '#090';
+            statusDiv.textContent = 'Reply updated!';
+            document.getElementById('modalReplyEditInput').value = '';
+            
+            // Close modal and refresh the thread
+            setTimeout(() => {
+                closeEditReplyModal();
+                fetchThread();
+            }, 1000);
+        } catch (err) {
+            statusDiv.style.color = '#c00';
+            statusDiv.textContent = 'Error: ' + err.message;
+        }
+    }
+    window.submitReplyEdit = submitReplyEdit;
     
     async function deleteReply(replyId) {
         const token = document.getElementById('adminTokenInput').value.trim();
