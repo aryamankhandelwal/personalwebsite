@@ -79,6 +79,16 @@
             </div>
             <!-- Blog Collapsible End -->
             
+            <div class="projects-collapsible" style="margin-bottom:1.5rem;">
+                <button id="projectsToggle" class="projects-toggle" aria-expanded="false" style="background:none;border:none;display:flex;align-items:center;cursor:pointer;padding:0;">
+                    [Projects]
+                </button>
+                <div id="projectsContent" class="projects-content" style="margin-top:0.5em;display:none;">
+                    <a href="https://github.com/aryamankhandelwal/Maribor" target="_blank" style="text-decoration:underline;color:#fff;">Maribor</a> [beta]: A second brain. Starting with a simple to do app
+                </div>
+            </div>
+            <!-- Projects Collapsible End -->
+            
             <div class="interests-collapsible" style="margin-bottom:1.5rem;">
                 <button id="interestsToggle" class="interests-toggle" aria-expanded="false" style="background:none;border:none;display:flex;align-items:center;cursor:pointer;padding:0;">
                     [Interests]
@@ -257,6 +267,28 @@ document.getElementById('questionForm').addEventListener('submit', async functio
     const toggleBtn = document.getElementById('blogToggle');
     toggleBtn.addEventListener('click', function() {
         window.location.href = 'blog.html';
+    });
+})();
+
+// --- Projects Collapsible Toggle ---
+(function() {
+    const toggleBtn = document.getElementById('projectsToggle');
+    const projectsContent = document.getElementById('projectsContent');
+    const arrow = toggleBtn.querySelector('.square-arrow');
+    let open = false; // Starts closed
+    toggleBtn.addEventListener('click', function() {
+        open = !open;
+        if (open) {
+            projectsContent.style.display = '';
+            toggleBtn.setAttribute('aria-expanded', 'true');
+            arrow.classList.remove('collapsed');
+            arrow.classList.add('expanded');
+        } else {
+            projectsContent.style.display = 'none';
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            arrow.classList.remove('expanded');
+            arrow.classList.add('collapsed');
+        }
     });
 })();
 

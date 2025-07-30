@@ -494,6 +494,52 @@ a:hover {
     color: #fff;
 }
 
+/* --- Projects Collapsible Styles --- */
+.projects-collapsible {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1.5rem;
+}
+.projects-toggle {
+    background: none;
+    border: none;
+    color: inherit;
+    font: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1rem;
+    outline: none;
+    transition: color 0.2s;
+}
+.projects-toggle:hover {
+    color: #8bb3ff;
+}
+.projects-content {
+    margin-top: 0.5em;
+    font-size: 0.85rem;
+    color: #fff;
+    transition: max-height 0.2s ease;
+    margin-left: 1.5em;
+}
+
+.projects-toggle span {
+    transition: transform 0.2s;
+}
+
+/* Override global link color for projects section */
+.projects-content a {
+    color: #fff;
+}
+
+.projects-content a:hover {
+    color: #8bb3ff;
+}
+
 /* --- Tracker Collapsible Styles --- */
 .tracker-collapsible {
     width: 100%;
@@ -573,7 +619,7 @@ a:hover {
         max-width: 800px;
         padding: 0rem 16px;
     }
-    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
+    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .projects-collapsible, .social-links {
         max-width: 800px;
         padding: 0rem 16px;
     }
@@ -593,7 +639,7 @@ a:hover {
         max-width: 100%;
         padding: 0rem 12px;
     }
-    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
+    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .projects-collapsible, .social-links {
         max-width: 100%;
         padding: 0rem 12px;
         text-align: left;
@@ -609,10 +655,10 @@ a:hover {
         font-size: 0.95rem;
     }
     /* Responsive font sizing for toggle buttons */
-    .about-toggle, .interests-toggle, .blog-toggle, .mentoring-toggle, .tracker-toggle {
+    .about-toggle, .interests-toggle, .blog-toggle, .mentoring-toggle, .tracker-toggle, .projects-toggle {
         font-size: 1.1rem !important;
     }
-    .about-content, .interests-content, .mentoring-content, .tracker-content {
+    .about-content, .interests-content, .mentoring-content, .tracker-content, .projects-content {
         font-size: 0.95rem !important;
     }
 }
@@ -627,7 +673,7 @@ a:hover {
         padding: 0rem 8px;
         margin: 0;
     }
-    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .social-links {
+    .column-first, .blog-first, .blog-within, .container-items, .about-collapsible, .interests-collapsible, .mentoring-collapsible, .tracker-collapsible, .blog-collapsible, .projects-collapsible, .social-links {
         width: 100%;
         max-width: 100%;
         padding: 0rem 8px;
@@ -641,20 +687,20 @@ a:hover {
         font-size: 0.85rem;
     }
     /* Responsive font sizing for toggle buttons */
-    .about-toggle, .interests-toggle, .blog-toggle, .mentoring-toggle, .tracker-toggle {
+    .about-toggle, .interests-toggle, .blog-toggle, .mentoring-toggle, .tracker-toggle, .projects-toggle {
         font-size: 1rem !important;
     }
-    .about-content, .interests-content, .mentoring-content, .tracker-content {
+    .about-content, .interests-content, .mentoring-content, .tracker-content, .projects-content {
         font-size: 0.85rem !important;
     }
 }
 
 /* Landscape mode on phones - scales with other text */
 @media screen and (min-width: 481px) and (max-width: 1024px) and (orientation: landscape) {
-    .about-toggle, .interests-toggle, .blog-toggle, .mentoring-toggle, .tracker-toggle {
+    .about-toggle, .interests-toggle, .blog-toggle, .mentoring-toggle, .tracker-toggle, .projects-toggle {
         font-size: 1.1rem !important;
     }
-    .about-content, .interests-content, .mentoring-content, .tracker-content {
+    .about-content, .interests-content, .mentoring-content, .tracker-content, .projects-content {
         font-size: 0.95rem !important;
     }
 }
