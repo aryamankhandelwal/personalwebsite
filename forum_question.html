@@ -123,8 +123,13 @@
         let questionHtml = `<div class="question-main" style="position:relative;">
             <div style="position:absolute;top:8px;right:8px;display:flex;gap:8px;">
                 <button onclick="showQuestionEditBox()" style="background:none;border:none;color:#fff;font-size:0.9rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#ffd700'" onmouseout="this.style.color='#fff'">/</button>
-                <button onclick="showQuestionAnswerBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
-                <button onclick="deleteThread()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#c00'" onmouseout="this.style.color='#fff'">×</button>
+                <div style="position:relative;">
+                    <button onclick="toggleAdminDropdown('question')" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">🔒</button>
+                    <div id="questionAdminDropdown" style="display:none;position:absolute;top:100%;right:0;background:#333;border:1px solid #555;border-radius:4px;padding:4px;z-index:100;min-width:60px;">
+                        <button onclick="showQuestionAnswerBox()" style="background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;padding:4px 8px;width:100%;text-align:left;display:block;" onmouseover="this.style.backgroundColor='#555'" onmouseout="this.style.backgroundColor='transparent'">+ Answer</button>
+                        <button onclick="deleteThread()" style="background:none;border:none;color:#c00;font-size:1rem;cursor:pointer;padding:4px 8px;width:100%;text-align:left;display:block;" onmouseover="this.style.backgroundColor='#555'" onmouseout="this.style.backgroundColor='transparent'">× Delete</button>
+                    </div>
+                </div>
             </div>
             <div style="font-size:0.85rem;color:#fff;padding-right:80px;">${data.question.text}</div>
             <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
@@ -166,8 +171,13 @@
                 ${reply.admin_reply ? `<div style='margin-top:8px;background:#333;padding:8px;border-radius:4px;color:#fff;font-size:0.8rem;'><b>Official Answer:</b><br>${reply.admin_reply.admin_answer}</div>` : ''}
                 <div style="position:absolute;top:8px;right:8px;display:flex;gap:8px;">
                     <button onclick="showReplyEditBox(${reply.id})" style="background:none;border:none;color:#fff;font-size:0.9rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#ffd700'" onmouseout="this.style.color='#fff'">/</button>
-                    <button onclick="showReplyAnswerBox(${reply.id})" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
-                    <button onclick="deleteReply(${reply.id})" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#c00'" onmouseout="this.style.color='#fff'">×</button>
+                    <div style="position:relative;">
+                        <button onclick="toggleAdminDropdown('reply${reply.id}')" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">🔒</button>
+                        <div id="replyAdminDropdown${reply.id}" style="display:none;position:absolute;top:100%;right:0;background:#333;border:1px solid #555;border-radius:4px;padding:4px;z-index:100;min-width:60px;">
+                            <button onclick="showReplyAnswerBox(${reply.id})" style="background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;padding:4px 8px;width:100%;text-align:left;display:block;" onmouseover="this.style.backgroundColor='#555'" onmouseout="this.style.backgroundColor='transparent'">+ Answer</button>
+                            <button onclick="deleteReply(${reply.id})" style="background:none;border:none;color:#c00;font-size:1rem;cursor:pointer;padding:4px 8px;width:100%;text-align:left;display:block;" onmouseover="this.style.backgroundColor='#555'" onmouseout="this.style.backgroundColor='transparent'">× Delete</button>
+                        </div>
+                    </div>
                 </div>
                 <div id="replyAnswerBox${reply.id}" style="display:none;margin-top:12px;">
                     <textarea id="replyAnswerInput${reply.id}" placeholder="Type your answer..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
@@ -287,7 +297,43 @@
     }
     window.submitQuestionEdit = submitQuestionEdit;
     
-
+    // --- Admin dropdown functions ---
+    function toggleAdminDropdown(type) {
+        const adminToken = document.getElementById('adminTokenInput').value.trim();
+        if (!adminToken) {
+            document.getElementById('adminStatus').textContent = 'Admin key required for admin actions.';
+            return;
+        }
+        
+        const dropdownId = type === 'question' ? 'questionAdminDropdown' : `replyAdminDropdown${type.replace('reply', '')}`;
+        const dropdown = document.getElementById(dropdownId);
+        
+        // Close all other dropdowns first
+        const allDropdowns = document.querySelectorAll('[id^="questionAdminDropdown"], [id^="replyAdminDropdown"]');
+        allDropdowns.forEach(dd => {
+            if (dd.id !== dropdownId) {
+                dd.style.display = 'none';
+            }
+        });
+        
+        // Toggle current dropdown
+        if (dropdown.style.display === 'none') {
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.style.display = 'none';
+        }
+    }
+    window.toggleAdminDropdown = toggleAdminDropdown;
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('[onclick*="toggleAdminDropdown"]')) {
+            const allDropdowns = document.querySelectorAll('[id^="questionAdminDropdown"], [id^="replyAdminDropdown"]');
+            allDropdowns.forEach(dd => {
+                dd.style.display = 'none';
+            });
+        }
+    });
     
     // --- Reply edit functions ---
     function showReplyEditBox(replyId) {
