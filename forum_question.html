@@ -128,20 +128,20 @@
         
         let repliesHtml = '';
         replies.forEach(reply => {
-            repliesHtml += `<div class="reply">
+            repliesHtml += `<div class="reply" style="position:relative;">
                 <div style="font-size:0.85rem;color:#fff;">${reply.reply_text}</div>
                 <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
                     ${new Date(reply.timestamp).toLocaleString()}
                     ${reply.edited ? '<span class="edited-label">(edited)</span>' : ''}
                 </div>
                 ${reply.admin_reply ? `<div style='margin-top:8px;background:#333;padding:8px;border-radius:4px;color:#fff;font-size:0.8rem;'><b>Official Answer:</b><br>${reply.admin_reply.admin_answer}</div>` : ''}
-                <div style="margin-top:8px;">
-                    <button onclick="showReplyAnswerBox(${reply.id})" class="edit-btn">Answer Reply</button>
-                    <div id="replyAnswerBox${reply.id}" style="display:none;margin-top:12px;">
-                        <textarea id="replyAnswerInput${reply.id}" placeholder="Type your answer..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
-                        <button onclick="submitReplyAnswer(${reply.id})" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">Submit Answer</button>
-                        <button onclick="hideReplyAnswerBox(${reply.id})" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;margin-left:8px;">Cancel</button>
-                    </div>
+                <div style="position:absolute;top:8px;right:8px;">
+                    <button onclick="showReplyAnswerBox(${reply.id})" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;">+</button>
+                </div>
+                <div id="replyAnswerBox${reply.id}" style="display:none;margin-top:12px;">
+                    <textarea id="replyAnswerInput${reply.id}" placeholder="Type your answer..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
+                    <button onclick="submitReplyAnswer(${reply.id})" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">Submit Answer</button>
+                    <button onclick="hideReplyAnswerBox(${reply.id})" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;margin-left:8px;">Cancel</button>
                 </div>
             </div>`;
         });
