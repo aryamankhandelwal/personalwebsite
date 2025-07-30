@@ -200,6 +200,21 @@ async def delete_question(question_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Question not found")
     await db.delete(question)
     await db.commit()
+    return {"status": "deleted"}
+
+@app.delete("/replies/{reply_id}", dependencies=[Depends(admin_auth)])
+async def delete_reply(reply_id: int, db: AsyncSession = Depends(get_db)):
+    reply = await db.get(Reply, reply_id)
+    if not reply:
+        raise HTTPException(status_code=404, detail="Reply not found")
+    
+    # Update reply count on the question
+    question = await db.get(Question, reply.question_id)
+    if question:
+        question.reply_count = max(0, question.reply_count - 1)
+    
+    await db.delete(reply)
+    await db.commit()
     return {"status": "deleted"} 
 
 @app.get("/ping", include_in_schema=False)
