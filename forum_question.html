@@ -126,7 +126,7 @@
                 <button onclick="showQuestionAnswerBox()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
                 <button onclick="deleteThread()" style="background:none;border:none;color:#fff;font-size:1.2rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#c00'" onmouseout="this.style.color='#fff'">×</button>
             </div>
-            <div style="font-size:0.85rem;color:#fff;">${data.question.text}</div>
+            <div style="font-size:0.85rem;color:#fff;padding-right:80px;">${data.question.text}</div>
             <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
                 Status: <span class="${data.question.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${data.question.status.charAt(0).toUpperCase() + data.question.status.slice(1)}</span>
                 &nbsp;|&nbsp;
@@ -158,7 +158,7 @@
         let repliesHtml = '';
         replies.forEach(reply => {
             repliesHtml += `<div class="reply" style="position:relative;" data-reply-id="${reply.id}">
-                <div class="reply-text" style="font-size:0.85rem;color:#fff;">${reply.reply_text}</div>
+                <div class="reply-text" style="font-size:0.85rem;color:#fff;padding-right:80px;">${reply.reply_text}</div>
                 <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
                     ${new Date(reply.timestamp).toLocaleString()}
                     ${reply.edited ? '<span class="edited-label">(edited)</span>' : ''}
