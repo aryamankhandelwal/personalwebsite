@@ -92,22 +92,6 @@ async def create_question(q: QuestionCreate, db: AsyncSession = Depends(get_db))
     await db.refresh(question)
     return question
 
-@app.post("/questions/{question_id}/replies", response_model=ReplyOut)
-async def create_reply(question_id: int, reply: ReplyCreate, db: AsyncSession = Depends(get_db)):
-    question = await db.get(Question, question_id)
-    if not question:
-        raise HTTPException(status_code=404, detail="Question not found")
-    
-    reply_obj = Reply(question_id=question_id, reply_text=reply.reply_text)
-    db.add(reply_obj)
-    
-    # Update reply count
-    question.reply_count += 1
-    
-    await db.commit()
-    await db.refresh(reply_obj)
-    return reply_obj
-
 @app.get("/questions", response_model=list[QuestionOut])
 async def list_questions(skip: int = 0, limit: int = 10, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
@@ -138,6 +122,22 @@ async def get_question(question_id: int, db: AsyncSession = Depends(get_db)):
         }
     except Exception as e:
         raise 
+
+@app.post("/questions/{question_id}/replies", response_model=ReplyOut)
+async def create_reply(question_id: int, reply: ReplyCreate, db: AsyncSession = Depends(get_db)):
+    question = await db.get(Question, question_id)
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+    
+    reply_obj = Reply(question_id=question_id, reply_text=reply.reply_text)
+    db.add(reply_obj)
+    
+    # Update reply count
+    question.reply_count += 1
+    
+    await db.commit()
+    await db.refresh(reply_obj)
+    return reply_obj
 
 @app.post("/questions/{question_id}/answer", dependencies=[Depends(admin_auth)])
 async def answer_question(question_id: int, answer: AnswerCreate, db: AsyncSession = Depends(get_db)):
