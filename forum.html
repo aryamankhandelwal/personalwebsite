@@ -151,7 +151,7 @@
         e.preventDefault();
         if (totalLoaded === limit) { page++; fetchQuestions(); }
     };
-    fetchQuestions();
+    document.addEventListener("DOMContentLoaded", function() { fetchQuestions(); });
     // Modal logic
     function openAddModal() {
         document.getElementById('addModal').style.display = 'flex';
