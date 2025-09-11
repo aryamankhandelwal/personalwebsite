@@ -3,118 +3,503 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jester's Courtyard</title>
+    <title>Jester's Courtyard — Aryaman Khandelwal</title>
+    <link rel="icon" type="image/x-icon" href="images/header.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&family=Google+Sans+Code:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        .forum-container { max-width: 700px; margin: 40px auto; }
-        .question-card { background: #333; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 12px; padding: 12px 16px; }
-        .question-card .meta { font-size: 0.75rem; color: #fff; margin-top: 4px; }
+        :root {
+            --bg: #f6f6f6; /* very light grey */
+            --text: #111111;
+            --muted: #999999;
+            --accent: #5e96f7; /* site blue */
+            --card-bg: #e8e8e8; /* lighter grey for question cards */
+        }
+        html, body {
+            height: 100%;
+        }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.3;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Layout */
+        .page {
+            display: flex;
+            min-height: 100dvh;
+        }
+        .sidebar {
+            width: 10vw;
+            min-width: 120px;
+            max-width: 180px;
+            padding: 48px 16px 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+            position: sticky;
+            top: 0;
+            height: 100dvh;
+            box-sizing: border-box;
+        }
+        .name { 
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+            font-weight: 700;
+            font-size: clamp(16px, 1.2vw + 8px, 20px);
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            line-height: 1.1;
+            color: var(--text);
+            white-space: pre-line;
+            margin: 0;
+        }
+        .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
+        .name a:hover, .name a:focus-visible { color: var(--accent); border-bottom: none; }
+
+        .clock { 
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+            font-style: normal;
+            font-weight: 700;
+            font-size: clamp(16px, 1.2vw + 8px, 20px);
+            letter-spacing: 0.02em;
+            line-height: 1.1;
+            margin: 0;
+        }
+
+        /* Desktop nav under clock */
+        .nav { 
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+            margin-top: 10px;
+        }
+        .nav a {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;    
+            display: block;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: none;
+            padding: 2px 0;
+            line-height: 1.1;
+            transition: color .2s ease;
+        }
+        .nav a:hover, .nav a:focus-visible {
+            color: var(--accent);
+        }
+
+        /* Mobile menu toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 12px;
+            z-index: 1001;
+            font-size: 28px;
+            line-height: 1;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            padding: 72px 24px 24px 24px;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        .mobile-menu a { 
+            font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+            display: block;
+            font-size: 14px;
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: none;
+            padding: 6px 0;
+            line-height: 1.1;
+        }
+        .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--accent); }
+
+        .menu-open .mobile-menu { display: block; }
+
+        .content {
+            flex: 0.8;
+            padding: 40px 6vw 80px 9vw;
+            box-sizing: border-box;
+        }
+        .section { 
+            font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+            max-width: 540px;
+        }
+
+        /* Forum-specific styles matching blog header */
+        .forum-header {
+            margin-bottom: 20px;
+        }
+        .forum-nav {
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .forum-nav .back-arrow {
+            color: var(--muted);
+            text-decoration: none;
+            border-bottom: none;
+            transition: color .2s ease;
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size: clamp(20px, 2.4vw, 28px);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .forum-nav .back-arrow:hover {
+            color: var(--accent);
+        }
+        .forum-nav .forum-label {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size: clamp(20px, 2.4vw, 28px);
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .section .forum-title {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif !important;
+            font-weight: 400 !important;
+            font-size: clamp(12px, 0.9vw, 14px) !important;
+            line-height: 1.2 !important;
+            margin: 0 0 20px 0 !important;
+            letter-spacing: 0 !important;
+            color: var(--text) !important;
+        }
+        .section .forum-title a {
+            color: var(--muted);
+            text-decoration: none;
+            border-bottom: none;
+            transition: color .2s ease;
+        }
+        .section .forum-title a:hover {
+            color: var(--accent);
+        }
+        .forum-divider {
+            width: 100%;
+            height: 1px;
+            background-color: var(--muted);
+            margin: 0 0 20px 0;
+            opacity: 0.5;
+        }
+
+        /* Question cards */
+        .forum-container { 
+            max-width: 540px; 
+        }
+        .question-card { 
+            background: var(--card-bg); 
+            border-radius: 8px; 
+            margin-bottom: 12px; 
+            padding: 16px; 
+            transition: background-color .2s ease;
+        }
+        .question-card:hover {
+            background: #ddd;
+        }
+        .question-text {
+            font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+            font-size: clamp(15px, 1.3vw, 18px);
+            color: var(--text);
+            cursor: pointer;
+            line-height: 1.3;
+            margin-bottom: 8px;
+        }
+        .question-meta {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(10px, 0.7vw, 12px);
+            color: var(--muted);
+            line-height: 1.2;
+        }
         .status-unanswered { color: #c00; }
         .status-answered { color: #090; }
-        .sticky-add-btn { position: fixed; bottom: 32px; right: 32px; background: #fff; color: #000; border: none; border-radius: 50px; padding: 10px 20px; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 8px #0002; z-index: 100; }
-        .sticky-add-btn:hover { background: #000; color: #fff; border: 1px solid #fff; }
-        .pagination { text-align: center; margin: 24px 0; }
-        .pagination a { color: #fff !important; text-decoration: underline; font-size: 0.85rem; margin: 0 4px; }
-        .pagination a:hover { color: #8bb3ff !important; }
-        .pagination span { color: #fff; font-size: 0.85rem; margin: 0 2px; }
-        .reply-count { color: #555; }
-        .back-link {
-            color: #fff !important;
-            text-decoration: underline;
-            font-size: 0.85rem;
+
+        /* Pagination */
+        .pagination { 
+            text-align: center; 
+            margin: 24px 0; 
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
         }
-        .back-link:hover {
-            color: #8bb3ff !important;
+        .pagination a { 
+            color: var(--muted) !important; 
+            text-decoration: none; 
+            border-bottom: none;
+            font-size: clamp(11px, 0.8vw + 1px, 14px); 
+            margin: 0 4px; 
+            transition: color .2s ease;
+        }
+        .pagination a:hover { 
+            color: var(--accent) !important; 
+        }
+        .pagination span { 
+            color: var(--text); 
+            font-size: clamp(11px, 0.8vw + 1px, 14px); 
+            margin: 0 2px; 
+        }
+
+        /* Add button */
+        .sticky-add-btn { 
+            position: fixed; 
+            bottom: 32px; 
+            right: 32px; 
+            background: var(--text); 
+            color: var(--bg); 
+            border: none; 
+            border-radius: 50px; 
+            padding: 12px 20px; 
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px); 
+            cursor: pointer; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            z-index: 100; 
+            transition: all .2s ease;
+        }
+        .sticky-add-btn:hover { 
+            background: var(--accent); 
+            color: #fff;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: var(--bg);
+            padding: 32px 24px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90vw;
+            border: 1px solid #ddd;
+        }
+        .modal h3 {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size: clamp(16px, 1.2vw + 8px, 20px);
+            color: var(--text);
+            margin-bottom: 1rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--muted);
+            color: var(--text);
+            font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+            font-size: clamp(15px, 1.3vw, 18px);
+            outline: none;
+            box-sizing: border-box;
+        }
+        .modal input:focus {
+            border-bottom-color: var(--accent);
+        }
+        .modal-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--text);
+            color: var(--text);
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            cursor: pointer;
+            transition: all .2s ease;
+            margin-right: 8px;
         }
         .modal-btn:hover {
-            color: #8bb3ff !important;
+            background: var(--text);
+            color: var(--bg);
+        }
+        .modal-status {
+            margin-top: 12px;
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            color: #c00;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .page { flex-direction: column; }
+            .sidebar {
+                width: 100%;
+                max-width: none;
+                min-width: 0;
+                height: auto;
+                position: relative;
+                padding: 24px 20px 0 20px;
+                gap: 0;
+            }
+            .menu-toggle { display: block; }
+            .nav { 
+                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+                display: none; 
+            }
+            .content { padding: 20px; }
+            .name { 
+                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+                font-size: 14px; 
+                letter-spacing: 0.04em; 
+                line-height: 1.15; 
+                margin: 0; 
+            }
+            .clock { 
+                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+                font-style: normal; 
+                font-size: 14px; 
+                letter-spacing: 0.04em; 
+                line-height: 1.15; 
+                margin: 0; 
+            }
+            .section { 
+                font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  
+                max-width: 540px; 
+            }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="logo"><a href="index.html">Aryaman Khandelwal</a></div>
-    </nav>
-    <section class="main">
-        <div class="main-container">
-            <div class="blog-first" style="margin-top:2rem;">
-                <div style="margin-bottom:1rem;">
-                    <span style="color:#fff;font-size:0.85rem;">< </span><a href="index.html" class="back-link">Back</a>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">+</button>
+    <div class="page">
+        <aside class="sidebar" aria-label="Site identity">
+            <div class="name"><a href="/index.html">ARYAMAN
+KHANDELWAL</a></div>
+            <div class="clock" id="dubai-clock" aria-label="Local time (Dubai, 24h)">17:00:00</div>
+            <nav class="nav" aria-label="Primary">
+                <a href="/blog.html">Blog</a>
+                <a href="/forum.html">Jester's Courtyard</a>
+                <a href="/builds.html">Builds</a>
+                <a href="/tracker.html">Tracker</a>
+            </nav>
+        </aside>
+        <main class="content" id="main-content">
+            <section class="section" aria-labelledby="forum-heading">
+                <div class="forum-header">
+                    <div class="forum-nav">
+                        <a href="/index.html" class="back-arrow"><</a>
+                        <span class="forum-label">JESTER'S COURTYARD</span>
+                    </div>
+                    <h1 class="forum-title">When I was recruiting for finance and tech, I was lost. I started this to be the "big brother" I wish I had. 3 years on, I've mentored over 50 students, with several receiving offers from institutions such as Bank of America, BCG, and Province Firm. Talk to me about 1-on-1 mentoring sessions, resume building help, interview guidance and prep, and networking opportunities. Contact me <a href="https://www.linkedin.com/company/jesterinapatagonia/" target="_blank">here</a></h1>
+                    <div class="forum-divider"></div>
                 </div>
-                <h1 style="font-size:1rem;font-weight:normal;margin-bottom:0.5em;">[Jester's Courtyard]</h1>
-                <div class="forum-container" style="text-align:left;">
+                
+                <div class="forum-container">
                     <div id="questionsList"></div>
                     <div class="pagination">
-                        <span style="color:#fff;font-size:0.85rem;"><</span><a href="#" id="prevPage">Newer</a>
+                        <span><</span><a href="#" id="prevPage">Newer</a>
                         <span id="pageInfo"></span>
-                        <a href="#" id="nextPage">Older</a><span style="color:#fff;font-size:0.85rem;">></span>
+                        <a href="#" id="nextPage">Older</a><span>></span>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
+        </main>
+    </div>
+
+    <div class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
+        <a href="/blog.html">Blog</a>
+        <a href="/forum.html">Jester's Courtyard</a>
+        <a href="/builds.html">Builds</a>
+        <a href="/tracker.html">Tracker</a>
+    </div>
+
     <button class="sticky-add-btn" onclick="openAddModal()">+ Add a question</button>
+    
     <!-- Modal for adding question -->
-    <div id="addModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:200;align-items:center;justify-content:center;">
-        <div style="background:#000;padding:32px 24px;border-radius:10px;max-width:400px;width:90vw;border:1px solid #333;">
-            <h3 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Ask a Question</h3>
+    <div id="addModal" style="display:none;" class="modal">
+        <div class="modal-content">
+            <h3>Ask a Question</h3>
             <form id="modalQuestionForm">
-                <input type="text" id="modalQuestionInput" placeholder="Your question..." required style="width:100%;padding:8px;margin-bottom:10px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;">
-                <input type="text" id="modalNicknameInput" placeholder="Nickname (optional)" style="width:100%;padding:8px;margin-bottom:10px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;">
-                <button type="submit" class="modal-btn" style="padding:8px 16px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Submit</button>
-                <button type="button" onclick="closeAddModal()" class="modal-btn" style="padding:8px 16px;margin-left:8px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Cancel</button>
+                <input type="text" id="modalQuestionInput" placeholder="Your question..." required>
+                <input type="text" id="modalNicknameInput" placeholder="Nickname (optional)">
+                <button type="submit" class="modal-btn">Submit</button>
+                <button type="button" onclick="closeAddModal()" class="modal-btn">Cancel</button>
             </form>
-            <div id="modalStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+            <div id="modalStatus" class="modal-status"></div>
         </div>
     </div>
-    <script>
-    // Typewriter Animation
-    function typeWriter(element, text, speed = 100) {
-        let i = 0;
-        element.innerHTML = '';
-        element.style.opacity = '1';
-        element.style.whiteSpace = 'nowrap';
-        element.style.overflow = 'hidden';
-        
-        function type() {
-            if (i < text.length) {
-                element.innerHTML = text.substring(0, i + 1) + '<span class="blinking-cursor">_</span>';
-                i++;
-                setTimeout(type, speed);
-            } else {
-                // Keep the blinking cursor after typing is complete
-                element.innerHTML = text + '<span class="blinking-cursor">_</span>';
-                
-                // Remove the cursor after 10 seconds
-                setTimeout(() => {
-                    element.innerHTML = text;
-                }, 10000);
-            }
-        }
-        
-        type();
-    }
 
-    // Initialize typewriter effect when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        const logoElement = document.querySelector('.logo a');
-        if (logoElement) {
-            const originalText = logoElement.textContent;
-            logoElement.textContent = '';
-            logoElement.style.opacity = '1';
-            logoElement.style.whiteSpace = 'nowrap';
-            logoElement.style.overflow = 'hidden';
-            
-            typeWriter(logoElement, originalText, 120); // 120ms per character for ~2 seconds total
+    <script>
+    (function() {
+        // Dubai clock
+        const el = document.getElementById('dubai-clock');
+        if (el) {
+            const fmt = new Intl.DateTimeFormat('en-GB', { 
+                timeZone: 'Asia/Dubai', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit', 
+                hour12: false 
+            });
+            function update() {
+                const parts = fmt.formatToParts(new Date());
+                let hh = '00', mm = '00', ss = '00';
+                for (const p of parts) { 
+                    if (p.type === 'hour') hh = p.value; 
+                    if (p.type === 'minute') mm = p.value; 
+                    if (p.type === 'second') ss = p.value; 
+                }
+                el.textContent = `${hh}:${mm}:${ss}`;
+            }
+            update();
+            setInterval(update, 1000);
         }
-    });
+
+        // Mobile menu toggle
+        const toggle = document.getElementById('menu-toggle');
+        const menu = document.getElementById('mobile-menu');
+        function openMenu() {
+            document.body.classList.add('menu-open');
+            toggle.textContent = '×';
+            toggle.setAttribute('aria-label', 'Close menu');
+            toggle.setAttribute('aria-expanded', 'true');
+            menu.hidden = false;
+        }
+        function closeMenu() {
+            document.body.classList.remove('menu-open');
+            toggle.textContent = '+';
+            toggle.setAttribute('aria-label', 'Open menu');
+            toggle.setAttribute('aria-expanded', 'false');
+            menu.hidden = true;
+        }
+        if (toggle && menu) {
+            toggle.addEventListener('click', function() {
+                if (document.body.classList.contains('menu-open')) closeMenu(); else openMenu();
+            });
+
+            // Close on link click
+            menu.addEventListener('click', function(e) { 
+                if (e.target.tagName === 'A') closeMenu(); 
+            });
+        }
+    })();
 
     let page = 1;
     const limit = 10;
     let totalLoaded = 0;
+    
     async function fetchQuestions() {
         const skip = (page - 1) * limit;
         const res = await fetch('https://personalwebsite-xzmk.onrender.com/questions?skip=' + skip + '&limit=' + limit);
@@ -123,17 +508,17 @@
         const list = document.getElementById('questionsList');
         list.innerHTML = '';
         if (questions.length === 0) {
-            list.innerHTML = '<p style="color:#fff;font-size:0.85rem;">No questions yet. Be the first to ask!</p>';
+            list.innerHTML = '<p style="color:var(--muted);font-size:clamp(15px, 1.3vw, 18px);font-family:\'Yrsa\', Georgia, \'Times New Roman\', serif;">No questions yet. Be the first to ask!</p>';
         }
         questions.forEach(q => {
             const card = document.createElement('div');
             card.className = 'question-card';
             card.innerHTML = `
-                <div style="font-size:0.85rem;cursor:pointer;color:#fff;" onclick="window.location='forum_question.html?id=${q.id}'">${q.text}</div>
-                <div class="meta">
+                <div class="question-text" onclick="window.location='forum_question.html?id=${q.id}'">${q.text}</div>
+                <div class="question-meta">
                     <span class="${q.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${q.status.charAt(0).toUpperCase() + q.status.slice(1)}</span>
                     &nbsp;|&nbsp;
-                    <span style="color:#fff;">${q.reply_count} replies</span>
+                    <span>${q.reply_count} replies</span>
                     &nbsp;|&nbsp;
                     <span>${new Date(q.timestamp).toLocaleString()}</span>
                     ${q.nickname ? `&nbsp;|&nbsp;<span>by ${q.nickname}</span>` : ''}
@@ -143,6 +528,7 @@
         });
         document.getElementById('pageInfo').textContent = `Page ${page}`;
     }
+    
     document.getElementById('prevPage').onclick = function(e) {
         e.preventDefault();
         if (page > 1) { page--; fetchQuestions(); }
@@ -151,7 +537,9 @@
         e.preventDefault();
         if (totalLoaded === limit) { page++; fetchQuestions(); }
     };
+    
     document.addEventListener("DOMContentLoaded", function() { fetchQuestions(); });
+    
     // Modal logic
     function openAddModal() {
         document.getElementById('addModal').style.display = 'flex';
@@ -162,6 +550,7 @@
     }
     window.openAddModal = openAddModal;
     window.closeAddModal = closeAddModal;
+    
     document.getElementById('modalQuestionForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const question = document.getElementById('modalQuestionInput').value.trim();
@@ -189,13 +578,11 @@
             statusDiv.textContent = 'Error: ' + err.message;
         }
     });
-    // --- BEGIN: Wake up backend on page load ---
+    
+    // Wake up backend on page load
     (function wakeBackend() {
-        // This fetches a harmless endpoint to wake up the Render backend/database
-        // It runs in the background and does not block UI or affect state
-        fetch('https://personalwebsite-xzmk.onrender.com/ping').catch(() => {});
+                 fetch('https://personalwebsite-xzmk.onrender.com/ping').catch(() => {});
     })();
-    // --- END: Wake up backend on page load ---
     </script>
 </body>
 </html> 
