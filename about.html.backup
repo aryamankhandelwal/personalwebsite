@@ -1,0 +1,1337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About — Aryaman Khandelwal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&family=Google+Sans+Code:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>/* Updated: $(date +%s) */
+  :root {
+    --bg: #f6f6f6; /* very light grey */
+    --text: #111111;
+    --muted: #999999;
+    --accent: #5e96f7; /* site blue */
+  }
+  html, body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    
+    line-height: 1.3;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Layout */
+  .page {
+    display: flex;
+    min-height: 100dvh;
+  }
+  .sidebar {
+    width: 10vw;              /* ~10% of viewport width */
+    min-width: 120px;         /* prevent being too narrow on mid screens */
+    max-width: 180px;         /* keep tidy on ultra-wide */
+    padding: 48px 16px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0; /* remove spacing between children */
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    box-sizing: border-box;
+  }
+  .name { font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    font-weight: 800;
+    font-size: clamp(16px, 1.2vw + 8px, 20px);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: var(--text);
+    white-space: pre-line; /* honor line break */
+    margin: 0; /* remove bottom spacing */
+  }
+  .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
+  .name a:hover, .name a:focus-visible { color: var(--accent); border-bottom: none; }
+
+  .clock { font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    font-style: normal;
+    font-weight: 800; /* match name weight */
+    font-size: clamp(16px, 1.2vw + 8px, 20px); /* match name size */
+    letter-spacing: 0.02em; /* match tracking */
+    line-height: 1.1; /* match line height */
+    margin: 0; /* no top spacing */
+  }
+
+  /* Desktop nav under clock */
+  .nav { font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    margin-top: 10px;
+    
+  }
+  .nav a {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;    display: block;
+    font-size: clamp(11px, 0.8vw + 1px, 14px); /* slightly larger on desktop */
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: none; /* override global anchor underline */
+    padding: 2px 0; /* tighter spacing */
+    line-height: 1.1; /* tighter line height */
+    transition: color .2s ease;
+  }
+  .nav a:hover, .nav a:focus-visible {
+    color: var(--accent);
+  }
+
+  /* Mobile menu toggle */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    z-index: 1001;
+    
+    font-size: 28px;
+    line-height: 1;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    padding: 72px 24px 24px 24px;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  .mobile-menu a { font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    display: block;
+    
+    font-size: 14px; /* smaller on mobile */
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: none; /* override global */
+    padding: 6px 0; /* tighter */
+    line-height: 1.1;
+  }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--accent); }
+
+  .menu-open .mobile-menu { display: block; }
+
+  .content {
+    flex: 0.8;
+    padding: 40px 6vw 80px 9vw; /* increase left padding further to shift right */
+    box-sizing: border-box;
+  }
+  .section { font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    max-width: 540px; /* reduced further from 630px */
+     /* match nav */
+  }
+  .section h1 { font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    
+    font-weight: 600;
+    font-size: clamp(24px, 2.8vw, 32px); /* slightly larger than nav */
+    line-height: 1.2;
+    margin: 0 0 12px 0;
+    letter-spacing: 0; /* serif default tracking */
+  }
+  .section p { font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    margin: 0 0 12px 0;
+    color: #000000;
+    font-size: clamp(15px, 1.3vw, 18px); /* a bit bigger than nav */
+    line-height: 1.3;
+  }
+  .placeholder-box {
+    width: 100%;
+    height: 240px;
+    background-color: #1a365d;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  .question-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e0e0e0;
+  }
+  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 540px;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 16px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    
+  }
+  .question-form button:hover {
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+      max-width: 540px;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+    }
+  }  }
+  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 540px;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 16px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    
+  }
+  .question-form button:hover {
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+      max-width: 540px;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+    }
+  }  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 540px;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 16px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    
+    text-decoration: none;
+  }
+  .question-form button:hover {
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+      max-width: 540px;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+    }
+  }  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    width: 100%;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 24px;
+    background: transparent;
+    border: 1px solid #999999;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+  }
+  .question-form button:hover {
+    border-color: #5e96f7;
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+    }
+  }  .question-section h2 {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    color: #000000;
+  }
+  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+    min-width: 300px;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 24px;
+    background: transparent;
+    border: 1px solid #999999;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .question-form button:hover {
+    border-color: #5e96f7;
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  .question-note {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #666666;
+    margin: 20px 0 0 0;
+  }
+  .question-note a {
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .question-note a:hover {
+    color: #5e96f7;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+      min-width: auto;
+    }
+  }    width: 100%;
+    height: 240px;
+    background-color: #1a365d;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  .question-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e0e0e0;
+  }
+  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 540px;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 16px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    
+  }
+  .question-form button:hover {
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+      max-width: 540px;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+    }
+  }  }    margin: 0 0 12px 0;
+    color: #000000;
+    font-size: clamp(15px, 1.3vw, 18px); /* a bit bigger than nav */
+    line-height: 1.3;
+  }
+  a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(0,0,0,0.12); }
+  a:hover { border-bottom-color: rgba(0,0,0,0.35); }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .page { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      height: auto;
+      position: relative;
+      padding: 24px 20px 0 20px;
+      gap: 0;
+    }
+    .menu-toggle { display: block; }
+    .nav { font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  display: none; }
+    .content { padding: 20px; }
+    .name { font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  font-size: 14px; letter-spacing: 0.04em; line-height: 1.15; margin: 0; }
+    .clock { font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  font-style: normal; font-size: 14px; letter-spacing: 0.04em; line-height: 1.15; margin: 0; }
+    .section { font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  max-width: 540px; }
+    .section h1 { font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  font-size: 22px; }
+  .section p { font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    margin: 0 0 12px 0;
+    color: #000000;
+    font-size: clamp(15px, 1.3vw, 18px); /* a bit bigger than nav */
+    line-height: 1.3;
+  }
+  .placeholder-box {
+    width: 100%;
+    height: 240px;
+    background-color: #1a365d;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  .question-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e0e0e0;
+  }
+  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 540px;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 16px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    
+  }
+  .question-form button:hover {
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+      max-width: 540px;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+    }
+  }  }
+  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 540px;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 16px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    
+  }
+  .question-form button:hover {
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+      max-width: 540px;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+    }
+  }  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 540px;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 16px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    
+    text-decoration: none;
+  }
+  .question-form button:hover {
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+      max-width: 540px;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+    }
+  }  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    width: 100%;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 24px;
+    background: transparent;
+    border: 1px solid #999999;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+  }
+  .question-form button:hover {
+    border-color: #5e96f7;
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+    }
+  }  .question-section h2 {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    color: #000000;
+  }
+  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+    min-width: 300px;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 24px;
+    background: transparent;
+    border: 1px solid #999999;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .question-form button:hover {
+    border-color: #5e96f7;
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  .question-note {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #666666;
+    margin: 20px 0 0 0;
+  }
+  .question-note a {
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .question-note a:hover {
+    color: #5e96f7;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+      min-width: auto;
+    }
+  }    width: 100%;
+    height: 240px;
+    background-color: #1a365d;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  .question-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #e0e0e0;
+  }
+  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    width: 100%;
+    max-width: 540px;
+  }
+  .question-form input {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 16px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #000000;
+  }
+  #questionInput {
+    flex: 0.8;
+  }
+  #nicknameInput {
+    width: 150px;
+  }
+  .question-form button {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    padding: 12px 8px;
+    background: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    
+  }
+  .question-form button:hover {
+    color: #5e96f7;
+  }
+  .question-status {
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }    margin-top: 10px;
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+  }
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 15px;
+      max-width: 540px;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+    }
+  }  }</style>
+</head>
+<body>
+  <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">+</button>
+  <div class="page">
+    <aside class="sidebar" aria-label="Site identity">
+      <div class="name"><a href="/about.html">ARYAMAN
+KHANDELWAL</a></div>
+      <div class="clock" id="dubai-clock" aria-label="Local time (Dubai, 24h)">17:00:00</div>
+      <nav class="nav" aria-label="Primary">
+        <a href="/blog.html">Blog</a>
+        <a href="/forum.html">Jester's Courtyard</a>
+        <a href="/tracker.html">Tracker</a>
+      </nav>
+    </aside>
+    <main class="content" id="main-content">
+      <section class="section" aria-labelledby="about-heading">
+        <div class="placeholder-box"></div>
+        
+        <p>I'm a lifelong generalist with specific focus areas by nurture. I'm fascinated at the opportunity that arises in the intersection of product, tech, and finance.</p>
+        <p>I'm currently in a corporate development and product leadership at <a href="https://astratech.ae/" style="color: #000000; text-decoration: none; transition: color .2s ease;" onmouseover="this.style.color='#5e96f7'" onmouseout="this.style.color='#999999'">Astra Tech</a>, where I'm building an AI-native platform to democratise financial services in MENA.</p>
+        <p>I began my career in investment banking at <a href="https://www.nomuraholdings.com/en/services/wholesale/ib.html" style="color: #000000; text-decoration: none; transition: color .2s ease;" onmouseover="this.style.color='#5e96f7'" onmouseout="this.style.color='#999999'">Nomura</a> in San Francisco, advising companies of various sizes on acquisitions and capital raises. Before that, I studied Statistics and Economics at <a href="https://www.ucla.edu/" style="color: #000000; text-decoration: none; transition: color .2s ease;" onmouseover="this.style.color='#5e96f7'" onmouseout="this.style.color='#999999'">UCLA</a>.</p>
+        <p>My experience and areas of interest span fintech, deep tech, sports, and media. I'm originally from India.</p>      </section>
+        <div class="question-section">
+          
+          <form id="questionForm" class="question-form">
+            <div class="form-row">
+              <input type="text" id="questionInput" placeholder="Ask me a question about uni or careers (soon)" required>
+              <input type="text" id="nicknameInput" placeholder="Nickname (optional)">
+              <button type="submit">Submit</button>
+            </div>
+          </form>
+          <div id="questionStatus" class="question-status"></div>
+          <div class="social-links">
+            <a href="https://twitter.com/aryamankhandelwal" target="_blank">X</a>
+            <a href="https://www.linkedin.com/in/aryamankhandelwal/" target="_blank">LinkedIn</a>
+            <a href="https://github.com/aryamankhandelwal" target="_blank">GitHub</a>
+          </div>
+          
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
+    <a href="/blog.html">Blog</a>
+    <a href="/forum.html">Jester's Courtyard</a>
+    <a href="/tracker.html">Tracker</a>
+  </div>
+
+  <script>
+    (function() {
+      const el = document.getElementById('dubai-clock');
+      if (el) {
+        const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Dubai', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        function update() {
+          const parts = fmt.formatToParts(new Date());
+          let hh = '00', mm = '00', ss = '00';
+          for (const p of parts) { if (p.type === 'hour') hh = p.value; if (p.type === 'minute') mm = p.value; if (p.type === 'second') ss = p.value; }
+          el.textContent = `${hh}:${mm}:${ss}`;
+        }
+        update();
+        setInterval(update, 1000);
+      }
+      }
+
+      // Mobile menu toggle
+      const toggle = document.getElementById('menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+      function openMenu() {
+        document.body.classList.add('menu-open');
+        toggle.textContent = '×';
+        toggle.setAttribute('aria-label', 'Close menu');
+        toggle.setAttribute('aria-expanded', 'true');
+        menu.hidden = false;
+      }
+      function closeMenu() {
+        document.body.classList.remove('menu-open');
+        toggle.textContent = '+';
+        toggle.setAttribute('aria-label', 'Open menu');
+        toggle.setAttribute('aria-expanded', 'false');
+        menu.hidden = true;
+      }
+      if (toggle && menu) {
+        toggle.addEventListener('click', function() {
+          if (document.body.classList.contains('menu-open')) closeMenu(); else openMenu();
+        });
+
+      // Question form submission
+      const questionForm = document.getElementById('questionForm');
+      if (questionForm) {
+        questionForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const question = document.getElementById('questionInput').value.trim();
+          const nickname = document.getElementById('nicknameInput').value.trim();
+          const statusDiv = document.getElementById('questionStatus');
+          statusDiv.textContent = '';
+          if (!question) {
+            statusDiv.textContent = 'Please enter a question.';
+            statusDiv.style.color = '#c00';
+            return;
+          }
+          try {
+            const res = await fetch('https://personalwebsite-xzmk.onrender.com/questions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: question, nickname: nickname || null })
+            });
+            if (!res.ok) throw new Error('Failed to submit question.');
+            document.getElementById('questionInput').value = '';
+            document.getElementById('nicknameInput').value = '';
+            statusDiv.style.color = '#090';
+            statusDiv.textContent = 'Question submitted! Check the Courtyard soon for answers.';
+          } catch (err) {
+            statusDiv.style.color = '#c00';
+            statusDiv.textContent = 'Error: ' + err.message;
+          }
+        });
+      }        // Close on link click
+        menu.addEventListener('click', function(e) { if (e.target.tagName === 'A') closeMenu(); });
+
+      // Question form submission
+      const questionForm = document.getElementById('questionForm');
+      if (questionForm) {
+        questionForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const question = document.getElementById('questionInput').value.trim();
+          const nickname = document.getElementById('nicknameInput').value.trim();
+          const statusDiv = document.getElementById('questionStatus');
+          statusDiv.textContent = '';
+          if (!question) {
+            statusDiv.textContent = 'Please enter a question.';
+            statusDiv.style.color = '#c00';
+            return;
+          }
+          try {
+            const res = await fetch('https://personalwebsite-xzmk.onrender.com/questions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: question, nickname: nickname || null })
+            });
+            if (!res.ok) throw new Error('Failed to submit question.');
+            document.getElementById('questionInput').value = '';
+            document.getElementById('nicknameInput').value = '';
+            statusDiv.style.color = '#090';
+            statusDiv.textContent = 'Question submitted! Check the Courtyard soon for answers.';
+          } catch (err) {
+            statusDiv.style.color = '#c00';
+            statusDiv.textContent = 'Error: ' + err.message;
+          }
+        });
+      }      }
+    })();
+  </script>
+</body>
+</html> 

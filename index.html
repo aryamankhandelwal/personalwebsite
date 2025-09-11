@@ -1,344 +1,450 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aryaman Khandelwal</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="images/header.png">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Index — Aryaman Khandelwal</title>
+<link rel="icon" type="image/x-icon" href="images/header.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&family=Google+Sans+Code:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>/* Updated: $(date +%s) */
+  :root {
+    --bg: #f6f6f6; /* very light grey */
+    --text: #111111;
+    --muted: #999999;
+    --accent: #5e96f7; /* site blue */
+  }
+  html, body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    
+    line-height: 1.3;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Layout */
+  .page {
+    display: flex;
+    min-height: 100dvh;
+  }
+  .sidebar {
+    width: 10vw;              /* ~10% of viewport width */
+    min-width: 120px;         /* prevent being too narrow on mid screens */
+    max-width: 180px;         /* keep tidy on ultra-wide */
+    padding: 48px 16px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0; /* remove spacing between children */
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    box-sizing: border-box;
+  }
+  .name { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    font-weight: 700;
+    font-size: clamp(16px, 1.2vw + 8px, 20px);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: var(--text);
+    white-space: pre-line; /* honor line break */
+    margin: 0; /* remove bottom spacing */
+  }
+  .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
+  .name a:hover, .name a:focus-visible { color: var(--accent); border-bottom: none; }
+
+  .clock { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    font-style: normal;
+    font-weight: 700; /* match name weight */
+    font-size: clamp(16px, 1.2vw + 8px, 20px); /* match name size */
+    letter-spacing: 0.02em; /* match tracking */
+    line-height: 1.1; /* match line height */
+    margin: 0; /* no top spacing */
+  }
+
+  /* Desktop nav under clock */
+  .nav { font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    margin-top: 10px;
+    
+  }
+  .nav a {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;    
+    display: block;
+    font-size: clamp(11px, 0.8vw + 1px, 14px); /* slightly larger on desktop */
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: none; /* override global anchor underline */
+    padding: 2px 0; /* tighter spacing */
+    line-height: 1.1; /* tighter line height */
+    transition: color .2s ease;
+  }
+  .nav a:hover, .nav a:focus-visible {
+    color: var(--accent);
+  }
+
+  /* Mobile menu toggle */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    z-index: 1001;
+    
+    font-size: 28px;
+    line-height: 1;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    padding: 72px 24px 24px 24px;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  .mobile-menu a { 
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    display: block;
+    
+    font-size: 14px; /* smaller on mobile */
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: none; /* override global */
+    padding: 6px 0; /* tighter */
+    line-height: 1.1;
+  }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--accent); }
+
+  .menu-open .mobile-menu { display: block; }
+
+  .content {
+    flex: 0.8;
+    padding: 40px 6vw 80px 9vw; /* increase left padding further to shift right */
+    box-sizing: border-box;
+  }
+  .section { 
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    max-width: 540px; /* reduced further from 630px */
+     /* match nav */
+  }
+  .section h1 { 
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    
+    font-weight: 600;
+    font-size: clamp(24px, 2.8vw, 32px); /* slightly larger than nav */
+    line-height: 1.2;
+    margin: 0 0 12px 0;
+    letter-spacing: 0; /* serif default tracking */
+  }
+  .section p { 
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    margin: 0 0 12px 0;
+    color: #000000;
+    font-size: clamp(15px, 1.3vw, 18px); /* a bit bigger than nav */
+    line-height: 1.3;
+  }
+  .placeholder-box {
+    width: 100%;
+    height: 240px;
+    background-color: #1a365d;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  .question-section {
+    margin-top: 20px;
+  }
+  .question-section h2 {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    color: #000000;
+  }
+  .question-form {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .question-form input {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    padding: 12px 0;
+    border: none;
+    border-bottom: 1px solid #999999;
+    background: transparent;
+    color: #000000;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .question-form input:focus {
+    border-bottom-color: #5e96f7;
+  }
+  .question-form input::placeholder {
+    color: #999999;
+  }
+  #questionInput {
+    flex: 0.7;
+    min-width: 250px;
+  }
+  #nicknameInput {
+    width: 140px;
+  }
+  .question-form button {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    padding: 12px 24px;
+    background: transparent;
+    border: none;
+    color: #000000;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  .question-form button:hover {
+    color: #5e96f7;
+  }
+  .question-status {
+    margin-top: 10px;
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    font-size: 14px;
+  }
+  .social-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  .social-links a {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(15px, 1.3vw, 18px);
+    color: #999999;
+    text-decoration: none;
+    border-bottom: none;
+    transition: color 0.2s ease;
+  }
+  .social-links a:hover {
+    color: #5e96f7;
+  }
+  .question-note {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: 14px;
+    color: #666666;
+    margin: 20px 0 0 0;
+  }
+  .question-note a {
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .question-note a:hover {
+    color: #5e96f7;
+  }
+  a { color: inherit; text-decoration: none; border-bottom: 1px solid rgba(0,0,0,0.12); }
+  a:hover { border-bottom-color: rgba(0,0,0,0.35); }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .page { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      height: auto;
+      position: relative;
+      padding: 24px 20px 0 20px;
+      gap: 0;
+    }
+    .menu-toggle { display: block; }
+    .nav { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      display: none; 
+    }
+    .content { padding: 20px; }
+    .name { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      font-size: 14px; 
+      letter-spacing: 0.04em; 
+      line-height: 1.15; 
+      margin: 0; 
+    }
+    .clock { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      font-style: normal; 
+      font-size: 14px; 
+      letter-spacing: 0.04em; 
+      line-height: 1.15; 
+      margin: 0; 
+    }
+    .section { 
+      font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  
+      max-width: 540px; 
+    }
+    .section h1 { 
+      font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  
+      font-size: 22px; 
+    }
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    #questionInput, #nicknameInput {
+      width: 100%;
+      min-width: auto;
+    }
+  }
+</style>
 </head>
-
 <body>
-    <nav>
-        <div class="logo"><a href="index.html">Aryaman Khandelwal</a></div>
-        <div class="nav-items">
-            <!-- <a href="blog.html">Blog<a> -->
-        </div>
-    </nav>
-
-    <section class="main">
-        <div class="main-container">
-            <div class="about-collapsible" style="margin-bottom:1.5rem;margin-top:2rem;">
-                <button id="aboutToggle" class="about-toggle" aria-expanded="true" style="background:none;border:none;display:flex;align-items:center;cursor:pointer;padding:0;">
-                    [About]
-                </button>
-                <div id="aboutContent" class="about-content" style="margin-top:0.5em;">
-                    I'm currently in a corporate development and product leadership role at Astra Tech, where I am building MENA's largest AI-native finance platform.<br><br>
-                    I began my career as a tech investment banker at Nomura in SF, advising exciting companies of various sizes on acquisitions and capital raises. I went to UCLA, where I studied Statistics and Economics.<br><br>
-                    I keenly continue to explore the intersection of product, tech, and finance. My experience and areas of interest lie primarily in fintech, deep tech, and sports + media.<br><br>
-                    I'm originally from India and currently live in Dubai.
-                </div>
-            </div>
-            <!-- About Collapsible End -->
-            
-            <div class="mentoring-collapsible" style="margin-bottom:1.5rem;">
-                <button id="mentoringToggle" class="mentoring-toggle" aria-expanded="true" style="background:none;border:none;display:flex;align-items:center;cursor:pointer;padding:0;">
-                    [Jester in a Patagonia]
-                </button>
-                <div id="mentoringContent" class="mentoring-content" style="margin-top:0.5em;">
-                    <form id="questionForm">
-                        <input type="text" id="questionInput" placeholder="Ask me a question about uni or careers (soon)" required style="width:58%;padding:8px;background:transparent;color:#fff;border:none;border-bottom:1px solid #555;border-radius:0;outline:none;">
-                        <div class="mobile-form-row">
-                            <input type="text" id="nicknameInput" placeholder="Nickname (optional)" style="width:25%;padding:8px;background:transparent;color:#fff;border:none;border-bottom:1px solid #555;border-radius:0;outline:none;">
-                            <button type="submit" style="padding:8px 16px;background:transparent;border:none;border-radius:0;cursor:pointer;transition:color 0.2s ease;font-size:0.85rem;">Submit</button>
-                        </div>
-                    </form>
-                    <div id="questionStatus" style="margin-top:8px;color:#c00;"></div>
-                    <div style="margin-top:12px;">
-                        <span id="missionToggle" style="text-decoration:underline;cursor:pointer;">Mission</span>
-                        <span style="margin-left:20px;">
-                            <a href="forum.html" style="text-decoration:underline;">Jester's Courtyard</a>
-                        </span>
-                        <div id="missionContent" style="display:none;margin-top:8px;margin-left:1.5em;color:#fff;">
-                            When I was recruiting for finance and tech, I was lost. I started this to be the "big brother" I wish I had. 3 years on, I've mentored over 50 students, with several receiving offers from institutions such as Bank of America, BCG, and Province Firm.<br><br>
-                            > 1-on-1 mentoring sessions<br>
-                            > Resume building help<br>
-                            > Interview guidance and prep<br>
-                            > Networking opportunities<br><br>
-                            <a href="https://www.linkedin.com/company/jesterinapatagonia/" target="_blank" style="text-decoration:underline;">LinkedIn</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Mentoring Collapsible End -->
-            
-            <div class="column-first" style="text-align:left;">
-                <p>
-                    <!-- About text moved to collapsible section above -->
-                </p>
-
-            </div>
-            
-            <div class="blog-collapsible" style="margin-bottom:1.5rem;">
-                <button id="blogToggle" class="blog-toggle" aria-expanded="false" style="background:none;border:none;display:flex;align-items:center;cursor:pointer;padding:0;">
-                    [Blog]
-                </button>
-            </div>
-            <!-- Blog Collapsible End -->
-            
-            <div class="projects-collapsible" style="margin-bottom:1.5rem;">
-                <button id="projectsToggle" class="projects-toggle" aria-expanded="false" style="background:none;border:none;display:flex;align-items:center;cursor:pointer;padding:0;">
-                    [Projects]
-                </button>
-                <div id="projectsContent" class="projects-content" style="margin-top:0.5em;display:none;">
-                    I've started to love building software from scratch by myself.<br><br>
-                    > <a href="https://github.com/aryamankhandelwal/Maribor" target="_blank" style="text-decoration:underline;">Maribor</a> [beta]: A second brain. Starting with a simple to do app<br>
-                    > Sachify [in dev]: Personal note-taker to organise my work life<br>
-                    > This website: Yes, everything in here (including the Courtyard)
-                </div>
-            </div>
-            <!-- Projects Collapsible End -->
-            
-            <div class="interests-collapsible" style="margin-bottom:1.5rem;">
-                <button id="interestsToggle" class="interests-toggle" aria-expanded="false" style="background:none;border:none;display:flex;align-items:center;cursor:pointer;padding:0;">
-                    [Interests]
-                </button>
-                <div id="interestsContent" class="interests-content" style="margin-top:0.5em;display:none;">
-                    <a href="https://hevy.com/user/aryamankhandelwal" target="_blank">Weightlifting</a> keeps me sane, and I received my personal trainer certification during the pandemic. I also love listening to <a href="https://open.spotify.com/user/aryamankhandelwal?si=105bbe2379374194" target="_blank">music</a> of all genres. I'm always watching sports: football (Chelsea), cricket (India), basketball (Grizzlies), American football (49ers).<br><br>
-                    I'm passionate about helping other founders and am actively exploring angel investing.
-                </div>
-            </div>
-            <!-- Interests Collapsible End -->
-            
-            <div class="tracker-collapsible" style="margin-bottom:1.5rem;">
-                <button id="trackerToggle" class="tracker-toggle" aria-expanded="false" style="background:none;border:none;display:flex;align-items:center;cursor:pointer;padding:0;">
-                    [Tracker]
-                </button>
-                <div id="trackerContent" class="tracker-content" style="margin-top:0.5em;display:none;margin-left:1.5em;">
-                    As an aspiring early-stage investor, I like to keep an eye on disruptive emerging tech.<br><br>
-                    > Fintech: <a href="peekmoney.html">Peek Money</a><br>
-                    > Deep tech: <a href="aliceandbob.html">Alice & Bob</a><br>
-                    > Media: <a href="qloo.html">Qloo</a><br>
-                    > <a href="archive.html">Archive</a>
-                </div>
-                        </div>
-            <!-- Tracker Collapsible End -->
-            
-            <div class="social-links" style="text-align:left;margin-bottom:1.5rem;">
-                <a href="https://x.com/khandelwalinnit" target="_blank" style="text-decoration:underline;">X</a> 
-                <a href="https://www.linkedin.com/in/aryamankhandelwal/" target="_blank" style="text-decoration:underline;">LinkedIn</a> 
-                <a href="https://github.com/aryamankhandelwal" target="_blank" style="text-decoration:underline;">Github</a>
-            </div>
-            
- 
-
-    </section>
-</body>
-<script>
-// Typewriter Animation
-function typeWriter(element, text, speed = 100) {
-    let i = 0;
-    element.innerHTML = '';
-    element.style.opacity = '1';
-    element.style.whiteSpace = 'nowrap';
-    element.style.overflow = 'hidden';
-    
-    function type() {
-        if (i < text.length) {
-            element.innerHTML = text.substring(0, i + 1) + '<span class="blinking-cursor">_</span>';
-            i++;
-            setTimeout(type, speed);
-        } else {
-            // Keep the blinking cursor after typing is complete
-            element.innerHTML = text + '<span class="blinking-cursor">_</span>';
-            
-            // Remove the cursor after 10 seconds
-            setTimeout(() => {
-                element.innerHTML = text;
-            }, 10000);
-        }
-    }
-    
-    type();
-}
-
-// Initialize typewriter effect when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, looking for logo element...');
-    const logoElement = document.querySelector('.logo a');
-    if (logoElement) {
-        console.log('Logo element found, starting animation...');
-        const originalText = logoElement.textContent;
-        console.log('Original text:', originalText);
+  <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">+</button>
+  <div class="page">
+    <aside class="sidebar" aria-label="Site identity">
+      <div class="name"><a href="/index.html">ARYAMAN
+KHANDELWAL</a></div>
+      <div class="clock" id="dubai-clock" aria-label="Local time (Dubai, 24h)">17:00:00</div>
+      <nav class="nav" aria-label="Primary">
+        <a href="/blog.html">Blog</a>
+        <a href="/forum.html">Jester's Courtyard</a>
+        <a href="/tracker.html">Tracker</a>
+      </nav>
+    </aside>
+    <main class="content" id="main-content">
+      <section class="section" aria-labelledby="about-heading">
+        <div class="placeholder-box"></div>
         
-        typeWriter(logoElement, originalText, 120); // 120ms per character for ~2 seconds total
-    } else {
-        console.log('Logo element not found!');
-    }
-});
+        <p>I'm a lifelong generalist with specific focus areas by nurture. I'm fascinated at the opportunity that arises in the intersection of product, tech, and finance.</p>
+        <p>I'm currently in a corporate development and product leadership at <a href="https://astratech.ae/" style="color: #999999; text-decoration: none; border-bottom: none; transition: color .2s ease;" onmouseover="this.style.color='#5e96f7'" onmouseout="this.style.color='#999999'">Astra Tech</a>, where I'm building an AI-native platform to democratise financial services in MENA.</p>
+        <p>I began my career in investment banking at <a href="https://www.nomuraholdings.com/en/services/wholesale/ib.html" style="color: #999999; text-decoration: none; border-bottom: none; transition: color .2s ease;" onmouseover="this.style.color='#5e96f7'" onmouseout="this.style.color='#999999'">Nomura</a> in San Francisco, advising companies of various sizes on acquisitions and capital raises. Before that, I studied Statistics and Economics at <a href="https://www.ucla.edu/" style="color: #999999; text-decoration: none; border-bottom: none; transition: color .2s ease;" onmouseover="this.style.color='#5e96f7'" onmouseout="this.style.color='#999999'">UCLA</a>.</p>
+        <p>My experience and areas of interest span fintech, deep tech, sports, and media. I'm originally from India.</p>      
+        <div class="question-section">
+          
+          <form id="questionForm" class="question-form">
+            <div class="form-row">
+              <input type="text" id="questionInput" placeholder="Ask me a question about uni or careers (soon)" required>
+              <input type="text" id="nicknameInput" placeholder="Nickname (optional)">
+              <button type="submit">Submit</button>
+            </div>
+          </form>
+          <div id="questionStatus" class="question-status"></div>
+          <div class="social-links">
+            <a href="https://x.com/khandelwalinnit" target="_blank">X</a>
+            <a href="https://www.linkedin.com/in/aryamankhandelwal/" target="_blank">LinkedIn</a>
+            <a href="https://github.com/aryamankhandelwal" target="_blank">GitHub</a>
+          </div>
+          
+        </div>
+      </section>
+    </main>
+  </div>
 
-// --- Question Bar Submission Logic ---
-document.getElementById('questionForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const question = document.getElementById('questionInput').value.trim();
-    const nickname = document.getElementById('nicknameInput').value.trim();
-    const statusDiv = document.getElementById('questionStatus');
-    statusDiv.textContent = '';
-    if (!question) {
-        statusDiv.textContent = 'Please enter a question.';
-        return;
-    }
-    try {
-        const res = await fetch('https://personalwebsite-xzmk.onrender.com/questions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: question, nickname: nickname || null })
+  <div class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
+    <a href="/blog.html">Blog</a>
+    <a href="/forum.html">Jester's Courtyard</a>
+    <a href="/tracker.html">Tracker</a>
+  </div>
+
+  <script>
+    (function() {
+      // Dubai clock
+      const el = document.getElementById('dubai-clock');
+      if (el) {
+        const fmt = new Intl.DateTimeFormat('en-GB', { 
+          timeZone: 'Asia/Dubai', 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          second: '2-digit', 
+          hour12: false 
         });
-        if (!res.ok) throw new Error('Failed to submit question.');
-        document.getElementById('questionInput').value = '';
-        document.getElementById('nicknameInput').value = '';
-        statusDiv.style.color = '#090';
-        statusDiv.textContent = 'Question submitted! Check the Courtyard soon for answers.';
-    } catch (err) {
-        statusDiv.style.color = '#c00';
-        statusDiv.textContent = 'Error: ' + err.message;
-    }
-});
-
-// --- BEGIN: Wake up backend on page load ---
-(function wakeBackend() {
-    // This fetches a harmless endpoint to wake up the Render backend/database
-    // It runs in the background and does not block UI or affect state
-    fetch('https://personalwebsite-xzmk.onrender.com/ping').catch(() => {});
-})();
-// --- END: Wake up backend on page load ---
-
-// --- About Collapsible Toggle ---
-(function() {
-    const toggleBtn = document.getElementById('aboutToggle');
-    const aboutContent = document.getElementById('aboutContent');
-    const arrow = toggleBtn.querySelector('.square-arrow');
-    let open = true;
-    toggleBtn.addEventListener('click', function() {
-        open = !open;
-        if (open) {
-            aboutContent.style.display = '';
-            toggleBtn.setAttribute('aria-expanded', 'true');
-            arrow.classList.remove('collapsed');
-            arrow.classList.add('expanded');
-        } else {
-            aboutContent.style.display = 'none';
-            toggleBtn.setAttribute('aria-expanded', 'false');
-            arrow.classList.remove('expanded');
-            arrow.classList.add('collapsed');
+        function update() {
+          const parts = fmt.formatToParts(new Date());
+          let hh = '00', mm = '00', ss = '00';
+          for (const p of parts) { 
+            if (p.type === 'hour') hh = p.value; 
+            if (p.type === 'minute') mm = p.value; 
+            if (p.type === 'second') ss = p.value; 
+          }
+          el.textContent = `${hh}:${mm}:${ss}`;
         }
-    });
-})();
+        update();
+        setInterval(update, 1000);
+      }
 
-// --- Mentoring Collapsible Toggle ---
-(function() {
-    const toggleBtn = document.getElementById('mentoringToggle');
-    const mentoringContent = document.getElementById('mentoringContent');
-    const arrow = toggleBtn.querySelector('.square-arrow');
-    let open = true;
-    toggleBtn.addEventListener('click', function() {
-        open = !open;
-        if (open) {
-            mentoringContent.style.display = '';
-            toggleBtn.setAttribute('aria-expanded', 'true');
-            arrow.classList.remove('collapsed');
-            arrow.classList.add('expanded');
-        } else {
-            mentoringContent.style.display = 'none';
-            toggleBtn.setAttribute('aria-expanded', 'false');
-            arrow.classList.remove('expanded');
-            arrow.classList.add('collapsed');
-        }
-    });
-})();
+      // Mobile menu toggle
+      const toggle = document.getElementById('menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+      function openMenu() {
+        document.body.classList.add('menu-open');
+        toggle.textContent = '×';
+        toggle.setAttribute('aria-label', 'Close menu');
+        toggle.setAttribute('aria-expanded', 'true');
+        menu.hidden = false;
+      }
+      function closeMenu() {
+        document.body.classList.remove('menu-open');
+        toggle.textContent = '+';
+        toggle.setAttribute('aria-label', 'Open menu');
+        toggle.setAttribute('aria-expanded', 'false');
+        menu.hidden = true;
+      }
+      if (toggle && menu) {
+        toggle.addEventListener('click', function() {
+          if (document.body.classList.contains('menu-open')) closeMenu(); else openMenu();
+        });
 
-// --- Mission Toggle ---
-(function() {
-    const toggleBtn = document.getElementById('missionToggle');
-    const missionContent = document.getElementById('missionContent');
-    let open = false;
-    toggleBtn.addEventListener('click', function() {
-        open = !open;
-        if (open) {
-            missionContent.style.display = '';
-        } else {
-            missionContent.style.display = 'none';
-        }
-    });
-})();
+        // Close on link click
+        menu.addEventListener('click', function(e) { 
+          if (e.target.tagName === 'A') closeMenu(); 
+        });
+      }
 
-// --- Blog Collapsible Toggle ---
-(function() {
-    const toggleBtn = document.getElementById('blogToggle');
-    toggleBtn.addEventListener('click', function() {
-        window.location.href = 'blog.html';
-    });
-})();
-
-// --- Projects Collapsible Toggle ---
-(function() {
-    const toggleBtn = document.getElementById('projectsToggle');
-    const projectsContent = document.getElementById('projectsContent');
-    const arrow = toggleBtn.querySelector('.square-arrow');
-    let open = false; // Starts closed
-    toggleBtn.addEventListener('click', function() {
-        open = !open;
-        if (open) {
-            projectsContent.style.display = '';
-            toggleBtn.setAttribute('aria-expanded', 'true');
-            arrow.classList.remove('collapsed');
-            arrow.classList.add('expanded');
-        } else {
-            projectsContent.style.display = 'none';
-            toggleBtn.setAttribute('aria-expanded', 'false');
-            arrow.classList.remove('expanded');
-            arrow.classList.add('collapsed');
-        }
-    });
-})();
-
-// --- Interests Collapsible Toggle ---
-(function() {
-    const toggleBtn = document.getElementById('interestsToggle');
-    const interestsContent = document.getElementById('interestsContent');
-    const arrow = toggleBtn.querySelector('.square-arrow');
-    let open = false; // Starts closed
-    toggleBtn.addEventListener('click', function() {
-        open = !open;
-        if (open) {
-            interestsContent.style.display = '';
-            toggleBtn.setAttribute('aria-expanded', 'true');
-            arrow.classList.remove('collapsed');
-            arrow.classList.add('expanded');
-        } else {
-            interestsContent.style.display = 'none';
-            toggleBtn.setAttribute('aria-expanded', 'false');
-            arrow.classList.remove('expanded');
-            arrow.classList.add('collapsed');
-        }
-    });
-})();
-
-// --- Tracker Collapsible Toggle ---
-(function() {
-    const toggleBtn = document.getElementById('trackerToggle');
-    const trackerContent = document.getElementById('trackerContent');
-    const arrow = toggleBtn.querySelector('.square-arrow');
-    let open = false; // Starts closed
-    toggleBtn.addEventListener('click', function() {
-        open = !open;
-        if (open) {
-            trackerContent.style.display = '';
-            toggleBtn.setAttribute('aria-expanded', 'true');
-            arrow.classList.remove('collapsed');
-            arrow.classList.add('expanded');
-        } else {
-            trackerContent.style.display = 'none';
-            toggleBtn.setAttribute('aria-expanded', 'false');
-            arrow.classList.remove('expanded');
-            arrow.classList.add('collapsed');
-        }
-    });
-})();
-
-
-</script>
+      // Question form submission
+      const questionForm = document.getElementById('questionForm');
+      if (questionForm) {
+        questionForm.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          const question = document.getElementById('questionInput').value.trim();
+          const nickname = document.getElementById('nicknameInput').value.trim();
+          const statusDiv = document.getElementById('questionStatus');
+          statusDiv.textContent = '';
+          if (!question) {
+            statusDiv.textContent = 'Please enter a question.';
+            statusDiv.style.color = '#c00';
+            return;
+          }
+          try {
+            const res = await fetch('https://personalwebsite-xzmk.onrender.com/questions', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: question, nickname: nickname || null })
+            });
+            if (!res.ok) throw new Error('Failed to submit question.');
+            document.getElementById('questionInput').value = '';
+            document.getElementById('nicknameInput').value = '';
+            statusDiv.style.color = '#090';
+            statusDiv.textContent = 'Question submitted! Check the Courtyard soon for answers.';
+          } catch (err) {
+            statusDiv.style.color = '#c00';
+            statusDiv.textContent = 'Error: ' + err.message;
+          }
+        });
+      }
+    })();
+  </script>
+</body>
 </html>
