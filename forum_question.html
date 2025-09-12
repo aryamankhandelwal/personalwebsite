@@ -693,7 +693,7 @@ KHANDELWAL</a></div>
     let adminToken = '';
 
     async function fetchThread() {
-        const res = await fetch(`http://127.0.0.1:8000/questions/${qid}`);
+        const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`);
         const data = await res.json();
         questionData = data.question;
         
@@ -807,7 +807,7 @@ KHANDELWAL</a></div>
         }
         
         try {
-            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}/answer`, {
+            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}/answer`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
                 body: JSON.stringify({ responder_answer: answer })
@@ -864,7 +864,7 @@ KHANDELWAL</a></div>
         const statusDiv = document.getElementById('modalEditStatus');
         
         try {
-            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}`, {
+            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: newText })
@@ -966,7 +966,7 @@ KHANDELWAL</a></div>
         const statusDiv = document.getElementById('modalReplyEditStatus');
         
         try {
-            const res = await fetch(`http://127.0.0.1:8000/replies/${replyId}`, {
+            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reply_text: newText })
@@ -1002,7 +1002,7 @@ KHANDELWAL</a></div>
         hideAllDropdowns();
         
         try {
-            const res = await fetch(`http://127.0.0.1:8000/replies/${replyId}`, {
+            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}`, {
                 method: 'DELETE',
                 headers: { 'x-admin-token': token }
             });
@@ -1029,7 +1029,7 @@ KHANDELWAL</a></div>
         hideAllDropdowns();
         
         try {
-            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}`, {
+            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`, {
                 method: 'DELETE',
                 headers: { 'x-admin-token': token }
             });
@@ -1072,7 +1072,7 @@ KHANDELWAL</a></div>
         const statusDiv = document.getElementById('modalReplyStatus');
         
         try {
-            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}/replies`, {
+            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}/replies`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reply_text: replyText })
@@ -1123,7 +1123,7 @@ KHANDELWAL</a></div>
         }
         
         try {
-            const res = await fetch(`http://127.0.0.1:8000/replies/${replyId}/admin_answer`, {
+            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}/admin_answer`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
                 body: JSON.stringify({ admin_answer: answer })
@@ -1148,9 +1148,9 @@ KHANDELWAL</a></div>
     
     // --- BEGIN: Wake up backend on page load ---
     (function wakeBackend() {
-        // This fetches a harmless endpoint to wake up the backend/database
+        // This fetches a harmless endpoint to wake up the Render backend/database
         // It runs in the background and does not block UI or affect state
-        fetch('http://127.0.0.1:8000/ping').catch(() => {});
+        fetch('https://personalwebsite-xzmk.onrender.com/ping').catch(() => {});
     })();
     // --- END: Wake up backend on page load ---
     </script>

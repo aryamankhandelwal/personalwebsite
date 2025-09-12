@@ -502,7 +502,7 @@ KHANDELWAL</a></div>
     
     async function fetchQuestions() {
         const skip = (page - 1) * limit;
-        const res = await fetch('http://127.0.0.1:8000/questions?skip=' + skip + '&limit=' + limit);
+        const res = await fetch('https://personalwebsite-xzmk.onrender.com/questions?skip=' + skip + '&limit=' + limit);
         const questions = await res.json();
         totalLoaded = questions.length;
         const list = document.getElementById('questionsList');
@@ -562,7 +562,7 @@ KHANDELWAL</a></div>
             return;
         }
         try {
-            const res = await fetch('http://127.0.0.1:8000/questions', {
+            const res = await fetch('https://personalwebsite-xzmk.onrender.com/questions', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: question, nickname: nickname || null })
@@ -581,7 +581,7 @@ KHANDELWAL</a></div>
     
     // Wake up backend on page load
     (function wakeBackend() {
-                 fetch('http://127.0.0.1:8000/ping').catch(() => {});
+                 fetch('https://personalwebsite-xzmk.onrender.com/ping').catch(() => {});
     })();
     </script>
 </body>
