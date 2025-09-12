@@ -3,109 +3,686 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Question Thread</title>
+    <title>Question Thread — Aryaman Khandelwal</title>
+    <link rel="icon" type="image/x-icon" href="images/header.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="images/header.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&family=Google+Sans+Code:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        .thread-container { max-width: 700px; margin: 40px auto; }
-        .question-main { background: #333; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 18px; padding: 12px 16px; }
-        .reply { background: #333; border-radius: 6px; box-shadow: 0 1px 4px #0001; margin-bottom: 12px; padding: 12px 16px; }
-        .admin-controls { margin-top: 18px; }
-        .admin-controls input { margin-right: 8px; background: #000; border: 1px solid #333; color: #fff; padding: 8px; font-size: 0.85rem; }
-        .reply-form { margin-top: 24px; }
-        .reply-form textarea { width: 100%; min-height: 60px; padding: 8px; background: #000; border: 1px solid #333; color: #fff; font-size: 0.85rem; }
-        .reply-form button { margin-top: 8px; background: transparent; border: 1px solid #fff; color: #fff; padding: 8px 16px; font-size: 0.85rem; cursor: pointer; }
-        .delete-btn { color: #c00; background: none; border: none; cursor: pointer; margin-left: 8px; font-size: 0.85rem; }
-        .edit-btn { color: #4169e1; background: none; border: none; cursor: pointer; margin-left: 8px; font-size: 0.85rem; }
-        .edited-label { color: #888; font-size: 0.9em; margin-left: 6px; }
-        .admin-reply-block { background: #333; padding: 10px; border-radius: 6px; margin-top: 8px; color: #fff; }
-        .back-link {
-            color: #fff !important;
-            text-decoration: underline;
-            font-size: 0.85rem;
+        :root {
+            --bg: #f6f6f6; /* very light grey */
+            --text: #111111;
+            --muted: #999999;
+            --accent: #5e96f7; /* site blue */
+            --card-bg: #e8e8e8; /* lighter grey for question cards */
         }
-        .back-link:hover {
-            color: #8bb3ff !important;
+        html, body {
+            height: 100%;
+        }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.3;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Layout */
+        .page {
+            display: flex;
+            min-height: 100dvh;
+        }
+        .sidebar {
+            width: 10vw;
+            min-width: 120px;
+            max-width: 180px;
+            padding: 48px 16px 24px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0;
+            position: sticky;
+            top: 0;
+            height: 100dvh;
+            box-sizing: border-box;
+        }
+        .name { 
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+            font-weight: 700;
+            font-size: clamp(16px, 1.2vw + 8px, 20px);
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            line-height: 1.1;
+            color: var(--text);
+            white-space: pre-line;
+            margin: 0;
+        }
+        .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
+        .name a:hover, .name a:focus-visible { color: var(--accent); border-bottom: none; }
+
+        .clock { 
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+            font-style: normal;
+            font-weight: 700;
+            font-size: clamp(16px, 1.2vw + 8px, 20px);
+            letter-spacing: 0.02em;
+            line-height: 1.1;
+            margin: 0;
+        }
+
+        /* Desktop nav under clock */
+        .nav { 
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+            margin-top: 10px;
+        }
+        .nav a {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;    
+            display: block;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: none;
+            padding: 2px 0;
+            line-height: 1.1;
+            transition: color .2s ease;
+        }
+        .nav a:hover, .nav a:focus-visible {
+            color: var(--accent);
+        }
+
+        /* Mobile menu toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 12px;
+            z-index: 1001;
+            font-size: 28px;
+            line-height: 1;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            padding: 72px 24px 24px 24px;
+            z-index: 1000;
+            box-sizing: border-box;
+        }
+        .mobile-menu a { 
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+            display: block;
+            font-size: 14px;
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: none;
+            padding: 6px 0;
+            line-height: 1.1;
+        }
+        .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--accent); }
+
+        .menu-open .mobile-menu { display: block; }
+
+        .content {
+            flex: 0.8;
+            padding: 40px 6vw 80px 9vw;
+            box-sizing: border-box;
+        }
+        .section { 
+            font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+            max-width: 540px;
+        }
+
+        /* Forum-specific styles matching blog header */
+        .forum-header {
+            margin-bottom: 20px;
+        }
+        .forum-nav {
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .forum-nav .back-arrow {
+            color: var(--muted);
+            text-decoration: none;
+            border-bottom: none;
+            transition: color .2s ease;
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size: clamp(20px, 2.4vw, 28px);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .forum-nav .back-arrow:hover {
+            color: var(--accent);
+        }
+        .forum-nav .forum-label {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size: clamp(20px, 2.4vw, 28px);
+            color: var(--text);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .section .forum-title {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif !important;
+            font-weight: 400 !important;
+            font-size: clamp(12px, 0.9vw, 14px) !important;
+            line-height: 1.2 !important;
+            margin: 0 0 20px 0 !important;
+            letter-spacing: 0 !important;
+            color: var(--text) !important;
+        }
+        .section .forum-title a {
+            color: var(--muted);
+            text-decoration: none;
+            border-bottom: none;
+            transition: color .2s ease;
+        }
+        .section .forum-title a:hover {
+            color: var(--accent);
+        }
+        .forum-divider {
+            width: 100%;
+            height: 1px;
+            background-color: var(--muted);
+            margin: 0 0 20px 0;
+            opacity: 0.5;
+        }
+
+        /* Question display */
+        .thread-container { 
+            max-width: 540px; 
+        }
+        .question-main { 
+            background: var(--card-bg); 
+            border-radius: 8px; 
+            margin-bottom: 20px; 
+            padding: 20px;
+            position: relative;
+        }
+        .question-text {
+            font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+            font-size: clamp(16px, 1.4vw, 20px);
+            color: var(--text);
+            line-height: 1.4;
+            margin-bottom: 12px;
+            padding-right: 80px;
+        }
+        .question-meta {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(10px, 0.7vw, 12px);
+            color: var(--muted);
+            line-height: 1.2;
+        }
+        .status-unanswered { color: #c00; }
+        .status-answered { color: #090; }
+
+        /* Official answer styling */
+        .official-answer {
+            margin-top: 16px;
+            background: #ddd;
+            padding: 16px;
+            border-radius: 6px;
+            border-left: 4px solid var(--accent);
+        }
+        .official-answer-label {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            color: var(--text);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .official-answer-text {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(12px, 0.9vw, 14px);
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        /* Replies section */
+        .replies-header {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size: clamp(14px, 1.1vw, 16px);
+            color: var(--text);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+        .reply-card { 
+            background: var(--card-bg); 
+            border-radius: 8px; 
+            margin-bottom: 12px; 
+            padding: 16px;
+            position: relative;
+        }
+        .reply-text {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(13px, 1.0vw, 15px);
+            color: var(--text);
+            line-height: 1.3;
+            margin-bottom: 8px;
+            padding-right: 80px;
+        }
+        .reply-meta {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(10px, 0.7vw, 12px);
+            color: var(--muted);
+            line-height: 1.2;
+        }
+
+        /* Admin controls - positioned absolutely in top right */
+        .admin-controls {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .edit-btn, .admin-btn {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px;
+            transition: color .2s ease;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .edit-btn:hover {
+            color: #ffd700;
         }
         .admin-btn:hover {
-            color: #8bb3ff !important;
+            color: var(--accent);
         }
-        .sticky-add-btn { position: fixed; bottom: 32px; right: 32px; background: #fff; color: #000; border: none; border-radius: 50px; padding: 10px 20px; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 8px #0002; z-index: 100; }
-        .sticky-add-btn:hover { background: #000; color: #fff; border: 1px solid #fff; }
+        .delete-btn:hover {
+            color: #c00 !important;
+        }
+
+        /* Dropdown menus */
+        .admin-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 4px;
+            background: var(--bg);
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 4px;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .admin-dropdown button {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 14px;
+            cursor: pointer;
+            padding: 6px 8px;
+            display: block;
+            width: 100%;
+            text-align: left;
+            transition: color .2s ease;
+        }
+        .admin-dropdown button:hover {
+            color: var(--accent);
+        }
+
+        /* Master key input - positioned above Add reply button */
+        .master-key-section-fixed {
+            position: fixed;
+            bottom: 100px;
+            right: 32px;
+            text-align: center;
+            z-index: 99;
+        }
+        .master-key-input {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            width: 200px;
+            padding: 8px 12px;
+            background: var(--bg);
+            border: 1px solid var(--muted);
+            border-radius: 4px;
+            color: var(--text);
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            outline: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .master-key-input:focus {
+            border-color: var(--accent);
+        }
+        .master-key-input::placeholder {
+            color: var(--muted);
+        }
+
+        /* Add reply button */
+        .sticky-add-btn { 
+            position: fixed; 
+            bottom: 32px; 
+            right: 32px; 
+            background: var(--text); 
+            color: var(--bg); 
+            border: none; 
+            border-radius: 50px; 
+            padding: 12px 20px; 
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px); 
+            cursor: pointer; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            z-index: 100; 
+            transition: all .2s ease;
+        }
+        .sticky-add-btn:hover { 
+            background: var(--accent); 
+            color: #fff;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: var(--bg);
+            padding: 32px 24px;
+            border-radius: 10px;
+            max-width: 400px;
+            width: 90vw;
+            border: 1px solid #ddd;
+        }
+        .modal h3 {
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-weight: 700;
+            font-size: clamp(16px, 1.2vw + 8px, 20px);
+            color: var(--text);
+            margin-bottom: 1rem;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+        .modal textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--muted);
+            color: var(--text);
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(13px, 1.0vw, 15px);
+            outline: none;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+        .modal textarea:focus {
+            border-bottom-color: var(--accent);
+        }
+        .modal-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--text);
+            color: var(--text);
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            cursor: pointer;
+            transition: all .2s ease;
+            margin-right: 8px;
+        }
         .modal-btn:hover {
-            color: #8bb3ff !important;
+            background: var(--text);
+            color: var(--bg);
+        }
+        .modal-status {
+            margin-top: 12px;
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            color: #c00;
+        }
+
+        /* Status messages */
+        .admin-status {
+            margin-top: 8px;
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            color: #c00;
+        }
+
+        .edited-label {
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .page { flex-direction: column; }
+            .sidebar {
+                width: 100%;
+                max-width: none;
+                min-width: 0;
+                height: auto;
+                position: relative;
+                padding: 24px 20px 0 20px;
+                gap: 0;
+            }
+            .menu-toggle { display: block; }
+            .nav { 
+                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+                display: none; 
+            }
+            .content { padding: 20px; }
+            .name { 
+                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+                font-size: 14px; 
+                letter-spacing: 0.04em; 
+                line-height: 1.15; 
+                margin: 0; 
+            }
+            .clock { 
+                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+                font-style: normal; 
+                font-size: 14px; 
+                letter-spacing: 0.04em; 
+                line-height: 1.15; 
+                margin: 0; 
+            }
+            .section { 
+                font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  
+                max-width: 540px; 
+            }
+            .question-text {
+                padding-right: 60px;
+            }
+            .reply-text {
+                padding-right: 60px;
+            }
+            .admin-controls {
+                top: 8px;
+                right: 8px;
+                gap: 4px;
+            }
+            .master-key-section-fixed {
+                bottom: 80px;
+                right: 20px;
+            }
+            .master-key-input {
+                width: 180px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="logo"><a href="index.html">Aryaman Khandelwal</a></div>
-    </nav>
-    <section class="main">
-        <div class="main-container">
-            <div class="blog-first" style="margin-top:2rem;">
-                <div style="margin-bottom:1rem;">
-                    <span style="color:#fff;font-size:0.85rem;">< </span><a href="forum.html" class="back-link">Back</a>
+    <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">+</button>
+    <div class="page">
+        <aside class="sidebar" aria-label="Site identity">
+            <div class="name"><a href="/index.html">ARYAMAN
+KHANDELWAL</a></div>
+            <div class="clock" id="dubai-clock" aria-label="Local time (Dubai, 24h)">17:00:00</div>
+            <nav class="nav" aria-label="Primary">
+                <a href="/blog.html">Blog</a>
+                <a href="/forum.html">Jester's Courtyard</a>
+                <a href="/builds.html">Builds</a>
+                <a href="/tracker.html">Tracker</a>
+            </nav>
+        </aside>
+        <main class="content" id="main-content">
+            <section class="section" aria-labelledby="forum-heading">
+                <div class="forum-header">
+                    <div class="forum-nav">
+                        <a href="/forum.html" class="back-arrow"><</a>
+                        <span class="forum-label">JESTER'S COURTYARD</span>
+                    </div>
+                    <h1 class="forum-title">When I was recruiting for finance and tech, I was lost. I started this to be the "big brother" I wish I had. 3 years on, I've mentored over 50 students, with several receiving offers from institutions such as Bank of America, BCG, and Province Firm. Talk to me about 1-on-1 mentoring sessions, resume building help, interview guidance and prep, and networking opportunities. Contact me <a href="https://www.linkedin.com/company/jesterinapatagonia/" target="_blank">here</a></h1>
+                    <div class="forum-divider"></div>
                 </div>
-                <div class="thread-container" style="text-align:left;">
+                
+                <div class="thread-container">
+                    <!-- Main question -->
                     <div id="questionBlock"></div>
                     
                     <!-- Replies Section -->
                     <div id="repliesSection" style="margin-top: 24px;">
-                        <h3 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Replies</h3>
+                        <h3 class="replies-header">Replies</h3>
                         <div id="repliesList"></div>
                     </div>
-                    
-
                 </div>
-            </div>
-        </div>
-    </section>
-    <div style="position:fixed;bottom:80px;right:32px;text-align:center;">
-        <input type="password" id="adminTokenInput" placeholder="Admin key" style="width:auto;padding:10px 20px;background:transparent;border:none;color:#fff;font-size:0.85rem;outline:none;text-align:center;">
-        <div id="adminStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+            </section>
+        </main>
     </div>
+
+    <div class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
+        <a href="/blog.html">Blog</a>
+        <a href="/forum.html">Jester's Courtyard</a>
+        <a href="/builds.html">Builds</a>
+        <a href="/tracker.html">Tracker</a>
+    </div>
+
+    <!-- Master key input section above Add reply button -->
+    <div class="master-key-section-fixed">
+        <input type="password" id="adminTokenInput" placeholder="Master key" class="master-key-input">
+        <div id="adminStatus" class="admin-status"></div>
+    </div>
+
     <button class="sticky-add-btn" onclick="openAddReplyModal()">+ Add a reply</button>
+    
     <!-- Modal for adding reply -->
-    <div id="addReplyModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:200;align-items:center;justify-content:center;">
-        <div style="background:#000;padding:32px 24px;border-radius:10px;max-width:400px;width:90vw;border:1px solid #333;">
-            <h3 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Add a Reply</h3>
+    <div id="addReplyModal" style="display:none;" class="modal">
+        <div class="modal-content">
+            <h3>Add a Reply</h3>
             <form id="modalReplyForm">
-                <textarea id="modalReplyInput" placeholder="Your reply..." required style="width:100%;min-height:80px;padding:8px;margin-bottom:10px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;resize:vertical;"></textarea>
-                <button type="submit" class="modal-btn" style="padding:8px 16px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Submit</button>
-                <button type="button" onclick="closeAddReplyModal()" class="modal-btn" style="padding:8px 16px;margin-left:8px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Cancel</button>
+                <textarea id="modalReplyInput" placeholder="Your reply..." required></textarea>
+                <button type="submit" class="modal-btn">Submit</button>
+                <button type="button" onclick="closeAddReplyModal()" class="modal-btn">Cancel</button>
             </form>
-            <div id="modalReplyStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+            <div id="modalReplyStatus" class="modal-status"></div>
         </div>
     </div>
+
     <!-- Modal for editing question -->
-    <div id="editQuestionModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:200;align-items:center;justify-content:center;">
-        <div style="background:#000;padding:32px 24px;border-radius:10px;max-width:400px;width:90vw;border:1px solid #333;">
-            <h3 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Edit Question</h3>
+    <div id="editQuestionModal" style="display:none;" class="modal">
+        <div class="modal-content">
+            <h3>Edit Question</h3>
             <form id="modalEditForm">
-                <textarea id="modalEditInput" placeholder="Edit your question..." required style="width:100%;min-height:80px;padding:8px;margin-bottom:10px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;resize:vertical;"></textarea>
-                <button type="submit" class="modal-btn" style="padding:8px 16px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Submit</button>
-                <button type="button" onclick="closeEditQuestionModal()" class="modal-btn" style="padding:8px 16px;margin-left:8px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Cancel</button>
+                <textarea id="modalEditInput" placeholder="Edit your question..." required></textarea>
+                <button type="submit" class="modal-btn">Submit</button>
+                <button type="button" onclick="closeEditQuestionModal()" class="modal-btn">Cancel</button>
             </form>
-            <div id="modalEditStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+            <div id="modalEditStatus" class="modal-status"></div>
         </div>
     </div>
+
     <!-- Modal for editing reply -->
-    <div id="editReplyModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:#0008;z-index:200;align-items:center;justify-content:center;">
-        <div style="background:#000;padding:32px 24px;border-radius:10px;max-width:400px;width:90vw;border:1px solid #333;">
-            <h3 style="color:#fff;font-size:0.85rem;margin-bottom:1rem;">Edit Reply</h3>
+    <div id="editReplyModal" style="display:none;" class="modal">
+        <div class="modal-content">
+            <h3>Edit Reply</h3>
             <form id="modalReplyEditForm">
-                <textarea id="modalReplyEditInput" placeholder="Edit your reply..." required style="width:100%;min-height:80px;padding:8px;margin-bottom:10px;background:transparent;border:none;border-bottom:1px solid #fff;color:#fff;font-size:0.85rem;outline:none;resize:vertical;"></textarea>
-                <button type="submit" class="modal-btn" style="padding:8px 16px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Submit</button>
-                <button type="button" onclick="closeEditReplyModal()" class="modal-btn" style="padding:8px 16px;margin-left:8px;background:transparent;border:none;color:#fff;font-size:0.85rem;cursor:pointer;">Cancel</button>
+                <textarea id="modalReplyEditInput" placeholder="Edit your reply..." required></textarea>
+                <button type="submit" class="modal-btn">Submit</button>
+                <button type="button" onclick="closeEditReplyModal()" class="modal-btn">Cancel</button>
             </form>
-            <div id="modalReplyEditStatus" style="margin-top:8px;color:#c00;font-size:0.85rem;"></div>
+            <div id="modalReplyEditStatus" class="modal-status"></div>
         </div>
     </div>
+
     <script>
+    (function() {
+        // Dubai clock
+        const el = document.getElementById('dubai-clock');
+        if (el) {
+            const fmt = new Intl.DateTimeFormat('en-GB', { 
+                timeZone: 'Asia/Dubai', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit', 
+                hour12: false 
+            });
+            function update() {
+                const parts = fmt.formatToParts(new Date());
+                let hh = '00', mm = '00', ss = '00';
+                for (const p of parts) { 
+                    if (p.type === 'hour') hh = p.value; 
+                    if (p.type === 'minute') mm = p.value; 
+                    if (p.type === 'second') ss = p.value; 
+                }
+                el.textContent = `${hh}:${mm}:${ss}`;
+            }
+            update();
+            setInterval(update, 1000);
+        }
+
+        // Mobile menu toggle
+        const toggle = document.getElementById('menu-toggle');
+        const menu = document.getElementById('mobile-menu');
+        function openMenu() {
+            document.body.classList.add('menu-open');
+            toggle.textContent = '×';
+            toggle.setAttribute('aria-label', 'Close menu');
+            toggle.setAttribute('aria-expanded', 'true');
+            menu.hidden = false;
+        }
+        function closeMenu() {
+            document.body.classList.remove('menu-open');
+            toggle.textContent = '+';
+            toggle.setAttribute('aria-label', 'Open menu');
+            toggle.setAttribute('aria-expanded', 'false');
+            menu.hidden = true;
+        }
+        if (toggle && menu) {
+            toggle.addEventListener('click', function() {
+                if (document.body.classList.contains('menu-open')) closeMenu(); else openMenu();
+            });
+
+            // Close on link click
+            menu.addEventListener('click', function(e) { 
+                if (e.target.tagName === 'A') closeMenu(); 
+            });
+        }
+    })();
+
     // --- Helpers ---
     function getQueryParam(name) {
         const url = new URL(window.location.href);
@@ -116,36 +693,41 @@
     let adminToken = '';
 
     async function fetchThread() {
-        const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`);
+        const res = await fetch(`http://127.0.0.1:8000/questions/${qid}`);
         const data = await res.json();
         questionData = data.question;
+        
         // Render question
-        let questionHtml = `<div class="question-main" style="position:relative;">
-            <div style="position:absolute;top:8px;right:8px;display:flex;gap:8px;">
-                <button onclick="showQuestionEditBox()" style="background:none;border:none;color:#fff;font-size:0.9rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#ffd700'" onmouseout="this.style.color='#fff'">/</button>
+        let questionHtml = `<div class="question-main">
+            <div class="admin-controls">
+                <button onclick="showQuestionEditBox()" class="edit-btn" title="Edit question">✎</button>
                 <div style="position:relative;">
-                    <button onclick="toggleAdminDropdown('question')" style="background:none;border:none;color:#fff;font-size:0.8rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">·</button>
-                    <div id="questionAdminDropdown" style="display:none;position:absolute;top:0;left:100%;margin-left:8px;background:#333;border-radius:4px;padding:4px;z-index:100;">
-                        <button onclick="showQuestionAnswerBox()" style="background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;padding:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
-                        <button onclick="deleteThread()" style="background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;padding:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#c00'" onmouseout="this.style.color='#fff'">×</button>
+                    <button onclick="toggleAdminDropdown('question')" class="admin-btn" title="Admin actions">⋯</button>
+                    <div id="questionAdminDropdown" class="admin-dropdown">
+                        <button onclick="showQuestionAnswerBox()">Add Official Answer</button>
+                        <button onclick="deleteThread()" class="delete-btn">Delete Thread</button>
                     </div>
                 </div>
             </div>
-            <div style="font-size:0.85rem;color:#fff;padding-right:120px;">${data.question.text}</div>
-            <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
-                Status: <span class="${data.question.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${data.question.status.charAt(0).toUpperCase() + data.question.status.slice(1)}</span>
+            <div class="question-text">${data.question.text}</div>
+            <div class="question-meta">
+                <span class="${data.question.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${data.question.status.charAt(0).toUpperCase() + data.question.status.slice(1)}</span>
                 &nbsp;|&nbsp;
                 ${data.question.nickname ? `by ${data.question.nickname} &nbsp;|&nbsp;` : ''}
                 ${new Date(data.question.timestamp).toLocaleString()}
                 ${data.question.edited ? '<span class="edited-label">(Edited)</span>' : ''}
             </div>
-            ${data.question.responder_answer ? `<div style='margin-top:12px;background:#333;padding:10px;border-radius:6px;color:#fff;font-size:0.85rem;'><b>Official Answer:</b><br>${data.question.responder_answer}</div>` : ''}
-            <div id="questionAnswerBox" style="display:none;margin-top:12px;">
-                <textarea id="questionAnswerInput" placeholder="Type your answer..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
-                <button onclick="submitQuestionAnswer()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">Submit Answer</button>
-                <button onclick="hideQuestionAnswerBox()" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;margin-left:8px;">Cancel</button>
+            ${data.question.responder_answer ? `<div class="official-answer">
+                <div class="official-answer-label">Official Answer</div>
+                <div class="official-answer-text">${data.question.responder_answer}</div>
+            </div>` : ''}
+            <div id="questionAnswerBox" style="display:none;margin-top:16px;">
+                <textarea id="questionAnswerInput" placeholder="Type your official answer..." style="width:100%;min-height:80px;padding:12px;background:transparent;border:none;border-bottom:1px solid var(--muted);color:var(--text);font-family:'Roboto',system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:clamp(13px,1.0vw,15px);outline:none;box-sizing:border-box;resize:vertical;"></textarea>
+                <div style="margin-top:12px;">
+                    <button onclick="submitQuestionAnswer()" class="modal-btn">Submit Answer</button>
+                    <button onclick="hideQuestionAnswerBox()" class="modal-btn">Cancel</button>
+                </div>
             </div>
-
         </div>`;
         document.getElementById('questionBlock').innerHTML = questionHtml;
         
@@ -156,47 +738,55 @@
     function renderReplies(replies) {
         const repliesList = document.getElementById('repliesList');
         if (replies.length === 0) {
-            repliesList.innerHTML = '<div style="color:#888;font-size:0.85rem;">No replies yet.</div>';
+            repliesList.innerHTML = '<div style="color:var(--muted);font-size:clamp(13px,1.0vw,15px);font-family:\'Roboto\',system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif;">No replies yet.</div>';
             return;
         }
         
         let repliesHtml = '';
         replies.forEach(reply => {
-            repliesHtml += `<div class="reply" style="position:relative;" data-reply-id="${reply.id}">
-                                  <div class="reply-text" style="font-size:0.85rem;color:#fff;padding-right:120px;">${reply.reply_text}</div>
-                <div style="color:#fff;font-size:0.75rem;margin-top:4px;">
-                    ${new Date(reply.timestamp).toLocaleString()}
-                    ${reply.edited ? '<span class="edited-label">(edited)</span>' : ''}
-                </div>
-                ${reply.admin_reply ? `<div style='margin-top:8px;background:#333;padding:8px;border-radius:4px;color:#fff;font-size:0.8rem;'><b>Official Answer:</b><br>${reply.admin_reply.admin_answer}</div>` : ''}
-                <div style="position:absolute;top:8px;right:8px;display:flex;gap:8px;">
-                    <button onclick="showReplyEditBox(${reply.id})" style="background:none;border:none;color:#fff;font-size:0.9rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#ffd700'" onmouseout="this.style.color='#fff'">/</button>
+            repliesHtml += `<div class="reply-card" data-reply-id="${reply.id}">
+                <div class="admin-controls">
+                    <button onclick="showReplyEditBox(${reply.id})" class="edit-btn" title="Edit reply">✎</button>
                     <div style="position:relative;">
-                        <button onclick="toggleAdminDropdown('reply${reply.id}')" style="background:none;border:none;color:#fff;font-size:0.8rem;cursor:pointer;padding:0;width:20px;height:20px;display:flex;align-items:center;justify-content:center;line-height:1;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">·</button>
-                        <div id="replyAdminDropdown${reply.id}" style="display:none;position:absolute;top:0;left:100%;margin-left:8px;background:#333;border-radius:4px;padding:4px;z-index:100;">
-                            <button onclick="showReplyAnswerBox(${reply.id})" style="background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;padding:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#8bb3ff'" onmouseout="this.style.color='#fff'">+</button>
-                            <button onclick="deleteReply(${reply.id})" style="background:none;border:none;color:#fff;font-size:1rem;cursor:pointer;padding:4px;width:20px;height:20px;display:flex;align-items:center;justify-content:center;" onmouseover="this.style.color='#c00'" onmouseout="this.style.color='#fff'">×</button>
+                        <button onclick="toggleAdminDropdown('reply${reply.id}')" class="admin-btn" title="Admin actions">⋯</button>
+                        <div id="replyAdminDropdown${reply.id}" class="admin-dropdown">
+                            <button onclick="showReplyAnswerBox(${reply.id})">Add Official Answer</button>
+                            <button onclick="deleteReply(${reply.id})" class="delete-btn">Delete Reply</button>
                         </div>
                     </div>
                 </div>
-                <div id="replyAnswerBox${reply.id}" style="display:none;margin-top:12px;">
-                    <textarea id="replyAnswerInput${reply.id}" placeholder="Type your answer..." style="width:100%;min-height:60px;background:#000;border:1px solid #333;color:#fff;padding:8px;font-size:0.85rem;"></textarea><br>
-                    <button onclick="submitReplyAnswer(${reply.id})" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;">Submit Answer</button>
-                    <button onclick="hideReplyAnswerBox(${reply.id})" class="admin-btn" style="background:transparent;border:1px solid #fff;color:#fff;padding:8px 16px;font-size:0.85rem;cursor:pointer;margin-top:8px;margin-left:8px;">Cancel</button>
+                <div class="reply-text">${reply.reply_text}</div>
+                <div class="reply-meta">
+                    ${new Date(reply.timestamp).toLocaleString()}
+                    ${reply.edited ? '<span class="edited-label">(edited)</span>' : ''}
+                </div>
+                ${reply.admin_reply ? `<div class="official-answer">
+                    <div class="official-answer-label">Official Answer</div>
+                    <div class="official-answer-text">${reply.admin_reply.admin_answer}</div>
+                </div>` : ''}
+                <div id="replyAnswerBox${reply.id}" style="display:none;margin-top:16px;">
+                    <textarea id="replyAnswerInput${reply.id}" placeholder="Type your official answer..." style="width:100%;min-height:80px;padding:12px;background:transparent;border:none;border-bottom:1px solid var(--muted);color:var(--text);font-family:'Roboto',system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:clamp(13px,1.0vw,15px);outline:none;box-sizing:border-box;resize:vertical;"></textarea>
+                    <div style="margin-top:12px;">
+                        <button onclick="submitReplyAnswer(${reply.id})" class="modal-btn">Submit Answer</button>
+                        <button onclick="hideReplyAnswerBox(${reply.id})" class="modal-btn">Cancel</button>
+                    </div>
                 </div>
             </div>`;
         });
         repliesList.innerHTML = repliesHtml;
     }
+    
     fetchThread();
+    
     // --- Question answer functions ---
     function showQuestionAnswerBox() {
         const token = document.getElementById('adminTokenInput').value.trim();
         if (!token) {
-            document.getElementById('adminStatus').textContent = 'Admin token required to answer questions.';
+            document.getElementById('adminStatus').textContent = 'Master key required to add official answers.';
             return;
         }
         document.getElementById('questionAnswerBox').style.display = 'block';
+        hideAllDropdowns();
     }
     window.showQuestionAnswerBox = showQuestionAnswerBox;
     
@@ -217,7 +807,7 @@
         }
         
         try {
-            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}/answer`, {
+            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}/answer`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
                 body: JSON.stringify({ responder_answer: answer })
@@ -245,6 +835,7 @@
         // Pre-fill the textarea with current question text
         document.getElementById('modalEditInput').value = questionData.text;
         document.getElementById('editQuestionModal').style.display = 'flex';
+        hideAllDropdowns();
     }
     window.showQuestionEditBox = showQuestionEditBox;
     
@@ -273,7 +864,7 @@
         const statusDiv = document.getElementById('modalEditStatus');
         
         try {
-            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`, {
+            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: newText })
@@ -301,7 +892,7 @@
     function toggleAdminDropdown(type) {
         const adminToken = document.getElementById('adminTokenInput').value.trim();
         if (!adminToken) {
-            document.getElementById('adminStatus').textContent = 'Admin key required for admin actions.';
+            document.getElementById('adminStatus').textContent = 'Master key required for admin actions.';
             return;
         }
         
@@ -309,29 +900,28 @@
         const dropdown = document.getElementById(dropdownId);
         
         // Close all other dropdowns first
-        const allDropdowns = document.querySelectorAll('[id^="questionAdminDropdown"], [id^="replyAdminDropdown"]');
-        allDropdowns.forEach(dd => {
-            if (dd.id !== dropdownId) {
-                dd.style.display = 'none';
-            }
-        });
+        hideAllDropdowns();
         
         // Toggle current dropdown
-        if (dropdown.style.display === 'none') {
+        if (dropdown.style.display === 'none' || !dropdown.style.display) {
             dropdown.style.display = 'block';
         } else {
             dropdown.style.display = 'none';
         }
     }
     window.toggleAdminDropdown = toggleAdminDropdown;
+
+    function hideAllDropdowns() {
+        const allDropdowns = document.querySelectorAll('.admin-dropdown');
+        allDropdowns.forEach(dd => {
+            dd.style.display = 'none';
+        });
+    }
     
     // Close dropdowns when clicking outside
     document.addEventListener('click', function(event) {
-        if (!event.target.closest('[onclick*="toggleAdminDropdown"]')) {
-            const allDropdowns = document.querySelectorAll('[id^="questionAdminDropdown"], [id^="replyAdminDropdown"]');
-            allDropdowns.forEach(dd => {
-                dd.style.display = 'none';
-            });
+        if (!event.target.closest('.admin-controls')) {
+            hideAllDropdowns();
         }
     });
     
@@ -346,6 +936,7 @@
             // Store the reply ID for submission
             document.getElementById('editReplyModal').setAttribute('data-reply-id', replyId);
         }
+        hideAllDropdowns();
     }
     window.showReplyEditBox = showReplyEditBox;
     
@@ -375,7 +966,7 @@
         const statusDiv = document.getElementById('modalReplyEditStatus');
         
         try {
-            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}`, {
+            const res = await fetch(`http://127.0.0.1:8000/replies/${replyId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reply_text: newText })
@@ -403,12 +994,15 @@
         const token = document.getElementById('adminTokenInput').value.trim();
         const statusDiv = document.getElementById('adminStatus');
         if (!token) {
-            statusDiv.textContent = 'Admin token required to delete replies.';
+            statusDiv.textContent = 'Master key required to delete replies.';
             return;
         }
         if (!confirm('Are you sure you want to delete this reply?')) return;
+        
+        hideAllDropdowns();
+        
         try {
-            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}`, {
+            const res = await fetch(`http://127.0.0.1:8000/replies/${replyId}`, {
                 method: 'DELETE',
                 headers: { 'x-admin-token': token }
             });
@@ -427,12 +1021,15 @@
         const token = document.getElementById('adminTokenInput').value.trim();
         const statusDiv = document.getElementById('adminStatus');
         if (!token) {
-            statusDiv.textContent = 'Admin token required.';
+            statusDiv.textContent = 'Master key required.';
             return;
         }
         if (!confirm('Are you sure you want to delete this thread?')) return;
+        
+        hideAllDropdowns();
+        
         try {
-            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`, {
+            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}`, {
                 method: 'DELETE',
                 headers: { 'x-admin-token': token }
             });
@@ -443,8 +1040,6 @@
         }
     }
     window.deleteThread = deleteThread;
-    
-
     
     // --- Modal functions ---
     function openAddReplyModal() {
@@ -477,7 +1072,7 @@
         const statusDiv = document.getElementById('modalReplyStatus');
         
         try {
-            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}/replies`, {
+            const res = await fetch(`http://127.0.0.1:8000/questions/${qid}/replies`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reply_text: replyText })
@@ -503,10 +1098,11 @@
     function showReplyAnswerBox(replyId) {
         const token = document.getElementById('adminTokenInput').value.trim();
         if (!token) {
-            document.getElementById('adminStatus').textContent = 'Admin token required to answer replies.';
+            document.getElementById('adminStatus').textContent = 'Master key required to add official answers.';
             return;
         }
         document.getElementById(`replyAnswerBox${replyId}`).style.display = 'block';
+        hideAllDropdowns();
     }
     window.showReplyAnswerBox = showReplyAnswerBox;
     
@@ -527,7 +1123,7 @@
         }
         
         try {
-            const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}/admin_answer`, {
+            const res = await fetch(`http://127.0.0.1:8000/replies/${replyId}/admin_answer`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
                 body: JSON.stringify({ admin_answer: answer })
@@ -552,9 +1148,9 @@
     
     // --- BEGIN: Wake up backend on page load ---
     (function wakeBackend() {
-        // This fetches a harmless endpoint to wake up the Render backend/database
+        // This fetches a harmless endpoint to wake up the backend/database
         // It runs in the background and does not block UI or affect state
-        fetch('https://personalwebsite-xzmk.onrender.com/ping').catch(() => {});
+        fetch('http://127.0.0.1:8000/ping').catch(() => {});
     })();
     // --- END: Wake up backend on page load ---
     </script>
