@@ -1,66 +1,377 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog 5 / Chelsea is running like a VC, and it's dangerous</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
-    <link rel="icon" type="image/x-icon" href="../images/header.png">
-    <style>
-        .back-link {
-            color: #fff !important;
-            text-decoration: underline;
-            font-size: 0.85rem;
-        }
-        .back-link:hover {
-            color: #8bb3ff !important;
-        }
-        .blog-within a {
-            color: #fff !important;
-            text-decoration: underline;
-        }
-        .blog-within a:hover {
-            color: #8bb3ff !important;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chelsea is running like a VC, and it's dangerous — Aryaman Khandelwal</title>
+<link rel="icon" type="image/x-icon" href="../images/header.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&family=Google+Sans+Code:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>/* Updated: 1726157001 */
+  :root {
+    --bg: #f6f6f6; /* very light grey */
+    --text: #111111;
+    --muted: #999999;
+    --accent: #5e96f7; /* site blue */
+  }
+  html, body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    
+    line-height: 1.3;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Layout */
+  .page {
+    display: flex;
+    min-height: 100dvh;
+  }
+  .sidebar {
+    width: 10vw;              /* ~10% of viewport width */
+    min-width: 120px;         /* prevent being too narrow on mid screens */
+    max-width: 180px;         /* keep tidy on ultra-wide */
+    padding: 48px 16px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0; /* remove spacing between children */
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    box-sizing: border-box;
+  }
+  .name { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    font-weight: 700;
+    font-size: clamp(16px, 1.2vw + 8px, 20px);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: var(--text);
+    white-space: pre-line; /* honor line break */
+    margin: 0; /* remove bottom spacing */
+  }
+  .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
+  .name a:hover, .name a:focus-visible { color: var(--accent); border-bottom: none; }
+
+  .clock { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    font-style: normal;
+    font-weight: 700; /* match name weight */
+    font-size: clamp(16px, 1.2vw + 8px, 20px); /* match name size */
+    letter-spacing: 0.02em; /* match tracking */
+    line-height: 1.1; /* match line height */
+    margin: 0; /* no top spacing */
+  }
+
+  /* Desktop nav under clock */
+  .nav { font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    margin-top: 10px;
+    
+  }
+  .nav a {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;    
+    display: block;
+    font-size: clamp(11px, 0.8vw + 1px, 14px); /* slightly larger on desktop */
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: none; /* override global anchor underline */
+    padding: 2px 0; /* tighter spacing */
+    line-height: 1.1; /* tighter line height */
+    transition: color .2s ease;
+  }
+  .nav a:hover, .nav a:focus-visible {
+    color: var(--accent);
+  }
+
+  /* Mobile menu toggle */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    z-index: 1001;
+    
+    font-size: 28px;
+    line-height: 1;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    padding: 72px 24px 24px 24px;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  .mobile-menu a { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    display: block;
+    
+    font-size: 14px; /* smaller on mobile */
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: none; /* override global */
+    padding: 6px 0; /* tighter */
+    line-height: 1.1;
+  }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--accent); }
+
+  .menu-open .mobile-menu { display: block; }
+
+  .content {
+    flex: 0.8;
+    padding: 40px 6vw 80px 9vw; /* increase left padding further to shift right */
+    box-sizing: border-box;
+  }
+  .section { 
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    max-width: 540px; /* reduced further from 630px */
+     /* match nav */
+  }
+  /* Blog-specific styles */
+  .blog-header {
+    margin-bottom: 20px;
+  }
+  .blog-nav {
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .blog-nav .back-arrow {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color .2s ease;
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 2.4vw, 28px);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .blog-nav .back-arrow:hover {
+    color: var(--accent);
+  }
+  .blog-nav .blog-label {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 2.4vw, 28px);
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .section .blog-title {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif !important;
+    font-weight: 400 !important;
+    font-size: clamp(12px, 0.9vw, 14px) !important;
+    line-height: 1.2 !important;
+    margin: 0 0 20px 0 !important;
+    letter-spacing: 0 !important;
+    color: var(--text) !important;
+  }
+  .blog-divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--muted);
+    margin: 0 0 20px 0;
+    opacity: 0.5;
+  }
+  /* Individual blog post styles */
+  .blog-post-title {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: clamp(24px, 2.8vw, 32px);
+    line-height: 1.2;
+    margin: 0 0 20px 0;
+    color: var(--text);
+  }
+  .blog-content {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(15px, 1.3vw, 18px);
+    line-height: 1.3;
+    color: var(--text);
+  }
+  .blog-content p {
+    margin: 0 0 16px 0;
+  }
+  .blog-content a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color .2s ease;
+  }
+  .blog-content a:hover {
+    color: var(--accent);
+  }
+  .blog-date {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(14px, 1.1vw, 16px);
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .page { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      height: auto;
+      position: relative;
+      padding: 24px 20px 0 20px;
+      gap: 0;
+    }
+    .menu-toggle { display: block; }
+    .nav { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      display: none; 
+    }
+    .content { padding: 20px; }
+    .name { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      font-size: 14px; 
+      letter-spacing: 0.04em; 
+      line-height: 1.15; 
+      margin: 0; 
+    }
+    .clock { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      font-style: normal; 
+      font-size: 14px; 
+      letter-spacing: 0.04em; 
+      line-height: 1.15; 
+      margin: 0; 
+    }
+    .section { 
+      font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  
+      max-width: 540px; 
+    }
+  }
+</style>
 </head>
 <body>
-    <nav>
-        <div class="logo"><a href="../index.html">Aryaman Khandelwal</a></div>
-        <div class="nav-items">
-            <!-- <a href="blog.html">Blog<a> -->
+  <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">+</button>
+  <div class="page">
+    <aside class="sidebar" aria-label="Site identity">
+      <div class="name"><a href="../index.html">ARYAMAN
+KHANDELWAL</a></div>
+      <div class="clock" id="dubai-clock" aria-label="Local time (Dubai, 24h)">17:00:00</div>
+      <nav class="nav" aria-label="Primary">
+        <a href="../blog.html">Blog</a>
+        <a href="../forum.html">Jester's Courtyard</a>
+        <a href="../builds.html">Builds</a>
+        <a href="../tracker.html">Tracker</a>
+      </nav>
+    </aside>
+    <main class="content" id="main-content">
+      <section class="section" aria-labelledby="blog-heading">
+        <div class="blog-header">
+          <div class="blog-nav">
+            <a href="../blog.html" class="back-arrow"><</a>
+            <span class="blog-label">BLOG</span>
+          </div>
+          <h1 class="blog-title">some of my thoughts</h1>
+          <div class="blog-divider"></div>
         </div>
-    </nav>
+        
+        <h2 class="blog-post-title">Chelsea is running like a VC, and it's dangerous</h2>
+        <div class="blog-date">August 2024</div>
+        
+        <div class="blog-content">
+          <p>Chelsea has been spending ungodly sums of money signing the most random players. It's to the point where even I as a fan have started to get numb. New signing is unveiled and I feel… nothing. Even more players are out on loan, feels like almost every day I wake up to 3 new players out on loan.</p>
 
-    <section class="main">
-        <div class="main-container">
-            <div class="blog-within" style="margin-top:2rem;">
-                <div style="margin-bottom:1rem;">
-                    <span style="color:#fff;font-size:0.85rem;">< </span><a href="../blog.html" class="back-link">Back</a>
-                </div>
-                <h1 style="font-size:0.85rem;font-weight:normal;margin-bottom:0.5em;">[Chelsea is running like a VC, and it's dangerous]</h1>
-                <p style="font-size:0.85rem;">August 2024 <br>
-                <div style="margin-left:1.5em;font-size:0.85rem;">
-                    Chelsea has been spending ungodly sums of money signing the most random players. It's to the point where even I as a fan have started to get numb. New signing is unveiled and I feel… nothing. Even more players are out on loan, feels like almost every day I wake up to 3 new players out on loan. <br><br>
+          <p>The Clearlake/Boehly ownership has been spending money in a very different way than anyone that came before. The VC-esque strategy is a very high risk one, and so far it doesn't seem to have worked. Buy loads of early stage players, work and nurture them, and hope that some of them become superstars.</p>
 
-                    The Clearlake/Boehly ownership has been spending money in a very different way than anyone that came before. The VC-esque strategy is a very high risk one, and so far it doesn't seem to have worked. Buy loads of early stage players, work and nurture them, and hope that some of them become superstars. <br><br>
+          <p>Last season's revenue rose over £500 million, but all of it was wiped out and then some by £760 million opex. All of this means Chelsea, even after years and years as an established football club, isn't profitable, with a net profit of (£90 million). Why?</p>
 
-                    Last season's revenue rose over £500 million, but all of it was wiped out and then some by £760 million opex. All of this means Chelsea, even after years and years as an established football club, isn't profitable, with a net profit of (£90 million). Why? <br><br>
+          <p>In my opinion, it's because a VC strategy doesn't necessarily work for a football club. There's a reason why no one else has used these tactics and loopholes. The amortisation play for instance, looked genius at the time. But employing young players for a long contract could easily become a huge liability if few of them go on to become superstars. For every Cole Palmer there are about 15 duds at the club right now. Including, btw, £100 million+ signing Enzo Fernandez, whose valuation tanked over £10 million after the recent racism scandal. Chelsea won the Champions League in 2012 despite having, on paper, a significantly worse squad than many teams in the competition. Why? Was it because of the youngsters like Ryan Bertrand? No. It was because of senior leaders. Those don't exist at the club anymore. No wonder, then, that the club has been struggling to look cohesive for a 4+ game streak.</p>
 
-                    In my opinion, it's because a VC strategy doesn't necessarily work for a football club. There's a reason why no one else has used these tactics and loopholes. The amortisation play for instance, looked genius at the time. But employing young players for a long contract could easily become a huge liability if few of them go on to become superstars. For every Cole Palmer there are about 15 duds at the club right now. Including, btw, £100 million+ signing Enzo Fernandez, whose valuation tanked over £10 million after the recent racism scandal. Chelsea won the Champions League in 2012 despite having, on paper, a significantly worse squad than many teams in the competition. Why? Was it because of the youngsters like Ryan Bertrand? No. It was because of senior leaders. Those don't exist at the club anymore. No wonder, then, that the club has been struggling to look cohesive for a 4+ game streak. <br><br>
+          <p>Nothing I'm saying here is new, btw. Almost anyone who knows the first thing about football can see this. My question then, is why aren't the ownership aligned on this? Each time a Fotmob (not sponsored) notification pops up saying a new player has been signed or sent on loan, I can only ask myself one question: are these American investors just oblivious or are they playing a 4D chess move that no one else can see?</p>
 
-                    Nothing I'm saying here is new, btw. Almost anyone who knows the first thing about football can see this. My question then, is why aren't the ownership aligned on this? Each time a Fotmob (not sponsored) notification pops up saying a new player has been signed or sent on loan, I can only ask myself one question: are these American investors just oblivious or are they playing a 4D chess move that no one else can see? <br><br>
+          <p>Deeper than that, though, why is Chelsea even spending so much money in the first place? Chelsea has probably the best academy in England, maybe in the world. The club has promising startups already incubated. Then why won't they work to develop them rather than sell them and import young players. Gallagher is the most recent of these, but before this there was Mount, Loftus-Cheek, the list goes on. The pure profit story is of course there. But are they saying none of these academy players can go on to become world-class. It's kind of like having pre-investment Snapchat, Uber, Facebook, and Salesforce in your investment portfolio, and you sell them at early at a suppressed valuation to make space for 15 Ouras. Sure it could become huge, but you already have a bird and a half in hand, what's the play going for two in the bush?</p>
 
-                    Deeper than that, though, why is Chelsea even spending so much money in the first place? Chelsea has probably the best academy in England, maybe in the world. The club has promising startups already incubated. Then why won't they work to develop them rather than sell them and import young players. Gallagher is the most recent of these, but before this there was Mount, Loftus-Cheek, the list goes on. The pure profit story is of course there. But are they saying none of these academy players can go on to become world-class. It's kind of like having pre-investment Snapchat, Uber, Facebook, and Salesforce in your investment portfolio, and you sell them at early at a suppressed valuation to make space for 15 Ouras. Sure it could become huge, but you already have a bird and a half in hand, what's the play going for two in the bush? <br><br>
-
-                    I'm skeptical about the long-term play here. Clearlake spent $3bn for Chelsea, and so far the club is valued at $3.13bn. It's been 2 years so far, and the club isn't showing any signs of turning around its investments or indeed its performances. Doesn't seem like a VC that LPs would be very happy with.<br><br><br><br>
-                </div>
-                </p>
-            </div>
+          <p>I'm skeptical about the long-term play here. Clearlake spent $3bn for Chelsea, and so far the club is valued at $3.13bn. It's been 2 years so far, and the club isn't showing any signs of turning around its investments or indeed its performances. Doesn't seem like a VC that LPs would be very happy with.</p>
         </div>
-    </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
+    <a href="../blog.html">Blog</a>
+    <a href="../forum.html">Jester's Courtyard</a>
+    <a href="../builds.html">Builds</a>
+    <a href="../tracker.html">Tracker</a>
+  </div>
+
+  <script>
+    (function() {
+      // Dubai clock
+      const el = document.getElementById('dubai-clock');
+      if (el) {
+        const fmt = new Intl.DateTimeFormat('en-GB', { 
+          timeZone: 'Asia/Dubai', 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          second: '2-digit', 
+          hour12: false 
+        });
+        function update() {
+          const parts = fmt.formatToParts(new Date());
+          let hh = '00', mm = '00', ss = '00';
+          for (const p of parts) { 
+            if (p.type === 'hour') hh = p.value; 
+            if (p.type === 'minute') mm = p.value; 
+            if (p.type === 'second') ss = p.value; 
+          }
+          el.textContent = `${hh}:${mm}:${ss}`;
+        }
+        update();
+        setInterval(update, 1000);
+      }
+
+      // Mobile menu toggle
+      const toggle = document.getElementById('menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+      function openMenu() {
+        document.body.classList.add('menu-open');
+        toggle.textContent = '×';
+        toggle.setAttribute('aria-label', 'Close menu');
+        toggle.setAttribute('aria-expanded', 'true');
+        menu.hidden = false;
+      }
+      function closeMenu() {
+        document.body.classList.remove('menu-open');
+        toggle.textContent = '+';
+        toggle.setAttribute('aria-label', 'Open menu');
+        toggle.setAttribute('aria-expanded', 'false');
+        menu.hidden = true;
+      }
+      if (toggle && menu) {
+        toggle.addEventListener('click', function() {
+          if (document.body.classList.contains('menu-open')) closeMenu(); else openMenu();
+        });
+
+        // Close on link click
+        menu.addEventListener('click', function(e) { 
+          if (e.target.tagName === 'A') closeMenu(); 
+        });
+      }
+    })();
+  </script>
 </body>
 </html>

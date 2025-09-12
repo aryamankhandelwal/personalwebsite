@@ -1,75 +1,411 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog 8 / What do the Fed rate cuts mean for India's economy?</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What do the Fed rate cuts mean for India's economy? — Aryaman Khandelwal</title>
+<link rel="icon" type="image/x-icon" href="../images/header.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
-    <link rel="icon" type="image/x-icon" href="../images/header.png">
-    <style>
-        .back-link {
-            color: #fff !important;
-            text-decoration: underline;
-            font-size: 0.85rem;
-        }
-        .back-link:hover {
-            color: #8bb3ff !important;
-        }
-        .blog-within a {
-            color: #fff !important;
-            text-decoration: underline;
-        }
-        .blog-within a:hover {
-            color: #8bb3ff !important;
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&family=Google+Sans+Code:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>/* Updated: $(date +%s) */
+  :root {
+    --bg: #f6f6f6; /* very light grey */
+    --text: #111111;
+    --muted: #999999;
+    --accent: #5e96f7; /* site blue */
+  }
+  html, body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    
+    line-height: 1.3;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Layout */
+  .page {
+    display: flex;
+    min-height: 100dvh;
+  }
+  .sidebar {
+    width: 10vw;              /* ~10% of viewport width */
+    min-width: 120px;         /* prevent being too narrow on mid screens */
+    max-width: 180px;         /* keep tidy on ultra-wide */
+    padding: 48px 16px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0; /* remove spacing between children */
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    box-sizing: border-box;
+  }
+  .name { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    font-weight: 700;
+    font-size: clamp(16px, 1.2vw + 8px, 20px);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: var(--text);
+    white-space: pre-line; /* honor line break */
+    margin: 0; /* remove bottom spacing */
+  }
+  .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
+  .name a:hover, .name a:focus-visible { color: var(--accent); border-bottom: none; }
+
+  .clock { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    font-style: normal;
+    font-weight: 700; /* match name weight */
+    font-size: clamp(16px, 1.2vw + 8px, 20px); /* match name size */
+    letter-spacing: 0.02em; /* match tracking */
+    line-height: 1.1; /* match line height */
+    margin: 0; /* no top spacing */
+  }
+
+  /* Desktop nav under clock */
+  .nav { font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    margin-top: 10px;
+    
+  }
+  .nav a {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;    
+    display: block;
+    font-size: clamp(11px, 0.8vw + 1px, 14px); /* slightly larger on desktop */
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: none; /* override global anchor underline */
+    padding: 2px 0; /* tighter spacing */
+    line-height: 1.1; /* tighter line height */
+    transition: color .2s ease;
+  }
+  .nav a:hover, .nav a:focus-visible {
+    color: var(--accent);
+  }
+
+  /* Mobile menu toggle */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    z-index: 1001;
+    
+    font-size: 28px;
+    line-height: 1;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    padding: 72px 24px 24px 24px;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  .mobile-menu a { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    display: block;
+    
+    font-size: 14px; /* smaller on mobile */
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: none; /* override global */
+    padding: 6px 0; /* tighter */
+    line-height: 1.1;
+  }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--accent); }
+
+  .menu-open .mobile-menu { display: block; }
+
+  .content {
+    flex: 0.8;
+    padding: 40px 6vw 80px 9vw; /* increase left padding further to shift right */
+    box-sizing: border-box;
+  }
+  .section { 
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    max-width: 540px; /* reduced further from 630px */
+     /* match nav */
+  }
+  /* Blog-specific styles */
+  .blog-header {
+    margin-bottom: 20px;
+  }
+  .blog-nav {
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .blog-nav .back-arrow {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color .2s ease;
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 2.4vw, 28px);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .blog-nav .back-arrow:hover {
+    color: var(--accent);
+  }
+  .blog-nav .blog-label {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 2.4vw, 28px);
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .section .blog-title {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif !important;
+    font-weight: 400 !important;
+    font-size: clamp(12px, 0.9vw, 14px) !important;
+    line-height: 1.2 !important;
+    margin: 0 0 20px 0 !important;
+    letter-spacing: 0 !important;
+    color: var(--text) !important;
+  }
+  .blog-divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--muted);
+    margin: 0 0 20px 0;
+    opacity: 0.5;
+  }
+  /* Individual blog post styles */
+  .blog-post-title {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: clamp(24px, 2.8vw, 32px);
+    line-height: 1.2;
+    margin: 0 0 20px 0;
+    color: var(--text);
+  }
+  .blog-content {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(15px, 1.3vw, 18px);
+    line-height: 1.3;
+    color: var(--text);
+  }
+  .blog-content p {
+    margin: 0 0 16px 0;
+  }
+  .blog-content a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color .2s ease;
+  }
+  .blog-content a:hover {
+    color: var(--accent);
+  }
+  .blog-date {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(14px, 1.1vw, 16px);
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+  .additional-reading {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(153, 153, 153, 0.3);
+  }
+  .additional-reading h3 {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(16px, 1.4vw, 20px);
+    font-weight: 600;
+    margin: 0 0 15px 0;
+    color: var(--text);
+  }
+  .additional-reading ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .additional-reading li {
+    margin-bottom: 12px;
+    padding-left: 20px;
+    position: relative;
+  }
+  .additional-reading li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .page { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      height: auto;
+      position: relative;
+      padding: 24px 20px 0 20px;
+      gap: 0;
+    }
+    .menu-toggle { display: block; }
+    .nav { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      display: none; 
+    }
+    .content { padding: 20px; }
+    .name { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      font-size: 14px; 
+      letter-spacing: 0.04em; 
+      line-height: 1.15; 
+      margin: 0; 
+    }
+    .clock { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      font-style: normal; 
+      font-size: 14px; 
+      letter-spacing: 0.04em; 
+      line-height: 1.15; 
+      margin: 0; 
+    }
+    .section { 
+      font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  
+      max-width: 540px; 
+    }
         }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="logo"><a href="../index.html">Aryaman Khandelwal</a></div>
-        <div class="nav-items">
-            <!-- <a href="blog.html">Blog<a> -->
+  <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">+</button>
+  <div class="page">
+    <aside class="sidebar" aria-label="Site identity">
+      <div class="name"><a href="../index.html">ARYAMAN
+KHANDELWAL</a></div>
+      <div class="clock" id="dubai-clock" aria-label="Local time (Dubai, 24h)">17:00:00</div>
+      <nav class="nav" aria-label="Primary">
+        <a href="../blog.html">Blog</a>
+        <a href="../forum.html">Jester's Courtyard</a>
+        <a href="../builds.html">Builds</a>
+        <a href="../tracker.html">Tracker</a>
+      </nav>
+    </aside>
+    <main class="content" id="main-content">
+      <section class="section" aria-labelledby="blog-heading">
+        <div class="blog-header">
+          <div class="blog-nav">
+            <a href="../blog.html" class="back-arrow"><</a>
+            <span class="blog-label">BLOG</span>
+          </div>
+          <h1 class="blog-title">some of my thoughts</h1>
+          <div class="blog-divider"></div>
         </div>
-    </nav>
+        
+        <h2 class="blog-post-title">What do the Fed rate cuts mean for India's economy?</h2>
+        <div class="blog-date">September 2024</div>
+        
+        <div class="blog-content">
+          <p>Think it's safe to say I was fairly shocked by the Fed's decision to cut the rates by 50 bps. I ran to my usual sources after reading the news, and felt vindicated to find that <a href="https://www.ft.com/content/405d8425-6023-439c-8990-670a1cb56ed6" target="_blank">several experts</a> seemed to have the same line of thinking as me. I found myself perplexed on why the Fed decided to cut all 50 bps at once, especially if they plan to cut more as the year progresses, rather than cutting 25 now and 25 in the short-term. On the promise of a soft landing this drastic cut (which I believe has only happened once before) could have the opposite effect on the economy as a whole.</p>
 
-    <section class="main">
-        <div class="main-container">
-            <div class="blog-within" style="margin-top:2rem;">
-                <div style="margin-bottom:1rem;">
-                    <span style="color:#fff;font-size:0.85rem;">< </span><a href="../blog.html" class="back-link">Back</a>
-                </div>
-                <h1 style="font-size:0.85rem;font-weight:normal;margin-bottom:0.5em;">[What do the Fed rate cuts mean for India's economy?]</h1>
-                <p style="font-size:0.85rem;">September 2024 <br>
-                <div style="margin-left:1.5em;font-size:0.85rem;">
-                    Think it's safe to say I was fairly shocked by the Fed's decision to cut the rates by 50 bps. I ran to my usual sources after reading the news, and felt vindicated to find that <a href="https://www.ft.com/content/405d8425-6023-439c-8990-670a1cb56ed6" target="_blank">several experts</a> seemed to have the same line of thinking as me. I found myself perplexed on why the Fed decided to cut all  50 bps at once, especially if they plan to cut more as the year progresses, rather than cutting 25 now and 25 in the short-term. On the promise of a soft landing this drastic cut (which I believe has only happened once before) could have the opposite effect on the economy as a whole. <br><br>
+          <p>Likely the dealmaking market in the US will be spurred on by the cuts. Also the cuts signal at a stock market that will rally in the green. As a tech investment banker in 2022 and 2023, tech deals were few and far between. It was tough to watch the markets, and I was somewhat lucky that I was a generalist across consumer and sponsors as well. I'd maybe still not have worked on any closed deals if I was a dedicated tech banker!</p>
 
-                    Likely the dealmaking market in the US will be spurred on by the cuts. Also the cuts signal at a stock market that will rally in the green. As a tech investment banker in 2022 and 2023, tech deals were few and far between. It was tough to watch the markets, and I was somewhat lucky that I was a generalist across consumer and sponsors as well. I'd maybe still not have worked on any closed deals if I was a dedicated tech banker! <br><br>
+          <p>A few interesting though experiments I thought of that could be ripple effects in India.</p>
 
-                    A few interesting though experiments I thought of that could be ripple effects in India. <br><br>
+          <p><strong>Stronger rupee (finally).</strong> For YEARS, one of the biggest criticisms of the Modi government was that they were not really able to get a grip on the rupee. When I left India in 2016 for Dubai initially, I remember the conversion being somewhere in the 60s. I continue to be shocked that it's close to 85 now! For sure, the Modi government did have some control and measures that could have been implemented to take care of these insane rises in prices. But pinning the whole thing on the BJP government may be unfair. Moving forward, probably the masses would realise this as well. The dollar weakening signals a stronger rupee, making it cheaper to important goods like oil, which we import a ton of. The stronger currency and lower import costs also indicate that, at least in the short term, the Indian government can have more control on inflation.</p>
 
-                    - Stronger rupee (finally). For YEARS, one of the biggest criticisms of the Modi government was that they were not really able to get a grip on the rupee. When I left India in 2016 for Dubai initially, I remember the conversion being somewhere in the 60s. I continue to be shocked that it's close to 85 now! For sure, the Modi government did have some control and measures that could have been implemented to take care of these insane rises in prices. But pinning the whole thing on the BJP government may be unfair. Moving forward, probably the masses would realise this as well. The dollar weakening signals a stronger rupee, making it cheaper to important goods like oil, which we import a ton of. The stronger currency and lower import costs also indicate that, at least in the short term, the Indian government can have more control on inflation. <br><br>
-                    - More foreign investment. When international rates fall, investors are more easily able and willing to borrow in the US and deploy in developing markets like India in search for higher returns. Higher returns = more risk. Lower rates = lower risk. Don't be shocked if the big international investors start deploying a lot more capital in India, driving up prices and valuations, but more necessarily, bringing some much needed liquidity to the dry Indian economy. <br><br>
+          <p><strong>More foreign investment.</strong> When international rates fall, investors are more easily able and willing to borrow in the US and deploy in developing markets like India in search for higher returns. Higher returns = more risk. Lower rates = lower risk. Don't be shocked if the big international investors start deploying a lot more capital in India, driving up prices and valuations, but more necessarily, bringing some much needed liquidity to the dry Indian economy.</p>
 
-                    Keep an eye out for what the RBI does. If the rupee becomes too strong or too much international capital is flooding into India, I wouldn't be surprised if RBI cuts rates as well. <br><br>
+          <p>Keep an eye out for what the RBI does. If the rupee becomes too strong or too much international capital is flooding into India, I wouldn't be surprised if RBI cuts rates as well.</p>
 
-                    <hr style="border: none; height: 1px; background-color: #fff; margin: 0.5rem 0;"><br>
-
-                    <span style="font-size:0.85rem;">Additional Reading: <br><br>
-                    
-                    - <a href="https://timesofindia.indiatimes.com/business/india-business/indian-banking-system-faces-steep-decline-in-liquidity-report/articleshow/112919524.cms#:~:text=A%20Union%20Bank%20of%20India,for%20improvement%2C%20liquidity%20remains%20low." target="_blank">A Union Bank of India report shows the Indian banking system's liquidity decreased sharply from Rs 2.86 lakh crore to Rs 0.95 lakh crore by August 28th. Despite calls for improvement, liquidity remains low</a> <br><br>
-
-                   - <a href="https://www.youtube.com/watch?v=xAUA9QgqkxM&ab_channel=All-InPodcast" target="_blank">This week's All In Pod discusses the Rate cuts and the implications of the 50 bps cut vs. the 25 bps</a></span>
-
-
-
-                    <br><br><br><br>
-                </div>
-                </p>
+          <div class="additional-reading">
+            <h3>Additional Reading</h3>
+            <ul>
+              <li><a href="https://timesofindia.indiatimes.com/business/india-business/indian-banking-system-faces-steep-decline-in-liquidity-report/articleshow/112919524.cms#:~:text=A%20Union%20Bank%20of%20India,for%20improvement%2C%20liquidity%20remains%20low." target="_blank">A Union Bank of India report shows the Indian banking system's liquidity decreased sharply from Rs 2.86 lakh crore to Rs 0.95 lakh crore by August 28th. Despite calls for improvement, liquidity remains low</a></li>
+              <li><a href="https://www.youtube.com/watch?v=xAUA9QgqkxM&ab_channel=All-InPodcast" target="_blank">This week's All In Pod discusses the Rate cuts and the implications of the 50 bps cut vs. the 25 bps</a></li>
+            </ul>
             </div>
         </div>
     </section>
+    </main>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
+    <a href="../blog.html">Blog</a>
+    <a href="../forum.html">Jester's Courtyard</a>
+    <a href="../builds.html">Builds</a>
+    <a href="../tracker.html">Tracker</a>
+  </div>
+
+  <script>
+    (function() {
+      // Dubai clock
+      const el = document.getElementById('dubai-clock');
+      if (el) {
+        const fmt = new Intl.DateTimeFormat('en-GB', { 
+          timeZone: 'Asia/Dubai', 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          second: '2-digit', 
+          hour12: false 
+        });
+        function update() {
+          const parts = fmt.formatToParts(new Date());
+          let hh = '00', mm = '00', ss = '00';
+          for (const p of parts) { 
+            if (p.type === 'hour') hh = p.value; 
+            if (p.type === 'minute') mm = p.value; 
+            if (p.type === 'second') ss = p.value; 
+          }
+          el.textContent = `${hh}:${mm}:${ss}`;
+        }
+        update();
+        setInterval(update, 1000);
+      }
+
+      // Mobile menu toggle
+      const toggle = document.getElementById('menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+      function openMenu() {
+        document.body.classList.add('menu-open');
+        toggle.textContent = '×';
+        toggle.setAttribute('aria-label', 'Close menu');
+        toggle.setAttribute('aria-expanded', 'true');
+        menu.hidden = false;
+      }
+      function closeMenu() {
+        document.body.classList.remove('menu-open');
+        toggle.textContent = '+';
+        toggle.setAttribute('aria-label', 'Open menu');
+        toggle.setAttribute('aria-expanded', 'false');
+        menu.hidden = true;
+      }
+      if (toggle && menu) {
+        toggle.addEventListener('click', function() {
+          if (document.body.classList.contains('menu-open')) closeMenu(); else openMenu();
+        });
+
+        // Close on link click
+        menu.addEventListener('click', function(e) { 
+          if (e.target.tagName === 'A') closeMenu(); 
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
