@@ -1,64 +1,373 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog 11 / Vibe coding and anti-technocracy</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
-    <link rel="icon" type="image/x-icon" href="../images/header.png">
-    <style>
-        .back-link {
-            color: #fff !important;
-            text-decoration: underline;
-            font-size: 0.85rem;
-        }
-        .back-link:hover {
-            color: #8bb3ff !important;
-        }
-        .blog-within a {
-            color: #fff !important;
-            text-decoration: underline;
-        }
-        .blog-within a:hover {
-            color: #8bb3ff !important;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vibe coding and anti-technocracy — Aryaman Khandelwal</title>
+<link rel="icon" type="image/x-icon" href="../images/header.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&family=Google+Sans+Code:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>/* Updated: 1726157006 */
+  :root {
+    --bg: #f6f6f6; /* very light grey */
+    --text: #111111;
+    --muted: #999999;
+    --accent: #5e96f7; /* site blue */
+  }
+  html, body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    
+    line-height: 1.3;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* Layout */
+  .page {
+    display: flex;
+    min-height: 100dvh;
+  }
+  .sidebar {
+    width: 10vw;              /* ~10% of viewport width */
+    min-width: 120px;         /* prevent being too narrow on mid screens */
+    max-width: 180px;         /* keep tidy on ultra-wide */
+    padding: 48px 16px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0; /* remove spacing between children */
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    box-sizing: border-box;
+  }
+  .name { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    font-weight: 700;
+    font-size: clamp(16px, 1.2vw + 8px, 20px);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1.1;
+    color: var(--text);
+    white-space: pre-line; /* honor line break */
+    margin: 0; /* remove bottom spacing */
+  }
+  .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
+  .name a:hover, .name a:focus-visible { color: var(--accent); border-bottom: none; }
+
+  .clock { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    font-style: normal;
+    font-weight: 700; /* match name weight */
+    font-size: clamp(16px, 1.2vw + 8px, 20px); /* match name size */
+    letter-spacing: 0.02em; /* match tracking */
+    line-height: 1.1; /* match line height */
+    margin: 0; /* no top spacing */
+  }
+
+  /* Desktop nav under clock */
+  .nav { font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    margin-top: 10px;
+    
+  }
+  .nav a {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;    
+    display: block;
+    font-size: clamp(11px, 0.8vw + 1px, 14px); /* slightly larger on desktop */
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: none; /* override global anchor underline */
+    padding: 2px 0; /* tighter spacing */
+    line-height: 1.1; /* tighter line height */
+    transition: color .2s ease;
+  }
+  .nav a:hover, .nav a:focus-visible {
+    color: var(--accent);
+  }
+
+  /* Mobile menu toggle */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    z-index: 1001;
+    
+    font-size: 28px;
+    line-height: 1;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    padding: 72px 24px 24px 24px;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  .mobile-menu a { 
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+    display: block;
+    
+    font-size: 14px; /* smaller on mobile */
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: none; /* override global */
+    padding: 6px 0; /* tighter */
+    line-height: 1.1;
+  }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--accent); }
+
+  .menu-open .mobile-menu { display: block; }
+
+  .content {
+    flex: 0.8;
+    padding: 40px 6vw 80px 9vw; /* increase left padding further to shift right */
+    box-sizing: border-box;
+  }
+  .section { 
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+    max-width: 540px; /* reduced further from 630px */
+     /* match nav */
+  }
+  /* Blog-specific styles */
+  .blog-header {
+    margin-bottom: 20px;
+  }
+  .blog-nav {
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .blog-nav .back-arrow {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color .2s ease;
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 2.4vw, 28px);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .blog-nav .back-arrow:hover {
+    color: var(--accent);
+  }
+  .blog-nav .blog-label {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 2.4vw, 28px);
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .section .blog-title {
+    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif !important;
+    font-weight: 400 !important;
+    font-size: clamp(12px, 0.9vw, 14px) !important;
+    line-height: 1.2 !important;
+    margin: 0 0 20px 0 !important;
+    letter-spacing: 0 !important;
+    color: var(--text) !important;
+  }
+  .blog-divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--muted);
+    margin: 0 0 20px 0;
+    opacity: 0.5;
+  }
+  /* Individual blog post styles */
+  .blog-post-title {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-weight: 600;
+    font-size: clamp(24px, 2.8vw, 32px);
+    line-height: 1.2;
+    margin: 0 0 20px 0;
+    color: var(--text);
+  }
+  .blog-content {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(15px, 1.3vw, 18px);
+    line-height: 1.3;
+    color: var(--text);
+  }
+  .blog-content p {
+    margin: 0 0 16px 0;
+  }
+  .blog-content a {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color .2s ease;
+  }
+  .blog-content a:hover {
+    color: var(--accent);
+  }
+  .blog-date {
+    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-size: clamp(14px, 1.1vw, 16px);
+    color: var(--text);
+    margin-bottom: 20px;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .page { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      height: auto;
+      position: relative;
+      padding: 24px 20px 0 20px;
+      gap: 0;
+    }
+    .menu-toggle { display: block; }
+    .nav { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      display: none; 
+    }
+    .content { padding: 20px; }
+    .name { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      font-size: 14px; 
+      letter-spacing: 0.04em; 
+      line-height: 1.15; 
+      margin: 0; 
+    }
+    .clock { 
+      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
+      font-style: normal; 
+      font-size: 14px; 
+      letter-spacing: 0.04em; 
+      line-height: 1.15; 
+      margin: 0; 
+    }
+    .section { 
+      font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  
+      max-width: 540px; 
+    }
+  }
+</style>
 </head>
 <body>
-    <nav>
-        <div class="logo"><a href="../index.html">Aryaman Khandelwal</a></div>
-        <div class="nav-items">
-            <!-- <a href="blog.html">Blog<a> -->
+  <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">+</button>
+  <div class="page">
+    <aside class="sidebar" aria-label="Site identity">
+      <div class="name"><a href="../index.html">ARYAMAN
+KHANDELWAL</a></div>
+      <div class="clock" id="dubai-clock" aria-label="Local time (Dubai, 24h)">17:00:00</div>
+      <nav class="nav" aria-label="Primary">
+        <a href="../blog.html">Blog</a>
+        <a href="../forum.html">Jester's Courtyard</a>
+        <a href="../builds.html">Builds</a>
+        <a href="../tracker.html">Tracker</a>
+      </nav>
+    </aside>
+    <main class="content" id="main-content">
+      <section class="section" aria-labelledby="blog-heading">
+        <div class="blog-header">
+          <div class="blog-nav">
+            <a href="../blog.html" class="back-arrow"><</a>
+            <span class="blog-label">BLOG</span>
+          </div>
+          <h1 class="blog-title">some of my thoughts</h1>
+          <div class="blog-divider"></div>
         </div>
-    </nav>
+        
+        <h2 class="blog-post-title">Vibe coding and anti-technocracy</h2>
+        <div class="blog-date">June 2025</div>
+        
+        <div class="blog-content">
+          <p>When I posted the last blog here, vibe coding hadn't yet taken off to the unreal degree it has today (or at least I didn't know about it). Even then, I thought it was interesting that I've thought about the higher and higher barriers of entry when it comes to MVPs and general software development, where if one have specialised technical knowledge and instead decided to focus on other aspects of a business, one finds oneself increasingly "priced out" of the technology ecosystem.</p>
 
-    <section class="main">
-        <div class="main-container">
-            <div class="blog-within" style="margin-top:2rem;">
-                <div style="margin-bottom:1rem;">
-                    <span style="color:#fff;font-size:0.85rem;">< </span><a href="../blog.html" class="back-link">Back</a>
-                </div>
-                <h1 style="font-size:0.85rem;font-weight:normal;margin-bottom:0.5em;">[Vibe coding and anti-technocracy]</h1>
-                <p style="font-size:0.85rem;">June 2025<br>
-                <div style="margin-left:1.5em;font-size:0.85rem;">
-                    When I posted the last blog here, vibe coding hadn't yet taken off to the unreal degree it has today (or at least I didn't know about it). Even then, I thought it was interesting that I've thought about the higher and higher barriers of entry when it comes to MVPs and general software development, where if one have specialised technical knowledge and instead decided to focus on other aspects of a business, one finds oneself increasingly "priced out" of the technology ecosystem. <br><br>
+          <p>I recently listened to Stephen West on <a href="https://www.philosophizethis.org/podcast/episode-201-transcript-bkx3e-37rkx-bpl83-ysc9b-kkg62" target="_blank">Philosophize This!</a> and came across a technocracy, and realised that this is exactly what I had been pondering (turns out I don't have an original thought anymore). Technocracy essentially meaning a society wherein relevance is determined not by the public or even a government or investors, but by smaller group of technical experts. The example that Stephen gave was that of Amazon, wherein "some guy called Jeff" determines what you see and (to some degree) what you buy, and on the seller side, determines who gets a sale, and is thus able to maximise Amazon's margins. This level of technical expertise determining consumer purchases creates a situation where unless you are able to build the most sophisticated algorithms and capture market share, you're increasingly just a cog in the system rather than one adding to the system.</p>
+            
+          <p>When I first heard about vibe coding, I was hopeful. Perhaps this could be an equaliser, where technical knowledge would no longer be a blocker for one to validate an idea. I pondered on it for a bit and hoped that vibe coding could be the answer to technocratic systems. It makes sense from one angle. AI can do a lot. I read <a href="https://x.com/SherryYanJiang?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" target="_blank">Sherry Jiang's Twitter</a> where she helped folks ship products in a single day via vibe coding.</p>
 
-                    I recently listened to Stephen West on <a href="https://www.philosophizethis.org/podcast/episode-201-transcript-bkx3e-37rkx-bpl83-ysc9b-kkg62" target="_blank">Philosophize This!</a> and came across a technocracy, and realised that this is exactly what I had been pondering (turns out I don't have an original thought anymore). Technocracy essentially meaning a society wherein relevance is determined not by the public or even a government or investors, but by smaller group of technical experts. The example that Stephen gave was that of Amazon, wherein "some guy called Jeff" determines what you see and (to some degree) what you buy, and on the seller side, determines who gets a sale, and is thus able to maximise Amazon's margins. This level of technical expertise determining consumer purchases creates a situation where unless you are able to build the most sophisticated algorithms and capture market share, you're increasingly just a cog in the system rather than one adding to the system. <br><br>
-                    
-                    When I first heard about vibe coding, I was hopeful. Perhaps this could be an equaliser, where technical knowledge would no longer be a blocker for one to validate an idea. I pondered on it for a bit and hoped that vibe coding could be the answer to technocratic systems. It makes sense from one angle. AI can do a lot. I read <a href="https://x.com/SherryYanJiang?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" target="_blank">Sherry Jiang's Twitter</a> where she helped folks ship products in a single day via vibe coding. <br><br>
+          <p>But over time, I've started to question whether it actually solves the problem. It definitely helps people move faster at the start, but it doesn't really remove the need for technical depth. It just pushes it further down the line. You can build something that works on the surface, but the moment you want to change how it behaves, or fix something that breaks, or make it scale, you're still going to need proper engineering support. So while vibe coding is helpful in getting something off the ground, it doesn't fundamentally shift who has control or how things are built.</p>
 
-                    But over time, I've started to question whether it actually solves the problem. It definitely helps people move faster at the start, but it doesn't really remove the need for technical depth. It just pushes it further down the line. You can build something that works on the surface, but the moment you want to change how it behaves, or fix something that breaks, or make it scale, you're still going to need proper engineering support. So while vibe coding is helpful in getting something off the ground, it doesn't fundamentally shift who has control or how things are built. <br><br>
-
-                    The tools make things feel more accessible, but they also hide a lot of complexity. That's not necessarily a bad thing, but it can create a false sense of independence. You're not always sure what's going on underneath, which makes it harder to troubleshoot or improve things later. It's useful for testing ideas quickly, and there's real value in that, but it doesn't remove the structural gap between technical and non-technical people. It just makes it easier to ignore for a while.
-
-                    <br><br><br><br>
-                </div>
-                </p>
-            </div>
+          <p>The tools make things feel more accessible, but they also hide a lot of complexity. That's not necessarily a bad thing, but it can create a false sense of independence. You're not always sure what's going on underneath, which makes it harder to troubleshoot or improve things later. It's useful for testing ideas quickly, and there's real value in that, but it doesn't remove the structural gap between technical and non-technical people. It just makes it easier to ignore for a while.</p>
         </div>
-    </section>
+      </section>
+    </main>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
+    <a href="../blog.html">Blog</a>
+    <a href="../forum.html">Jester's Courtyard</a>
+    <a href="../builds.html">Builds</a>
+    <a href="../tracker.html">Tracker</a>
+  </div>
+
+  <script>
+    (function() {
+      // Dubai clock
+      const el = document.getElementById('dubai-clock');
+      if (el) {
+        const fmt = new Intl.DateTimeFormat('en-GB', { 
+          timeZone: 'Asia/Dubai', 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          second: '2-digit', 
+          hour12: false 
+        });
+        function update() {
+          const parts = fmt.formatToParts(new Date());
+          let hh = '00', mm = '00', ss = '00';
+          for (const p of parts) { 
+            if (p.type === 'hour') hh = p.value; 
+            if (p.type === 'minute') mm = p.value; 
+            if (p.type === 'second') ss = p.value; 
+          }
+          el.textContent = `${hh}:${mm}:${ss}`;
+        }
+        update();
+        setInterval(update, 1000);
+      }
+
+      // Mobile menu toggle
+      const toggle = document.getElementById('menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+      function openMenu() {
+        document.body.classList.add('menu-open');
+        toggle.textContent = '×';
+        toggle.setAttribute('aria-label', 'Close menu');
+        toggle.setAttribute('aria-expanded', 'true');
+        menu.hidden = false;
+      }
+      function closeMenu() {
+        document.body.classList.remove('menu-open');
+        toggle.textContent = '+';
+        toggle.setAttribute('aria-label', 'Open menu');
+        toggle.setAttribute('aria-expanded', 'false');
+        menu.hidden = true;
+      }
+      if (toggle && menu) {
+        toggle.addEventListener('click', function() {
+          if (document.body.classList.contains('menu-open')) closeMenu(); else openMenu();
+        });
+
+        // Close on link click
+        menu.addEventListener('click', function(e) { 
+          if (e.target.tagName === 'A') closeMenu(); 
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
