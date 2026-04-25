@@ -461,9 +461,9 @@ KHANDELWAL</a></div>
         for (let i = trimmedLines.length - 1; i >= 0; i--) {
             if (trimmedLines[i] !== '') { lastNonEmpty = trimmedLines[i]; break; }
         }
-        const hasKeyword = text.toLowerCase().includes('darkmatter');
-        const lastLineIsKeyword = lastNonEmpty.toLowerCase() === 'darkmatter';
-        if (!hasKeyword) return { valid: false, error: 'Missing keyword: message must end with "darkmatter" on its own line.' };
+        const hasKeyword = text.toLowerCase().includes('masterjester');
+        const lastLineIsKeyword = lastNonEmpty.toLowerCase() === 'masterjester';
+        if (!hasKeyword) return { valid: false, error: 'Missing keyword: message must end with "masterjester" on its own line.' };
         if (!lastLineIsKeyword) return { valid: false, error: 'Keyword must be the very last line, alone, with no other text.' };
         return { valid: true, error: '' };
     }
