@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin — Aryaman Khandelwal</title>
+    <link rel="icon" type="image/x-icon" href="/static/header.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f6f6f6;
+            --text: #111111;
+            --muted: #999999;
+            --accent: #5e96f7;
+            --card-bg: #e8e8e8;
+        }
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .wrap {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 24px 80px 24px;
+            box-sizing: border-box;
+        }
+        .top {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .label {
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: clamp(20px, 2.4vw, 28px);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin: 0;
+        }
+        .logout-form { margin: 0; }
+        .logout-form button {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            padding: 0;
+        }
+        .logout-form button:hover { color: var(--accent); }
+        .desc {
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(12px, 0.9vw, 14px);
+            color: var(--muted);
+            margin: 0 0 20px 0;
+        }
+        .divider {
+            width: 100%;
+            height: 1px;
+            background-color: var(--muted);
+            opacity: 0.5;
+            margin: 0 0 24px 0;
+        }
+        .banner {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(12px, 0.9vw, 14px);
+            color: var(--text);
+            border-left: 2px solid var(--accent);
+        }
+        h2 {
+            font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+            font-weight: 600;
+            font-size: clamp(20px, 2vw, 24px);
+            margin: 32px 0 12px 0;
+        }
+        h3 {
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--muted);
+            margin: 20px 0 10px 0;
+        }
+        .form-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .field { margin-bottom: 14px; }
+        .field label {
+            display: block;
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 13px);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin-bottom: 4px;
+        }
+        .field input[type="text"],
+        .field input[type="url"],
+        .field textarea,
+        .field select {
+            width: 100%;
+            box-sizing: border-box;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--muted);
+            color: var(--text);
+            font-family: 'Yrsa', Georgia, serif;
+            font-size: clamp(14px, 1.1vw, 16px);
+            padding: 6px 0;
+            outline: none;
+            resize: vertical;
+        }
+        .field input:focus,
+        .field textarea:focus,
+        .field select:focus { border-bottom-color: var(--accent); }
+        .field textarea { min-height: 60px; }
+        .field-row { display: flex; gap: 16px; }
+        .field-row .field { flex: 1; }
+        .checks {
+            display: flex;
+            gap: 24px;
+            margin: 12px 0 16px 0;
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(12px, 0.9vw, 14px);
+        }
+        .checks label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text);
+            cursor: pointer;
+        }
+        .submit-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--text);
+            color: var(--text);
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+        .submit-btn:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+        .sector-block { margin-bottom: 20px; }
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+        }
+        .row.featured { border-left: 2px solid var(--accent); }
+        .row.archived { opacity: 0.55; }
+        .row-info {
+            font-family: 'Yrsa', Georgia, serif;
+            font-size: clamp(14px, 1.1vw, 16px);
+            line-height: 1.3;
+            min-width: 0;
+        }
+        .row-info .name { font-weight: 600; }
+        .row-info .meta {
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(10px, 0.7vw, 12px);
+            color: var(--muted);
+            margin-top: 2px;
+        }
+        .row-actions { display: flex; gap: 6px; flex-shrink: 0; margin-left: 12px; align-items: center; }
+        .row-actions form { margin: 0; }
+        .row-actions button,
+        .row-actions .row-edit {
+            padding: 4px 10px;
+            background: transparent;
+            border: 1px solid var(--muted);
+            color: var(--text);
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(10px, 0.7vw, 12px);
+            cursor: pointer;
+            transition: all .2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            line-height: 1.4;
+        }
+        .row-actions button:hover,
+        .row-actions .row-edit:hover {
+            border-color: var(--text);
+            background: var(--text);
+            color: var(--bg);
+        }
+        .empty {
+            font-family: 'Yrsa', Georgia, serif;
+            font-size: clamp(13px, 1vw, 15px);
+            color: var(--muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="top">
+            <p class="label">Admin · Tracker</p>
+            <form class="logout-form" method="post" action="/admin/logout">
+                <button type="submit">Log out</button>
+            </form>
+        </div>
+        <p class="desc">Add and manage companies in the public tracker.</p>
+        <div class="divider"></div>
+
+        {% if banner %}
+        <div class="banner">{{ banner }}</div>
+        {% endif %}
+
+        <h2>Add company</h2>
+        <form class="form-card" method="post" action="/admin/tracker/companies">
+            <div class="field-row">
+                <div class="field">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" required>
+                </div>
+                <div class="field">
+                    <label for="sector">Sector</label>
+                    <select name="sector" id="sector" required>
+                        {% for s in sectors %}
+                        <option value="{{ s }}">{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="field">
+                <label for="description">Description (one line)</label>
+                <input type="text" name="description" id="description" required>
+            </div>
+            <div class="field">
+                <label for="alpha">Alpha (your view on their edge)</label>
+                <textarea name="alpha" id="alpha"></textarea>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="founders">Founders</label>
+                    <input type="text" name="founders" id="founders">
+                </div>
+                <div class="field">
+                    <label for="stage">Stage</label>
+                    <input type="text" name="stage" id="stage" placeholder="e.g. Seed, Series A">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="region">Country / Region</label>
+                    <input type="text" name="region" id="region">
+                </div>
+                <div class="field">
+                    <label for="website">Website</label>
+                    <input type="url" name="website" id="website" placeholder="https://...">
+                </div>
+            </div>
+            <div class="field">
+                <label for="notable_investors">Notable investors</label>
+                <input type="text" name="notable_investors" id="notable_investors">
+            </div>
+            <div class="checks">
+                <label><input type="checkbox" name="is_featured" value="true"> Mark as featured</label>
+                <label><input type="checkbox" name="is_archived" value="true"> Archive on add</label>
+            </div>
+            <button type="submit" class="submit-btn">Add company</button>
+        </form>
+
+        <h2>Current companies</h2>
+        {% for s in sectors %}
+        <div class="sector-block">
+            <h3>{{ s }}</h3>
+            {% set active = active_by_sector.get(s, []) %}
+            {% if active %}
+                {% for c in active %}
+                <div class="row {% if c.is_featured %}featured{% endif %}">
+                    <div class="row-info">
+                        <div class="name">{{ c.name }}</div>
+                        <div class="meta">
+                            {%- if c.stage %}{{ c.stage }}{% endif -%}
+                            {%- if c.stage and c.region %} · {% endif -%}
+                            {%- if c.region %}{{ c.region }}{% endif -%}
+                            {%- if c.is_featured %} · Featured{% endif -%}
+                        </div>
+                    </div>
+                    <div class="row-actions">
+                        <a class="row-edit" href="/admin/tracker/companies/{{ c.id }}/edit">Edit</a>
+                        <form method="post" action="/admin/tracker/companies/{{ c.id }}/feature">
+                            <button type="submit">{% if c.is_featured %}Unfeature{% else %}Feature{% endif %}</button>
+                        </form>
+                        <form method="post" action="/admin/tracker/companies/{{ c.id }}/archive">
+                            <button type="submit">Archive</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty">No companies yet.</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+        {% if archived_companies %}
+        <h2>Archived</h2>
+        {% for c in archived_companies %}
+        <div class="row archived">
+            <div class="row-info">
+                <div class="name">{{ c.name }}</div>
+                <div class="meta">
+                    {{ c.sector }}
+                    {%- if c.stage %} · {{ c.stage }}{% endif -%}
+                    {%- if c.region %} · {{ c.region }}{% endif -%}
+                </div>
+            </div>
+            <div class="row-actions">
+                <a class="row-edit" href="/admin/tracker/companies/{{ c.id }}/edit">Edit</a>
+            </div>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</body>
+</html>

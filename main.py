@@ -1,21 +1,41 @@
 import os
-from fastapi import FastAPI, Depends, HTTPException, Header, Request
+from fastapi import FastAPI, Depends, Form, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
+from starlette.middleware.sessions import SessionMiddleware
+from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from models import Base, Question, Reply, LiveTweet
+from models import Base, Question, Reply, LiveTweet, TrackerCompany
 from database import engine, get_db
 from typing import Optional
-from datetime import datetime
+from datetime import date, datetime
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), 'backend', '.env'))
 
 ADMIN_TOKEN = os.getenv('ADMIN_TOKEN')
+if not ADMIN_TOKEN:
+    raise RuntimeError("ADMIN_TOKEN environment variable is not set.")
+
+TRACKER_SECTORS = ['Fintech', 'Deep Tech', 'Sports & Media', 'Others']
+SESSION_MAX_AGE = 7 * 24 * 60 * 60  # 7 days
+
+templates = Jinja2Templates(directory=os.path.join(os.path.dirname(__file__), 'templates'))
 
 app = FastAPI()
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=ADMIN_TOKEN,
+    max_age=SESSION_MAX_AGE,
+    same_site="lax",
+    https_only=False,  # set True behind HTTPS in prod; cookies work over http for local dev
+    session_cookie="admin_session",
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -93,6 +113,27 @@ class LiveTweetOut(BaseModel):
     created_at: datetime
     class Config:
         from_attributes = True
+
+class TrackerCompanyOut(BaseModel):
+    id: int
+    name: str
+    description: str
+    alpha: Optional[str] = None
+    founders: Optional[str] = None
+    stage: Optional[str] = None
+    notable_investors: Optional[str] = None
+    website: Optional[str] = None
+    sector: str
+    region: Optional[str] = None
+    is_featured: bool
+    is_archived: bool
+    date_added: date
+    class Config:
+        from_attributes = True
+
+def require_admin_session(request: Request):
+    if not request.session.get("authed"):
+        raise HTTPException(status_code=401, detail="Not authenticated")
 
 @app.post("/questions", response_model=QuestionOut)
 async def create_question(q: QuestionCreate, db: AsyncSession = Depends(get_db)):
@@ -248,6 +289,266 @@ async def delete_livetweet(tweet_id: int, db: AsyncSession = Depends(get_db)):
     await db.delete(tweet)
     await db.commit()
     return {"status": "deleted"}
+
+@app.get("/tracker_companies", response_model=list[TrackerCompanyOut])
+async def list_tracker_companies(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(TrackerCompany).order_by(
+            TrackerCompany.sector,
+            TrackerCompany.is_featured.desc(),
+            TrackerCompany.date_added.desc(),
+        )
+    )
+    return result.scalars().all()
+
+
+# --- Admin (cookie-protected) ---
+
+@app.get("/admin", include_in_schema=False)
+async def admin_root(request: Request, db: AsyncSession = Depends(get_db)):
+    if not request.session.get("authed"):
+        return templates.TemplateResponse(
+            request, "admin_login.html", {"error": None}
+        )
+
+    result = await db.execute(
+        select(TrackerCompany).order_by(
+            TrackerCompany.is_featured.desc(),
+            TrackerCompany.date_added.desc(),
+            TrackerCompany.id.desc(),
+        )
+    )
+    companies = result.scalars().all()
+
+    active_by_sector = {s: [] for s in TRACKER_SECTORS}
+    archived_companies = []
+    for c in companies:
+        if c.is_archived:
+            archived_companies.append(c)
+        elif c.sector in active_by_sector:
+            active_by_sector[c.sector].append(c)
+        else:
+            # Companies whose sector got renamed/removed: surface them under "Others"
+            active_by_sector.setdefault('Others', []).append(c)
+
+    banner = None
+    ok = request.query_params.get("ok")
+    if ok == "created":
+        banner = "Company added."
+    elif ok == "updated":
+        banner = "Company updated."
+    elif ok == "featured":
+        banner = "Featured updated."
+    elif ok == "archived":
+        banner = "Company archived."
+
+    return templates.TemplateResponse(
+        request,
+        "admin_dashboard.html",
+        {
+            "sectors": TRACKER_SECTORS,
+            "active_by_sector": active_by_sector,
+            "archived_companies": archived_companies,
+            "banner": banner,
+        },
+    )
+
+
+@app.post("/admin/login", include_in_schema=False)
+async def admin_login(request: Request, password: str = Form(...)):
+    if password != ADMIN_TOKEN:
+        return templates.TemplateResponse(
+            request,
+            "admin_login.html",
+            {"error": "Incorrect password."},
+            status_code=401,
+        )
+    request.session["authed"] = True
+    return RedirectResponse(url="/admin", status_code=303)
+
+
+@app.post("/admin/logout", include_in_schema=False)
+async def admin_logout(request: Request):
+    request.session.clear()
+    return RedirectResponse(url="/admin", status_code=303)
+
+
+@app.post("/admin/tracker/companies", include_in_schema=False)
+async def admin_create_company(
+    request: Request,
+    name: str = Form(...),
+    description: str = Form(...),
+    sector: str = Form(...),
+    alpha: str = Form(""),
+    founders: str = Form(""),
+    stage: str = Form(""),
+    notable_investors: str = Form(""),
+    region: str = Form(""),
+    website: str = Form(""),
+    is_featured: Optional[str] = Form(None),
+    is_archived: Optional[str] = Form(None),
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    if sector not in TRACKER_SECTORS:
+        raise HTTPException(status_code=400, detail=f"Invalid sector: {sector}")
+
+    featured = bool(is_featured)
+    archived = bool(is_archived)
+    # An archived company should never be the featured one for its sector.
+    if archived:
+        featured = False
+
+    def _opt(value: str) -> Optional[str]:
+        v = value.strip()
+        return v or None
+
+    company = TrackerCompany(
+        name=name.strip(),
+        description=description.strip(),
+        sector=sector,
+        alpha=_opt(alpha),
+        founders=_opt(founders),
+        stage=_opt(stage),
+        notable_investors=_opt(notable_investors),
+        region=_opt(region),
+        website=_opt(website),
+        is_featured=featured,
+        is_archived=archived,
+    )
+    db.add(company)
+    await db.flush()  # populate company.id
+
+    if featured:
+        await db.execute(
+            update(TrackerCompany)
+            .where(TrackerCompany.sector == sector)
+            .where(TrackerCompany.id != company.id)
+            .values(is_featured=False)
+        )
+
+    await db.commit()
+    return RedirectResponse(url="/admin?ok=created", status_code=303)
+
+
+@app.get("/admin/tracker/companies/{company_id}/edit", include_in_schema=False)
+async def admin_edit_form(
+    request: Request,
+    company_id: int,
+    db: AsyncSession = Depends(get_db),
+):
+    if not request.session.get("authed"):
+        return RedirectResponse(url="/admin", status_code=303)
+    company = await db.get(TrackerCompany, company_id)
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+    return templates.TemplateResponse(
+        request,
+        "admin_edit_company.html",
+        {"company": company, "sectors": TRACKER_SECTORS},
+    )
+
+
+@app.post("/admin/tracker/companies/{company_id}/edit", include_in_schema=False)
+async def admin_edit_submit(
+    request: Request,
+    company_id: int,
+    name: str = Form(...),
+    description: str = Form(...),
+    sector: str = Form(...),
+    alpha: str = Form(""),
+    founders: str = Form(""),
+    stage: str = Form(""),
+    notable_investors: str = Form(""),
+    region: str = Form(""),
+    website: str = Form(""),
+    is_featured: Optional[str] = Form(None),
+    is_archived: Optional[str] = Form(None),
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    if sector not in TRACKER_SECTORS:
+        raise HTTPException(status_code=400, detail=f"Invalid sector: {sector}")
+
+    company = await db.get(TrackerCompany, company_id)
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+
+    featured = bool(is_featured)
+    archived = bool(is_archived)
+    if archived:
+        featured = False  # archived rows are never the sector's featured pick
+
+    def _opt(value: str) -> Optional[str]:
+        v = value.strip()
+        return v or None
+
+    company.name = name.strip()
+    company.description = description.strip()
+    company.sector = sector
+    company.alpha = _opt(alpha)
+    company.founders = _opt(founders)
+    company.stage = _opt(stage)
+    company.notable_investors = _opt(notable_investors)
+    company.region = _opt(region)
+    company.website = _opt(website)
+    company.is_featured = featured
+    company.is_archived = archived
+
+    if featured:
+        await db.execute(
+            update(TrackerCompany)
+            .where(TrackerCompany.sector == sector)
+            .where(TrackerCompany.id != company.id)
+            .values(is_featured=False)
+        )
+
+    await db.commit()
+    return RedirectResponse(url="/admin?ok=updated", status_code=303)
+
+
+@app.post("/admin/tracker/companies/{company_id}/feature", include_in_schema=False)
+async def admin_toggle_feature(
+    company_id: int,
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    company = await db.get(TrackerCompany, company_id)
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+
+    if company.is_featured:
+        company.is_featured = False
+    else:
+        await db.execute(
+            update(TrackerCompany)
+            .where(TrackerCompany.sector == company.sector)
+            .where(TrackerCompany.id != company.id)
+            .values(is_featured=False)
+        )
+        company.is_featured = True
+        # Re-featuring an archived company brings it back to active.
+        if company.is_archived:
+            company.is_archived = False
+
+    await db.commit()
+    return RedirectResponse(url="/admin?ok=featured", status_code=303)
+
+
+@app.post("/admin/tracker/companies/{company_id}/archive", include_in_schema=False)
+async def admin_archive(
+    company_id: int,
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    company = await db.get(TrackerCompany, company_id)
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+    company.is_archived = True
+    company.is_featured = False
+    await db.commit()
+    return RedirectResponse(url="/admin?ok=archived", status_code=303)
+
 
 @app.get("/ping", include_in_schema=False)
 def ping():

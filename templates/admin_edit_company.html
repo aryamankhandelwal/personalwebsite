@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin · Edit — Aryaman Khandelwal</title>
+    <link rel="icon" type="image/x-icon" href="/static/header.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f6f6f6;
+            --text: #111111;
+            --muted: #999999;
+            --accent: #5e96f7;
+            --card-bg: #e8e8e8;
+        }
+        html, body { height: 100%; }
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .wrap {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 24px 80px 24px;
+            box-sizing: border-box;
+        }
+        .top {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .label {
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-weight: 700;
+            font-size: clamp(20px, 2.4vw, 28px);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin: 0;
+        }
+        .back-link {
+            color: var(--muted);
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            border-bottom: none;
+            transition: color .2s ease;
+        }
+        .back-link:hover { color: var(--accent); }
+        .desc {
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(12px, 0.9vw, 14px);
+            color: var(--muted);
+            margin: 0 0 20px 0;
+        }
+        .divider {
+            width: 100%;
+            height: 1px;
+            background-color: var(--muted);
+            opacity: 0.5;
+            margin: 0 0 24px 0;
+        }
+        h2 {
+            font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+            font-weight: 600;
+            font-size: clamp(20px, 2vw, 24px);
+            margin: 0 0 12px 0;
+        }
+        .form-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .field { margin-bottom: 14px; }
+        .field label {
+            display: block;
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 13px);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin-bottom: 4px;
+        }
+        .field input[type="text"],
+        .field input[type="url"],
+        .field textarea,
+        .field select {
+            width: 100%;
+            box-sizing: border-box;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--muted);
+            color: var(--text);
+            font-family: 'Yrsa', Georgia, serif;
+            font-size: clamp(14px, 1.1vw, 16px);
+            padding: 6px 0;
+            outline: none;
+            resize: vertical;
+        }
+        .field input:focus,
+        .field textarea:focus,
+        .field select:focus { border-bottom-color: var(--accent); }
+        .field textarea { min-height: 60px; }
+        .field-row { display: flex; gap: 16px; }
+        .field-row .field { flex: 1; }
+        .checks {
+            display: flex;
+            gap: 24px;
+            margin: 12px 0 16px 0;
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(12px, 0.9vw, 14px);
+        }
+        .checks label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text);
+            cursor: pointer;
+        }
+        .actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-top: 8px;
+        }
+        .submit-btn {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid var(--text);
+            color: var(--text);
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            cursor: pointer;
+            transition: all .2s ease;
+        }
+        .submit-btn:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+        .cancel-link {
+            color: var(--muted);
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            text-decoration: none;
+            border-bottom: none;
+            transition: color .2s ease;
+        }
+        .cancel-link:hover { color: var(--accent); }
+        .meta {
+            font-family: 'Roboto', system-ui, sans-serif;
+            font-size: clamp(10px, 0.7vw, 12px);
+            color: var(--muted);
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="top">
+            <p class="label">Edit company</p>
+            <a class="back-link" href="/admin">← Back</a>
+        </div>
+        <p class="desc">Update {{ company.name }}.</p>
+        <div class="divider"></div>
+
+        <form class="form-card" method="post" action="/admin/tracker/companies/{{ company.id }}/edit">
+            <div class="field-row">
+                <div class="field">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" value="{{ company.name }}" required>
+                </div>
+                <div class="field">
+                    <label for="sector">Sector</label>
+                    <select name="sector" id="sector" required>
+                        {% for s in sectors %}
+                        <option value="{{ s }}" {% if s == company.sector %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="field">
+                <label for="description">Description (one line)</label>
+                <input type="text" name="description" id="description" value="{{ company.description }}" required>
+            </div>
+            <div class="field">
+                <label for="alpha">Alpha (your view on their edge)</label>
+                <textarea name="alpha" id="alpha">{% if company.alpha %}{{ company.alpha }}{% endif %}</textarea>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="founders">Founders</label>
+                    <input type="text" name="founders" id="founders" value="{{ company.founders or '' }}">
+                </div>
+                <div class="field">
+                    <label for="stage">Stage</label>
+                    <input type="text" name="stage" id="stage" value="{{ company.stage or '' }}" placeholder="e.g. Seed, Series A">
+                </div>
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label for="region">Country / Region</label>
+                    <input type="text" name="region" id="region" value="{{ company.region or '' }}">
+                </div>
+                <div class="field">
+                    <label for="website">Website</label>
+                    <input type="url" name="website" id="website" value="{{ company.website or '' }}" placeholder="https://...">
+                </div>
+            </div>
+            <div class="field">
+                <label for="notable_investors">Notable investors</label>
+                <input type="text" name="notable_investors" id="notable_investors" value="{{ company.notable_investors or '' }}">
+            </div>
+            <div class="checks">
+                <label><input type="checkbox" name="is_featured" value="true" {% if company.is_featured %}checked{% endif %}> Featured</label>
+                <label><input type="checkbox" name="is_archived" value="true" {% if company.is_archived %}checked{% endif %}> Archived</label>
+            </div>
+            <div class="actions">
+                <button type="submit" class="submit-btn">Save changes</button>
+                <a class="cancel-link" href="/admin">Cancel</a>
+            </div>
+        </form>
+
+        <div class="meta">
+            Added {{ company.date_added }} · ID {{ company.id }}
+        </div>
+    </div>
+</body>
+</html>

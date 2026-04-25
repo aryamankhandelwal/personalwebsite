@@ -1,6 +1,6 @@
 """SQLAlchemy models for the Ask Me Anything app."""
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, func
+from sqlalchemy import Boolean, Column, Date, Integer, String, Text, DateTime, ForeignKey, func
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -43,4 +43,21 @@ class LiveTweet(Base):
     __tablename__ = 'livetweets'
     id = Column(Integer, primary_key=True, index=True)
     content = Column(Text, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now()) 
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class TrackerCompany(Base):
+    __tablename__ = 'tracker_companies'
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(Text, nullable=False)
+    description = Column(Text, nullable=False)
+    alpha = Column(Text, nullable=True)
+    founders = Column(Text, nullable=True)
+    stage = Column(Text, nullable=True)
+    notable_investors = Column(Text, nullable=True)
+    website = Column(Text, nullable=True)
+    sector = Column(Text, nullable=False)
+    region = Column(Text, nullable=True)
+    is_featured = Column(Boolean, server_default='false', default=False, nullable=False)
+    is_archived = Column(Boolean, server_default='false', default=False, nullable=False)
+    date_added = Column(Date, server_default=func.current_date(), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)

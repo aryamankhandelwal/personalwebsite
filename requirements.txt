@@ -2,5 +2,8 @@ fastapi
 uvicorn[standard]
 aiosqlite
 sqlalchemy
-python-dotenv 
-asyncpg 
+python-dotenv
+asyncpg
+jinja2
+itsdangerous
+python-multipart
