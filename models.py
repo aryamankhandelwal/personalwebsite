@@ -1,6 +1,6 @@
 """SQLAlchemy models for the Ask Me Anything app."""
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, func
 from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
@@ -37,4 +37,10 @@ class AdminReply(Base):
     admin_answer = Column(Text, nullable=False)
     timestamp = Column(DateTime, default=datetime.utcnow)
     edited = Column(Integer, default=0)  # 0 = not edited, 1 = edited
-    reply = relationship('Reply', back_populates='admin_reply') 
+    reply = relationship('Reply', back_populates='admin_reply')
+
+class LiveTweet(Base):
+    __tablename__ = 'livetweets'
+    id = Column(Integer, primary_key=True, index=True)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now()) 

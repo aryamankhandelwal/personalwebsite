@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from models import Base, Question, Reply
+from models import Base, Question, Reply, LiveTweet
 from database import engine, get_db
 from typing import Optional
 from datetime import datetime
@@ -83,6 +83,16 @@ class AdminReplyOut(BaseModel):
 
 class AdminReplyCreate(BaseModel):
     admin_answer: str
+
+class LiveTweetCreate(BaseModel):
+    content: str
+
+class LiveTweetOut(BaseModel):
+    id: int
+    content: str
+    created_at: datetime
+    class Config:
+        from_attributes = True
 
 @app.post("/questions", response_model=QuestionOut)
 async def create_question(q: QuestionCreate, db: AsyncSession = Depends(get_db)):
@@ -216,6 +226,28 @@ async def delete_reply(reply_id: int, db: AsyncSession = Depends(get_db)):
     await db.delete(reply)
     await db.commit()
     return {"status": "deleted"} 
+
+@app.post("/livetweets", response_model=LiveTweetOut)
+async def create_livetweet(lt: LiveTweetCreate, db: AsyncSession = Depends(get_db)):
+    tweet = LiveTweet(content=lt.content)
+    db.add(tweet)
+    await db.commit()
+    await db.refresh(tweet)
+    return tweet
+
+@app.get("/livetweets", response_model=list[LiveTweetOut])
+async def list_livetweets(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(LiveTweet).order_by(LiveTweet.created_at.desc()))
+    return result.scalars().all()
+
+@app.delete("/livetweets/{tweet_id}", dependencies=[Depends(admin_auth)])
+async def delete_livetweet(tweet_id: int, db: AsyncSession = Depends(get_db)):
+    tweet = await db.get(LiveTweet, tweet_id)
+    if not tweet:
+        raise HTTPException(status_code=404, detail="Not found")
+    await db.delete(tweet)
+    await db.commit()
+    return {"status": "deleted"}
 
 @app.get("/ping", include_in_schema=False)
 def ping():
