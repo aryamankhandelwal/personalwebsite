@@ -5,25 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Question Thread — Aryaman Khandelwal</title>
     <link rel="icon" type="image/x-icon" href="images/header.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&family=Google+Sans+Code:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        @font-face { font-family: 'Geist'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'Geist'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'Geist'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-SemiBold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'Geist Mono'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-mono/GeistMono-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+
         :root {
-            --bg: #f6f6f6; /* very light grey */
-            --text: #111111;
-            --muted: #999999;
-            --accent: #5e96f7; /* site blue */
-            --card-bg: #e8e8e8; /* lighter grey for question cards */
+            --background: #1a1a1a;
+            --foreground: #ededed;
+            --muted: #888888;
+            --muted-foreground: #a1a1a1;
+            --accent: #ededed;
+            --border: rgba(255,255,255,0.10);
+            --input-border: rgba(255,255,255,0.15);
+            --card: #232323;
+            --ring: rgba(255,255,255,0.25);
+            --blue: #5e96f7;
+        }
+
+        a { color: inherit; text-decoration: none; border-bottom: none; }
+
+        html {
+            scrollbar-gutter: stable;
         }
         html, body {
             height: 100%;
         }
         body {
             margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.3;
+            background: var(--background);
+            color: var(--foreground);
+            font-family: 'Geist', system-ui, sans-serif;
+            line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -46,48 +60,50 @@
             height: 100dvh;
             box-sizing: border-box;
         }
-        .name { 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
-            font-weight: 700;
-            font-size: clamp(16px, 1.2vw + 8px, 20px);
-            letter-spacing: 0.02em;
+        .name {
+            font-family: 'Geist', system-ui, sans-serif;
+            font-weight: 600;
+            font-size: clamp(14px, 1vw, 16px);
+            letter-spacing: 0.04em;
             text-transform: uppercase;
-            line-height: 1.1;
-            color: var(--text);
+            line-height: 1.2;
+            color: var(--foreground);
             white-space: pre-line;
             margin: 0;
         }
         .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
-        .name a:hover, .name a:focus-visible { color: var(--accent); border-bottom: none; }
+        .name a:hover, .name a:focus-visible { color: var(--blue); border-bottom: none; }
 
-        .clock { 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
-            font-style: normal;
-            font-weight: 700;
-            font-size: clamp(16px, 1.2vw + 8px, 20px);
-            letter-spacing: 0.02em;
-            line-height: 1.1;
+        .clock {
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-weight: 400;
+            font-size: clamp(13px, 0.9vw, 15px);
+            letter-spacing: 0.04em;
+            color: #9a9a9a;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: 'zero' 1;
+            line-height: 1.2;
             margin: 0;
         }
 
         /* Desktop nav under clock */
-        .nav { 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
-            margin-top: 10px;
+        .nav {
+            font-family: 'Geist', system-ui, sans-serif;
+            margin-top: 14px;
         }
         .nav a {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;    
+            font-family: 'Geist', system-ui, sans-serif;
             display: block;
-            font-size: clamp(11px, 0.8vw + 1px, 14px);
-            color: var(--text);
+            font-size: clamp(12px, 0.85vw, 14px);
+            color: var(--muted);
             text-decoration: none;
             border-bottom: none;
-            padding: 2px 0;
-            line-height: 1.1;
+            padding: 3px 0;
+            line-height: 1.2;
             transition: color .2s ease;
         }
         .nav a:hover, .nav a:focus-visible {
-            color: var(--accent);
+            color: var(--blue);
         }
 
         /* Mobile menu toggle */
@@ -97,13 +113,14 @@
             top: 10px;
             right: 12px;
             z-index: 1001;
+            font-family: 'Geist', system-ui, sans-serif;
             font-size: 28px;
             line-height: 1;
             width: 36px;
             height: 36px;
             border: none;
             background: transparent;
-            color: var(--text);
+            color: var(--foreground);
             cursor: pointer;
         }
 
@@ -111,22 +128,22 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: var(--bg);
+            background: var(--background);
             padding: 72px 24px 24px 24px;
             z-index: 1000;
             box-sizing: border-box;
         }
-        .mobile-menu a { 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+        .mobile-menu a {
+            font-family: 'Geist', system-ui, sans-serif;
             display: block;
             font-size: 14px;
-            color: var(--text);
+            color: var(--muted);
             text-decoration: none;
             border-bottom: none;
             padding: 6px 0;
             line-height: 1.1;
         }
-        .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--accent); }
+        .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--blue); }
 
         .menu-open .mobile-menu { display: block; }
 
@@ -135,8 +152,8 @@
             padding: 40px 6vw 80px 9vw;
             box-sizing: border-box;
         }
-        .section { 
-            font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+        .section {
+            font-family: 'Geist', system-ui, sans-serif;
             max-width: 540px;
         }
 
@@ -155,131 +172,135 @@
             text-decoration: none;
             border-bottom: none;
             transition: color .2s ease;
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-weight: 700;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-weight: 600;
             font-size: clamp(20px, 2.4vw, 28px);
             text-transform: uppercase;
             letter-spacing: 0.02em;
         }
         .forum-nav .back-arrow:hover {
-            color: var(--accent);
+            color: var(--blue);
         }
         .forum-nav .forum-label {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-weight: 700;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-weight: 500;
             font-size: clamp(20px, 2.4vw, 28px);
-            color: var(--text);
+            color: var(--foreground);
             text-transform: uppercase;
             letter-spacing: 0.02em;
         }
         .section .forum-title {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif !important;
+            font-family: 'Geist', system-ui, sans-serif !important;
             font-weight: 400 !important;
-            font-size: clamp(12px, 0.9vw, 14px) !important;
-            line-height: 1.2 !important;
+            font-size: clamp(12px, 0.85vw, 14px) !important;
+            line-height: 1.6 !important;
             margin: 0 0 20px 0 !important;
             letter-spacing: 0 !important;
-            color: var(--text) !important;
+            color: var(--muted-foreground) !important;
         }
         .section .forum-title a {
-            color: var(--muted);
-            text-decoration: none;
-            border-bottom: none;
-            transition: color .2s ease;
+            color: var(--muted-foreground);
+            text-decoration: underline;
+            text-decoration-color: rgba(255,255,255,0.2);
+            text-underline-offset: 3px;
+            text-decoration-thickness: 1px;
+            transition: color .2s ease, text-decoration-color .2s ease;
         }
         .section .forum-title a:hover {
-            color: var(--accent);
+            color: var(--blue);
+            text-decoration-color: var(--blue);
         }
         .forum-divider {
             width: 100%;
             height: 1px;
-            background-color: var(--muted);
+            background-color: var(--border);
             margin: 0 0 20px 0;
-            opacity: 0.5;
         }
 
         /* Question display */
-        .thread-container { 
-            max-width: 540px; 
+        .thread-container {
+            max-width: 540px;
         }
-        .question-main { 
-            background: var(--card-bg); 
-            border-radius: 8px; 
-            margin-bottom: 20px; 
+        .question-main {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 20px;
             padding: 20px;
             position: relative;
         }
         .question-text {
-            font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
-            font-size: clamp(16px, 1.4vw, 20px);
-            color: var(--text);
-            line-height: 1.4;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(15px, 1.1vw, 16px);
+            color: var(--foreground);
+            line-height: 1.6;
             margin-bottom: 12px;
             padding-right: 80px;
         }
         .question-meta {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(10px, 0.7vw, 12px);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(12px, 0.9vw, 14px);
             color: var(--muted);
-            line-height: 1.2;
+            line-height: 1.4;
         }
-        .status-unanswered { color: #c00; }
-        .status-answered { color: #090; }
+        .status-unanswered { color: #ef4444; }
+        .status-answered { color: #22c55e; }
 
         /* Official answer styling */
         .official-answer {
             margin-top: 16px;
-            background: #ddd;
+            background: rgba(255,255,255,0.05);
             padding: 16px;
             border-radius: 6px;
-            border-left: 4px solid var(--accent);
+            border-left: 4px solid var(--blue);
         }
         .official-answer-label {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-weight: 700;
-            font-size: clamp(11px, 0.8vw + 1px, 14px);
-            color: var(--text);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-weight: 600;
+            font-size: clamp(12px, 0.9vw, 14px);
+            color: var(--foreground);
             margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 0.02em;
         }
         .official-answer-text {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(12px, 0.9vw, 14px);
-            color: var(--text);
-            line-height: 1.3;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(15px, 1.1vw, 16px);
+            color: var(--muted-foreground);
+            line-height: 1.6;
         }
 
         /* Replies section */
         .replies-header {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-weight: 700;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-weight: 600;
             font-size: clamp(14px, 1.1vw, 16px);
-            color: var(--text);
+            color: var(--foreground);
             margin-bottom: 16px;
             text-transform: uppercase;
             letter-spacing: 0.02em;
         }
-        .reply-card { 
-            background: var(--card-bg); 
-            border-radius: 8px; 
-            margin-bottom: 12px; 
+        .reply-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
             padding: 16px;
             position: relative;
         }
         .reply-text {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(13px, 1.0vw, 15px);
-            color: var(--text);
-            line-height: 1.3;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(15px, 1.1vw, 16px);
+            color: var(--foreground);
+            line-height: 1.6;
             margin-bottom: 8px;
             padding-right: 80px;
         }
         .reply-meta {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(10px, 0.7vw, 12px);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(12px, 0.9vw, 14px);
             color: var(--muted);
-            line-height: 1.2;
+            line-height: 1.4;
         }
 
         /* Admin controls - positioned absolutely in top right */
@@ -309,10 +330,10 @@
             color: #ffd700;
         }
         .admin-btn:hover {
-            color: var(--accent);
+            color: var(--blue);
         }
         .delete-btn:hover {
-            color: #c00 !important;
+            color: #ef4444 !important;
         }
 
         /* Dropdown menus */
@@ -322,18 +343,19 @@
             top: 100%;
             right: 0;
             margin-top: 4px;
-            background: var(--bg);
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
             padding: 4px;
             z-index: 100;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         .admin-dropdown button {
             background: none;
             border: none;
-            color: var(--text);
-            font-size: 14px;
+            color: var(--foreground);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: 13px;
             cursor: pointer;
             padding: 6px 8px;
             display: block;
@@ -342,7 +364,7 @@
             transition: color .2s ease;
         }
         .admin-dropdown button:hover {
-            color: var(--accent);
+            color: var(--blue);
         }
 
         /* Master key input - positioned above Add reply button */
@@ -354,44 +376,43 @@
             z-index: 99;
         }
         .master-key-input {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+            font-family: 'Geist', system-ui, sans-serif;
             width: 200px;
             padding: 8px 12px;
-            background: var(--bg);
-            border: 1px solid var(--muted);
-            border-radius: 4px;
-            color: var(--text);
-            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--foreground);
+            font-size: 13px;
             outline: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
         .master-key-input:focus {
-            border-color: var(--accent);
+            border-color: var(--muted);
         }
         .master-key-input::placeholder {
             color: var(--muted);
         }
 
         /* Add reply button */
-        .sticky-add-btn { 
-            position: fixed; 
-            bottom: 32px; 
-            right: 32px; 
-            background: var(--text); 
-            color: var(--bg); 
-            border: none; 
-            border-radius: 50px; 
-            padding: 12px 20px; 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(11px, 0.8vw + 1px, 14px); 
-            cursor: pointer; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-            z-index: 100; 
+        .sticky-add-btn {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: var(--foreground);
+            color: var(--background);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 100;
             transition: all .2s ease;
         }
-        .sticky-add-btn:hover { 
-            background: var(--accent); 
-            color: #fff;
+        .sticky-add-btn:hover {
+            opacity: 0.85;
         }
 
         /* Modal */
@@ -407,18 +428,18 @@
             justify-content: center;
         }
         .modal-content {
-            background: var(--bg);
+            background: var(--card);
             padding: 32px 24px;
-            border-radius: 10px;
+            border-radius: 8px;
             max-width: 400px;
             width: 90vw;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border);
         }
         .modal h3 {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-weight: 700;
-            font-size: clamp(16px, 1.2vw + 8px, 20px);
-            color: var(--text);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-weight: 600;
+            font-size: clamp(18px, 1.4vw, 22px);
+            color: var(--foreground);
             margin-bottom: 1rem;
             letter-spacing: 0.02em;
             text-transform: uppercase;
@@ -430,45 +451,49 @@
             margin-bottom: 12px;
             background: transparent;
             border: none;
-            border-bottom: 1px solid var(--muted);
-            color: var(--text);
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(13px, 1.0vw, 15px);
+            border-bottom: 1px solid var(--border);
+            color: var(--foreground);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(15px, 1.1vw, 16px);
             outline: none;
             box-sizing: border-box;
             resize: vertical;
         }
+        .modal textarea::placeholder {
+            color: var(--muted);
+        }
         .modal textarea:focus {
-            border-bottom-color: var(--accent);
+            border-bottom-color: var(--muted);
         }
         .modal-btn {
             padding: 8px 16px;
             background: transparent;
-            border: 1px solid var(--text);
-            color: var(--text);
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--foreground);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: 13px;
             cursor: pointer;
             transition: all .2s ease;
             margin-right: 8px;
         }
         .modal-btn:hover {
-            background: var(--text);
-            color: var(--bg);
+            background: var(--foreground);
+            color: var(--background);
         }
         .modal-status {
             margin-top: 12px;
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(11px, 0.8vw + 1px, 14px);
-            color: #c00;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: 13px;
+            color: #ef4444;
         }
 
         /* Status messages */
         .admin-status {
             margin-top: 8px;
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(11px, 0.8vw + 1px, 14px);
-            color: #c00;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: 13px;
+            color: #ef4444;
         }
 
         .edited-label {
@@ -489,29 +514,28 @@
                 gap: 0;
             }
             .menu-toggle { display: block; }
-            .nav { 
-                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
-                display: none; 
+            .nav {
+                font-family: 'Geist', system-ui, sans-serif;
+                display: none;
             }
             .content { padding: 20px; }
-            .name { 
-                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
-                font-size: 14px; 
-                letter-spacing: 0.04em; 
-                line-height: 1.15; 
-                margin: 0; 
+            .name {
+                font-family: 'Geist', system-ui, sans-serif;
+                font-size: 14px;
+                letter-spacing: 0.04em;
+                line-height: 1.15;
+                margin: 0;
             }
-            .clock { 
-                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
-                font-style: normal; 
-                font-size: 14px; 
-                letter-spacing: 0.04em; 
-                line-height: 1.15; 
-                margin: 0; 
+            .clock {
+                font-family: 'Geist Mono', ui-monospace, monospace;
+                font-size: 13px;
+                letter-spacing: 0.04em;
+                line-height: 1.15;
+                margin: 0;
             }
-            .section { 
-                font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  
-                max-width: 540px; 
+            .section {
+                font-family: 'Geist', system-ui, sans-serif;
+                max-width: 540px;
             }
             .question-text {
                 padding-right: 60px;
@@ -547,8 +571,9 @@ KHANDELWAL</a></div>
                 <a href="/forum.html">Jester's Courtyard</a>
                 <a href="/builds.html">Builds</a>
                 <a href="/tracker.html">Tracker</a>
+                <a href="/interests.html">Interests</a>
                 <a href="/livetweets.html">Live Tweets</a>
-    </nav>
+            </nav>
         </aside>
         <main class="content" id="main-content">
             <section class="section" aria-labelledby="forum-heading">
@@ -556,15 +581,15 @@ KHANDELWAL</a></div>
                     <div class="forum-nav">
                         <a href="/forum.html" class="back-arrow"><</a>
                         <span class="forum-label">JESTER'S COURTYARD</span>
-                </div>
+                    </div>
                     <h1 class="forum-title">When I was recruiting for finance and tech, I was lost. I started this to be the "big brother" I wish I had. 3 years on, I've mentored over 50 students, with several receiving offers from institutions such as Bank of America, BCG, and Province Firm. Talk to me about 1-on-1 mentoring sessions, resume building help, interview guidance and prep, and networking opportunities. Contact me <a href="https://www.linkedin.com/company/jesterinapatagonia/" target="_blank">here</a></h1>
                     <div class="forum-divider"></div>
                 </div>
-                
+
                 <div class="thread-container">
                     <!-- Main question -->
                     <div id="questionBlock"></div>
-                    
+
                     <!-- Replies Section -->
                     <div id="repliesSection" style="margin-top: 24px;">
                         <h3 class="replies-header">Replies</h3>
@@ -573,13 +598,14 @@ KHANDELWAL</a></div>
                 </div>
             </section>
         </main>
-            </div>
+    </div>
 
     <div class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
         <a href="/blog.html">Blog</a>
         <a href="/forum.html">Jester's Courtyard</a>
         <a href="/builds.html">Builds</a>
         <a href="/tracker.html">Tracker</a>
+        <a href="/interests.html">Interests</a>
         <a href="/livetweets.html">Live Tweets</a>
         </div>
 
@@ -590,7 +616,7 @@ KHANDELWAL</a></div>
     </div>
 
     <button class="sticky-add-btn" onclick="openAddReplyModal()">+ Add a reply</button>
-    
+
     <!-- Modal for adding reply -->
     <div id="addReplyModal" style="display:none;" class="modal">
         <div class="modal-content">
@@ -635,20 +661,20 @@ KHANDELWAL</a></div>
         // Dubai clock
         const el = document.getElementById('dubai-clock');
         if (el) {
-            const fmt = new Intl.DateTimeFormat('en-GB', { 
-                timeZone: 'Asia/Dubai', 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit', 
-                hour12: false 
+            const fmt = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Dubai',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
             });
             function update() {
                 const parts = fmt.formatToParts(new Date());
                 let hh = '00', mm = '00', ss = '00';
-                for (const p of parts) { 
-                    if (p.type === 'hour') hh = p.value; 
-                    if (p.type === 'minute') mm = p.value; 
-                    if (p.type === 'second') ss = p.value; 
+                for (const p of parts) {
+                    if (p.type === 'hour') hh = p.value;
+                    if (p.type === 'minute') mm = p.value;
+                    if (p.type === 'second') ss = p.value;
                 }
                 el.textContent = `${hh}:${mm}:${ss}`;
             }
@@ -661,7 +687,7 @@ KHANDELWAL</a></div>
         const menu = document.getElementById('mobile-menu');
         function openMenu() {
             document.body.classList.add('menu-open');
-            toggle.textContent = '×';
+            toggle.textContent = '\u00d7';
             toggle.setAttribute('aria-label', 'Close menu');
             toggle.setAttribute('aria-expanded', 'true');
             menu.hidden = false;
@@ -679,8 +705,8 @@ KHANDELWAL</a></div>
             });
 
             // Close on link click
-            menu.addEventListener('click', function(e) { 
-                if (e.target.tagName === 'A') closeMenu(); 
+            menu.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') closeMenu();
             });
         }
     })();
@@ -698,7 +724,7 @@ KHANDELWAL</a></div>
         const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`);
         const data = await res.json();
         questionData = data.question;
-        
+
         // Render question
         let questionHtml = `<div class="question-main">
             <div class="admin-controls">
@@ -716,7 +742,7 @@ KHANDELWAL</a></div>
                 <span class="${data.question.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${data.question.status.charAt(0).toUpperCase() + data.question.status.slice(1)}</span>
                 &nbsp;|&nbsp;
                 ${data.question.nickname ? `by ${data.question.nickname} &nbsp;|&nbsp;` : ''}
-                ${new Date(data.question.timestamp).toLocaleString()}
+                <span style="font-family:'Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-feature-settings:'zero' 1">${new Date(data.question.timestamp).toLocaleString()}</span>
                 ${data.question.edited ? '<span class="edited-label">(Edited)</span>' : ''}
             </div>
             ${data.question.responder_answer ? `<div class="official-answer">
@@ -724,26 +750,26 @@ KHANDELWAL</a></div>
                 <div class="official-answer-text">${data.question.responder_answer}</div>
             </div>` : ''}
             <div id="questionAnswerBox" style="display:none;margin-top:16px;">
-                <textarea id="questionAnswerInput" placeholder="Type your official answer..." style="width:100%;min-height:80px;padding:12px;background:transparent;border:none;border-bottom:1px solid var(--muted);color:var(--text);font-family:'Roboto',system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:clamp(13px,1.0vw,15px);outline:none;box-sizing:border-box;resize:vertical;"></textarea>
+                <textarea id="questionAnswerInput" placeholder="Type your official answer..." style="width:100%;min-height:80px;padding:12px;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--foreground);font-family:'Geist',system-ui,sans-serif;font-size:clamp(13px,1.0vw,15px);outline:none;box-sizing:border-box;resize:vertical;"></textarea>
                 <div style="margin-top:12px;">
                     <button onclick="submitQuestionAnswer()" class="modal-btn">Submit Answer</button>
                     <button onclick="hideQuestionAnswerBox()" class="modal-btn">Cancel</button>
-            </div>
+                </div>
             </div>
         </div>`;
         document.getElementById('questionBlock').innerHTML = questionHtml;
-        
+
         // Render replies
         renderReplies(data.replies || []);
     }
-    
+
     function renderReplies(replies) {
         const repliesList = document.getElementById('repliesList');
         if (replies.length === 0) {
-            repliesList.innerHTML = '<div style="color:var(--muted);font-size:clamp(13px,1.0vw,15px);font-family:\'Roboto\',system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif;">No replies yet.</div>';
+            repliesList.innerHTML = '<div style="color:var(--muted);font-size:clamp(13px,1.0vw,15px);font-family:\'Geist\',system-ui,sans-serif;">No replies yet.</div>';
             return;
         }
-        
+
         let repliesHtml = '';
         replies.forEach(reply => {
             repliesHtml += `<div class="reply-card" data-reply-id="${reply.id}">
@@ -759,7 +785,7 @@ KHANDELWAL</a></div>
                 </div>
                 <div class="reply-text">${reply.reply_text}</div>
                 <div class="reply-meta">
-                    ${new Date(reply.timestamp).toLocaleString()}
+                    <span style="font-family:'Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-feature-settings:'zero' 1">${new Date(reply.timestamp).toLocaleString()}</span>
                     ${reply.edited ? '<span class="edited-label">(edited)</span>' : ''}
                 </div>
                 ${reply.admin_reply ? `<div class="official-answer">
@@ -767,7 +793,7 @@ KHANDELWAL</a></div>
                     <div class="official-answer-text">${reply.admin_reply.admin_answer}</div>
                 </div>` : ''}
                 <div id="replyAnswerBox${reply.id}" style="display:none;margin-top:16px;">
-                    <textarea id="replyAnswerInput${reply.id}" placeholder="Type your official answer..." style="width:100%;min-height:80px;padding:12px;background:transparent;border:none;border-bottom:1px solid var(--muted);color:var(--text);font-family:'Roboto',system-ui,-apple-system,Segoe UI,Helvetica,Arial,sans-serif;font-size:clamp(13px,1.0vw,15px);outline:none;box-sizing:border-box;resize:vertical;"></textarea>
+                    <textarea id="replyAnswerInput${reply.id}" placeholder="Type your official answer..." style="width:100%;min-height:80px;padding:12px;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--foreground);font-family:'Geist',system-ui,sans-serif;font-size:clamp(13px,1.0vw,15px);outline:none;box-sizing:border-box;resize:vertical;"></textarea>
                     <div style="margin-top:12px;">
                         <button onclick="submitReplyAnswer(${reply.id})" class="modal-btn">Submit Answer</button>
                         <button onclick="hideReplyAnswerBox(${reply.id})" class="modal-btn">Cancel</button>
@@ -777,9 +803,9 @@ KHANDELWAL</a></div>
         });
         repliesList.innerHTML = repliesHtml;
     }
-    
+
     fetchThread();
-    
+
     // --- Question answer functions ---
     function showQuestionAnswerBox() {
         const token = document.getElementById('adminTokenInput').value.trim();
@@ -791,105 +817,99 @@ KHANDELWAL</a></div>
         hideAllDropdowns();
     }
     window.showQuestionAnswerBox = showQuestionAnswerBox;
-    
+
     function hideQuestionAnswerBox() {
         document.getElementById('questionAnswerBox').style.display = 'none';
         document.getElementById('questionAnswerInput').value = '';
     }
     window.hideQuestionAnswerBox = hideQuestionAnswerBox;
-    
+
     async function submitQuestionAnswer() {
         const answer = document.getElementById('questionAnswerInput').value.trim();
         const token = document.getElementById('adminTokenInput').value.trim();
         const statusDiv = document.getElementById('adminStatus');
-        
+
         if (!answer) {
             statusDiv.textContent = 'Please enter an answer.';
             return;
         }
-        
+
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}/answer`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
                 body: JSON.stringify({ responder_answer: answer })
             });
-            
+
             if (!res.ok) throw new Error('Failed to submit answer.');
-            
-            statusDiv.style.color = '#090';
+
+            statusDiv.style.color = '#22c55e';
             statusDiv.textContent = 'Answer submitted!';
-            
-            // Hide the answer box and clear the input
+
             hideQuestionAnswerBox();
-            
-            // Refresh the thread to show the new answer
             fetchThread();
         } catch (err) {
-            statusDiv.style.color = '#c00';
+            statusDiv.style.color = '#ef4444';
             statusDiv.textContent = 'Error: ' + err.message;
         }
     }
     window.submitQuestionAnswer = submitQuestionAnswer;
-    
+
     // --- Question edit functions ---
     function showQuestionEditBox() {
-        // Pre-fill the textarea with current question text
         document.getElementById('modalEditInput').value = questionData.text;
         document.getElementById('editQuestionModal').style.display = 'flex';
         hideAllDropdowns();
     }
     window.showQuestionEditBox = showQuestionEditBox;
-    
+
     function closeEditQuestionModal() {
         document.getElementById('editQuestionModal').style.display = 'none';
         document.getElementById('modalEditInput').value = '';
         document.getElementById('modalEditStatus').textContent = '';
     }
     window.closeEditQuestionModal = closeEditQuestionModal;
-    
-    // Handle edit modal form submission
+
     document.getElementById('modalEditForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const newText = document.getElementById('modalEditInput').value.trim();
         const statusDiv = document.getElementById('modalEditStatus');
-        
+
         if (!newText) {
             statusDiv.textContent = 'Please enter question text.';
             return;
         }
-        
+
         submitQuestionEdit(newText);
     });
-    
+
     async function submitQuestionEdit(newText) {
         const statusDiv = document.getElementById('modalEditStatus');
-        
+
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text: newText })
             });
-            
+
             if (!res.ok) throw new Error('Failed to update question.');
-            
-            statusDiv.style.color = '#090';
+
+            statusDiv.style.color = '#22c55e';
             statusDiv.textContent = 'Question updated!';
             document.getElementById('modalEditInput').value = '';
-            
-            // Close modal and refresh the thread
+
             setTimeout(() => {
                 closeEditQuestionModal();
                 fetchThread();
             }, 1000);
         } catch (err) {
-            statusDiv.style.color = '#c00';
+            statusDiv.style.color = '#ef4444';
             statusDiv.textContent = 'Error: ' + err.message;
         }
     }
     window.submitQuestionEdit = submitQuestionEdit;
-    
+
     // --- Admin dropdown functions ---
     function toggleAdminDropdown(type) {
         const adminToken = document.getElementById('adminTokenInput').value.trim();
@@ -897,14 +917,12 @@ KHANDELWAL</a></div>
             document.getElementById('adminStatus').textContent = 'Master key required for admin actions.';
             return;
         }
-        
+
         const dropdownId = type === 'question' ? 'questionAdminDropdown' : `replyAdminDropdown${type.replace('reply', '')}`;
         const dropdown = document.getElementById(dropdownId);
-        
-        // Close all other dropdowns first
+
         hideAllDropdowns();
-        
-        // Toggle current dropdown
+
         if (dropdown.style.display === 'none' || !dropdown.style.display) {
             dropdown.style.display = 'block';
         } else {
@@ -912,86 +930,81 @@ KHANDELWAL</a></div>
         }
     }
     window.toggleAdminDropdown = toggleAdminDropdown;
-    
+
     function hideAllDropdowns() {
         const allDropdowns = document.querySelectorAll('.admin-dropdown');
-            allDropdowns.forEach(dd => {
-                dd.style.display = 'none';
-            });
+        allDropdowns.forEach(dd => {
+            dd.style.display = 'none';
+        });
     }
-    
-    // Close dropdowns when clicking outside
+
     document.addEventListener('click', function(event) {
         if (!event.target.closest('.admin-controls')) {
             hideAllDropdowns();
         }
     });
-    
+
     // --- Reply edit functions ---
     function showReplyEditBox(replyId) {
-        // Get the reply text from the DOM
         const replyElement = document.querySelector(`[data-reply-id="${replyId}"]`);
         if (replyElement) {
             const replyText = replyElement.querySelector('.reply-text').textContent;
             document.getElementById('modalReplyEditInput').value = replyText;
             document.getElementById('editReplyModal').style.display = 'flex';
-            // Store the reply ID for submission
             document.getElementById('editReplyModal').setAttribute('data-reply-id', replyId);
         }
         hideAllDropdowns();
     }
     window.showReplyEditBox = showReplyEditBox;
-    
+
     function closeEditReplyModal() {
         document.getElementById('editReplyModal').style.display = 'none';
         document.getElementById('modalReplyEditInput').value = '';
         document.getElementById('modalReplyEditStatus').textContent = '';
     }
     window.closeEditReplyModal = closeEditReplyModal;
-    
-    // Handle reply edit modal form submission
+
     document.getElementById('modalReplyEditForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const newText = document.getElementById('modalReplyEditInput').value.trim();
         const statusDiv = document.getElementById('modalReplyEditStatus');
         const replyId = document.getElementById('editReplyModal').getAttribute('data-reply-id');
-        
+
         if (!newText) {
             statusDiv.textContent = 'Please enter reply text.';
             return;
         }
-        
+
         submitReplyEdit(replyId, newText);
     });
-    
+
     async function submitReplyEdit(replyId, newText) {
         const statusDiv = document.getElementById('modalReplyEditStatus');
-        
+
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reply_text: newText })
             });
-            
+
             if (!res.ok) throw new Error('Failed to update reply.');
-            
-            statusDiv.style.color = '#090';
+
+            statusDiv.style.color = '#22c55e';
             statusDiv.textContent = 'Reply updated!';
             document.getElementById('modalReplyEditInput').value = '';
-            
-            // Close modal and refresh the thread
+
             setTimeout(() => {
                 closeEditReplyModal();
                 fetchThread();
             }, 1000);
         } catch (err) {
-            statusDiv.style.color = '#c00';
+            statusDiv.style.color = '#ef4444';
             statusDiv.textContent = 'Error: ' + err.message;
         }
     }
     window.submitReplyEdit = submitReplyEdit;
-    
+
     async function deleteReply(replyId) {
         const token = document.getElementById('adminTokenInput').value.trim();
         const statusDiv = document.getElementById('adminStatus');
@@ -1000,25 +1013,25 @@ KHANDELWAL</a></div>
             return;
         }
         if (!confirm('Are you sure you want to delete this reply?')) return;
-        
+
         hideAllDropdowns();
-        
+
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}`, {
                 method: 'DELETE',
                 headers: { 'x-admin-token': token }
             });
             if (!res.ok) throw new Error('Failed to delete reply.');
-            statusDiv.style.color = '#090';
+            statusDiv.style.color = '#22c55e';
             statusDiv.textContent = 'Reply deleted!';
             fetchThread();
         } catch (err) {
-            statusDiv.style.color = '#c00';
+            statusDiv.style.color = '#ef4444';
             statusDiv.textContent = 'Error: ' + err.message;
         }
     }
     window.deleteReply = deleteReply;
-    
+
     async function deleteThread() {
         const token = document.getElementById('adminTokenInput').value.trim();
         const statusDiv = document.getElementById('adminStatus');
@@ -1027,9 +1040,9 @@ KHANDELWAL</a></div>
             return;
         }
         if (!confirm('Are you sure you want to delete this thread?')) return;
-        
+
         hideAllDropdowns();
-        
+
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}`, {
                 method: 'DELETE',
@@ -1042,61 +1055,59 @@ KHANDELWAL</a></div>
         }
     }
     window.deleteThread = deleteThread;
-    
+
     // --- Modal functions ---
     function openAddReplyModal() {
         document.getElementById('addReplyModal').style.display = 'flex';
     }
     window.openAddReplyModal = openAddReplyModal;
-    
+
     function closeAddReplyModal() {
         document.getElementById('addReplyModal').style.display = 'none';
         document.getElementById('modalReplyInput').value = '';
         document.getElementById('modalReplyStatus').textContent = '';
     }
     window.closeAddReplyModal = closeAddReplyModal;
-    
-    // Handle modal form submission
+
     document.getElementById('modalReplyForm').addEventListener('submit', function(e) {
         e.preventDefault();
         const replyText = document.getElementById('modalReplyInput').value.trim();
         const statusDiv = document.getElementById('modalReplyStatus');
-        
+
         if (!replyText) {
             statusDiv.textContent = 'Please enter a reply.';
             return;
         }
-        
+
         submitReplyFromModal(replyText);
     });
-    
+
     async function submitReplyFromModal(replyText) {
         const statusDiv = document.getElementById('modalReplyStatus');
-        
+
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/questions/${qid}/replies`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reply_text: replyText })
             });
-            
+
             if (!res.ok) throw new Error('Failed to submit reply.');
-            
-            statusDiv.style.color = '#090';
+
+            statusDiv.style.color = '#22c55e';
             statusDiv.textContent = 'Reply submitted!';
             document.getElementById('modalReplyInput').value = '';
-            
-            // Close modal and refresh the thread
+
             setTimeout(() => {
                 closeAddReplyModal();
                 fetchThread();
             }, 1000);
         } catch (err) {
-            statusDiv.style.color = '#c00';
+            statusDiv.style.color = '#ef4444';
             statusDiv.textContent = 'Error: ' + err.message;
         }
     }
-    
+
     function showReplyAnswerBox(replyId) {
         const token = document.getElementById('adminTokenInput').value.trim();
         if (!token) {
@@ -1107,54 +1118,48 @@ KHANDELWAL</a></div>
         hideAllDropdowns();
     }
     window.showReplyAnswerBox = showReplyAnswerBox;
-    
+
     function hideReplyAnswerBox(replyId) {
         document.getElementById(`replyAnswerBox${replyId}`).style.display = 'none';
         document.getElementById(`replyAnswerInput${replyId}`).value = '';
     }
     window.hideReplyAnswerBox = hideReplyAnswerBox;
-    
+
     async function submitReplyAnswer(replyId) {
         const answer = document.getElementById(`replyAnswerInput${replyId}`).value.trim();
         const token = document.getElementById('adminTokenInput').value.trim();
         const statusDiv = document.getElementById('adminStatus');
-        
+
         if (!answer) {
             statusDiv.textContent = 'Please enter an answer.';
             return;
         }
-        
+
         try {
             const res = await fetch(`https://personalwebsite-xzmk.onrender.com/replies/${replyId}/admin_answer`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'x-admin-token': token },
                 body: JSON.stringify({ admin_answer: answer })
             });
-            
+
             if (!res.ok) throw new Error('Failed to submit reply answer.');
-            
-            statusDiv.style.color = '#090';
+
+            statusDiv.style.color = '#22c55e';
             statusDiv.textContent = 'Reply answer submitted!';
-            
-            // Hide the answer box and clear the input
+
             hideReplyAnswerBox(replyId);
-            
-            // Refresh the thread to show the new admin reply
             fetchThread();
         } catch (err) {
-            statusDiv.style.color = '#c00';
+            statusDiv.style.color = '#ef4444';
             statusDiv.textContent = 'Error: ' + err.message;
         }
     }
     window.submitReplyAnswer = submitReplyAnswer;
-    
-    // --- BEGIN: Wake up backend on page load ---
+
+    // Wake up backend on page load
     (function wakeBackend() {
-        // This fetches a harmless endpoint to wake up the Render backend/database
-        // It runs in the background and does not block UI or affect state
         fetch('https://personalwebsite-xzmk.onrender.com/ping').catch(() => {});
     })();
-    // --- END: Wake up backend on page load ---
     </script>
 </body>
-</html> 
+</html>

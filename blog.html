@@ -5,89 +5,137 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Blog — Aryaman Khandelwal</title>
 <link rel="icon" type="image/x-icon" href="images/header.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&family=Google+Sans+Code:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-<style>/* Updated: $(date +%s) */
+<style>
+  /* Geist Sans */
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geist';
+    src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-SemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+  /* Geist Mono */
+  @font-face {
+    font-family: 'Geist Mono';
+    src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-mono/GeistMono-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
   :root {
-    --bg: #f6f6f6; /* very light grey */
-    --text: #111111;
-    --muted: #999999;
-    --accent: #5e96f7; /* site blue */
+    --background: #1a1a1a;
+    --foreground: #ededed;
+    --muted: #888888;
+    --muted-foreground: #a1a1a1;
+    --accent: #ededed;
+    --border: rgba(255,255,255,0.10);
+    --input-border: rgba(255,255,255,0.15);
+    --card: #232323;
+    --ring: rgba(255,255,255,0.25);
+    --blue: #5e96f7;
+  }
+  html {
+    scrollbar-gutter: stable;
   }
   html, body {
     height: 100%;
   }
   body {
     margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    
-    line-height: 1.3;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: 'Geist', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+
+  /* Global link defaults */
+  a { color: inherit; text-decoration: none; border-bottom: none; }
+
   /* Layout */
   .page {
     display: flex;
     min-height: 100dvh;
   }
   .sidebar {
-    width: 10vw;              /* ~10% of viewport width */
-    min-width: 120px;         /* prevent being too narrow on mid screens */
-    max-width: 180px;         /* keep tidy on ultra-wide */
+    width: 10vw;
+    min-width: 120px;
+    max-width: 180px;
     padding: 48px 16px 24px 16px;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0; /* remove spacing between children */
+    gap: 0;
     position: sticky;
     top: 0;
     height: 100dvh;
     box-sizing: border-box;
   }
-  .name { 
-    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
-    font-weight: 700;
-    font-size: clamp(16px, 1.2vw + 8px, 20px);
-    letter-spacing: 0.02em;
+  .name {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 600;
+    font-size: clamp(14px, 1vw, 16px);
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    line-height: 1.1;
-    color: var(--text);
-    white-space: pre-line; /* honor line break */
-    margin: 0; /* remove bottom spacing */
+    line-height: 1.2;
+    color: var(--foreground);
+    white-space: pre-line;
+    margin: 0;
   }
-  .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
-  .name a:hover, .name a:focus-visible { color: var(--accent); border-bottom: none; }
-
-  .clock { 
-    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
-    font-style: normal;
-    font-weight: 700; /* match name weight */
-    font-size: clamp(16px, 1.2vw + 8px, 20px); /* match name size */
-    letter-spacing: 0.02em; /* match tracking */
-    line-height: 1.1; /* match line height */
-    margin: 0; /* no top spacing */
+  .name a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: none;
+    transition: color .2s ease;
+  }
+  .name a:hover, .name a:focus-visible {
+    color: var(--blue);
   }
 
-  /* Desktop nav under clock */
-  .nav { font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
-    margin-top: 10px;
-    
+  .clock {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-weight: 400;
+    font-size: clamp(13px, 0.9vw, 15px);
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    color: #9a9a9a;
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'zero' 1;
+  }
+
+  /* Desktop nav */
+  .nav {
+    margin-top: 14px;
   }
   .nav a {
-    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;    
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
     display: block;
-    font-size: clamp(11px, 0.8vw + 1px, 14px); /* slightly larger on desktop */
-    color: var(--text);
+    font-size: clamp(12px, 0.85vw, 14px);
+    color: var(--muted);
     text-decoration: none;
-    border-bottom: none; /* override global anchor underline */
-    padding: 2px 0; /* tighter spacing */
-    line-height: 1.1; /* tighter line height */
+    border-bottom: none;
+    padding: 3px 0;
+    line-height: 1.2;
     transition: color .2s ease;
   }
   .nav a:hover, .nav a:focus-visible {
-    color: var(--accent);
+    color: var(--blue);
   }
 
   /* Mobile menu toggle */
@@ -97,14 +145,14 @@
     top: 10px;
     right: 12px;
     z-index: 1001;
-    
+    font-family: 'Geist', system-ui, sans-serif;
     font-size: 28px;
     line-height: 1;
     width: 36px;
     height: 36px;
     border: none;
     background: transparent;
-    color: var(--text);
+    color: var(--foreground);
     cursor: pointer;
   }
 
@@ -112,36 +160,37 @@
     display: none;
     position: fixed;
     inset: 0;
-    background: var(--bg);
+    background: var(--background);
     padding: 72px 24px 24px 24px;
     z-index: 1000;
     box-sizing: border-box;
   }
-  .mobile-menu a { 
-    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+  .mobile-menu a {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
     display: block;
-    
-    font-size: 14px; /* smaller on mobile */
-    color: var(--text);
+    font-size: 14px;
+    color: var(--muted);
     text-decoration: none;
-    border-bottom: none; /* override global */
-    padding: 6px 0; /* tighter */
-    line-height: 1.1;
+    border-bottom: none;
+    padding: 6px 0;
+    line-height: 1.2;
+    transition: color .2s ease;
   }
-  .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--accent); }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible {
+    color: var(--blue);
+  }
 
   .menu-open .mobile-menu { display: block; }
 
   .content {
     flex: 0.8;
-    padding: 40px 6vw 80px 9vw; /* increase left padding further to shift right */
+    padding: 40px 6vw 80px 9vw;
     box-sizing: border-box;
   }
-  .section { 
-    font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
-    max-width: 540px; /* reduced further from 630px */
-     /* match nav */
+  .section {
+    max-width: 540px;
   }
+
   /* Blog-specific styles */
   .blog-header {
     margin-bottom: 20px;
@@ -157,34 +206,34 @@
     text-decoration: none;
     border-bottom: none;
     transition: color .2s ease;
-    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-    font-weight: 700;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 600;
     font-size: clamp(20px, 2.4vw, 28px);
     text-transform: uppercase;
     letter-spacing: 0.02em;
   }
   .blog-nav .back-arrow:hover {
-    color: var(--accent);
+    color: var(--blue);
   }
   .blog-nav .blog-label {
-    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-    font-weight: 700;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
     font-size: clamp(20px, 2.4vw, 28px);
-    color: var(--text);
+    color: var(--foreground);
     text-transform: uppercase;
     letter-spacing: 0.02em;
   }
   .section .blog-title {
-    font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif !important;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif !important;
     font-weight: 400 !important;
-    font-size: clamp(12px, 0.9vw, 14px) !important;
-    line-height: 1.2 !important;
+    font-size: clamp(12px, 0.85vw, 14px) !important;
+    line-height: 1.6 !important;
     margin: 0 0 20px 0 !important;
     letter-spacing: 0 !important;
-    color: var(--text) !important;
+    color: var(--muted-foreground) !important;
   }
   .blog-subtitle {
-    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
     font-size: clamp(15px, 1.3vw, 18px);
     color: var(--muted);
     margin: 0 0 20px 0;
@@ -193,9 +242,8 @@
   .blog-divider {
     width: 100%;
     height: 1px;
-    background-color: var(--muted);
+    background-color: var(--border);
     margin: 0 0 12px 0;
-    opacity: 0.5;
   }
   .blog-list {
     list-style: none;
@@ -204,10 +252,12 @@
   }
   .blog-item {
     margin-bottom: 8px;
+    display: flex;
+    align-items: baseline;
   }
   .blog-item a {
-    font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
-    font-size: clamp(15px, 1.3vw, 18px);
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-size: clamp(15px, 1.1vw, 16px);
     color: var(--muted);
     text-decoration: none;
     border-bottom: none;
@@ -215,11 +265,13 @@
     line-height: 1.3;
   }
   .blog-item a:hover {
-    color: var(--accent);
+    color: var(--blue);
   }
   .blog-item::before {
-    content: '> ';
-    color: var(--text);
+    content: '—';
+    color: var(--muted);
+    flex-shrink: 0;
+    margin-right: 0.6em;
   }
 
   /* Mobile adjustments */
@@ -235,30 +287,21 @@
       gap: 0;
     }
     .menu-toggle { display: block; }
-    .nav { 
-      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
-      display: none; 
-    }
+    .nav { display: none; }
     .content { padding: 20px; }
-    .name { 
-      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
-      font-size: 14px; 
-      letter-spacing: 0.04em; 
-      line-height: 1.15; 
-      margin: 0; 
+    .name {
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      line-height: 1.15;
+      margin: 0;
     }
-    .clock { 
-      font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
-      font-style: normal; 
-      font-size: 14px; 
-      letter-spacing: 0.04em; 
-      line-height: 1.15; 
-      margin: 0; 
+    .clock {
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      line-height: 1.15;
+      margin: 0;
     }
-    .section { 
-      font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  
-      max-width: 540px; 
-    }
+    .section { max-width: 540px; }
   }
 </style>
 </head>
@@ -288,7 +331,7 @@ KHANDELWAL</a></div>
           <h1 class="blog-title">some of my thoughts</h1>
           <div class="blog-divider"></div>
         </div>
-        
+
         <ul class="blog-list">
           <li class="blog-item"><a href="blogs/blog12.html">On the current state of India…</a></li>
           <li class="blog-item"><a href="blogs/blog11.html">Vibe coding and anti-technocracy</a></li>
@@ -321,20 +364,20 @@ KHANDELWAL</a></div>
       // Dubai clock
       const el = document.getElementById('dubai-clock');
       if (el) {
-        const fmt = new Intl.DateTimeFormat('en-GB', { 
-          timeZone: 'Asia/Dubai', 
-          hour: '2-digit', 
-          minute: '2-digit', 
-          second: '2-digit', 
-          hour12: false 
+        const fmt = new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Asia/Dubai',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
         });
         function update() {
           const parts = fmt.formatToParts(new Date());
           let hh = '00', mm = '00', ss = '00';
-          for (const p of parts) { 
-            if (p.type === 'hour') hh = p.value; 
-            if (p.type === 'minute') mm = p.value; 
-            if (p.type === 'second') ss = p.value; 
+          for (const p of parts) {
+            if (p.type === 'hour') hh = p.value;
+            if (p.type === 'minute') mm = p.value;
+            if (p.type === 'second') ss = p.value;
           }
           el.textContent = `${hh}:${mm}:${ss}`;
         }
@@ -365,8 +408,8 @@ KHANDELWAL</a></div>
         });
 
         // Close on link click
-        menu.addEventListener('click', function(e) { 
-          if (e.target.tagName === 'A') closeMenu(); 
+        menu.addEventListener('click', function(e) {
+          if (e.target.tagName === 'A') closeMenu();
         });
       }
     })();

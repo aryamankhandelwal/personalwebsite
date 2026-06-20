@@ -5,25 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jester's Courtyard — Aryaman Khandelwal</title>
     <link rel="icon" type="image/x-icon" href="images/header.png">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Yrsa:wght@400;500;600&family=Google+Sans+Code:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        @font-face { font-family: 'Geist'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'Geist'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'Geist'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-SemiBold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+        @font-face { font-family: 'Geist Mono'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-mono/GeistMono-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+
         :root {
-            --bg: #f6f6f6; /* very light grey */
-            --text: #111111;
-            --muted: #999999;
-            --accent: #5e96f7; /* site blue */
-            --card-bg: #e8e8e8; /* lighter grey for question cards */
+            --background: #1a1a1a;
+            --foreground: #ededed;
+            --muted: #888888;
+            --muted-foreground: #a1a1a1;
+            --accent: #ededed;
+            --border: rgba(255,255,255,0.10);
+            --input-border: rgba(255,255,255,0.15);
+            --card: #232323;
+            --ring: rgba(255,255,255,0.25);
+            --blue: #5e96f7;
+        }
+        html {
+            scrollbar-gutter: stable;
         }
         html, body {
             height: 100%;
         }
+        a {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: none;
+        }
         body {
             margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.3;
+            background: var(--background);
+            color: var(--foreground);
+            font-family: 'Geist', system-ui, sans-serif;
+            line-height: 1.6;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -46,48 +62,50 @@
             height: 100dvh;
             box-sizing: border-box;
         }
-        .name { 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
-            font-weight: 700;
-            font-size: clamp(16px, 1.2vw + 8px, 20px);
-            letter-spacing: 0.02em;
+        .name {
+            font-family: 'Geist', system-ui, sans-serif;
+            font-weight: 600;
+            font-size: clamp(14px, 1vw, 16px);
+            letter-spacing: 0.04em;
             text-transform: uppercase;
-            line-height: 1.1;
-            color: var(--text);
+            line-height: 1.2;
+            color: var(--foreground);
             white-space: pre-line;
             margin: 0;
         }
         .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
-        .name a:hover, .name a:focus-visible { color: var(--accent); border-bottom: none; }
+        .name a:hover, .name a:focus-visible { color: var(--blue); border-bottom: none; }
 
-        .clock { 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
-            font-style: normal;
-            font-weight: 700;
-            font-size: clamp(16px, 1.2vw + 8px, 20px);
-            letter-spacing: 0.02em;
-            line-height: 1.1;
+        .clock {
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-weight: 400;
+            font-size: clamp(13px, 0.9vw, 15px);
+            letter-spacing: 0.04em;
+            color: #9a9a9a;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: 'zero' 1;
+            line-height: 1.2;
             margin: 0;
         }
 
         /* Desktop nav under clock */
-        .nav { 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
-            margin-top: 10px;
+        .nav {
+            font-family: 'Geist', system-ui, sans-serif;
+            margin-top: 14px;
         }
         .nav a {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;    
+            font-family: 'Geist', system-ui, sans-serif;
             display: block;
-            font-size: clamp(11px, 0.8vw + 1px, 14px);
-            color: var(--text);
+            font-size: clamp(12px, 0.85vw, 14px);
+            color: var(--muted);
             text-decoration: none;
             border-bottom: none;
-            padding: 2px 0;
-            line-height: 1.1;
+            padding: 3px 0;
+            line-height: 1.2;
             transition: color .2s ease;
         }
         .nav a:hover, .nav a:focus-visible {
-            color: var(--accent);
+            color: var(--blue);
         }
 
         /* Mobile menu toggle */
@@ -103,7 +121,8 @@
             height: 36px;
             border: none;
             background: transparent;
-            color: var(--text);
+            color: var(--foreground);
+            font-family: 'Geist', system-ui, sans-serif;
             cursor: pointer;
         }
 
@@ -111,22 +130,22 @@
             display: none;
             position: fixed;
             inset: 0;
-            background: var(--bg);
+            background: var(--background);
             padding: 72px 24px 24px 24px;
             z-index: 1000;
             box-sizing: border-box;
         }
-        .mobile-menu a { 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif; 
+        .mobile-menu a {
+            font-family: 'Geist', system-ui, sans-serif;
             display: block;
             font-size: 14px;
-            color: var(--text);
+            color: var(--muted);
             text-decoration: none;
             border-bottom: none;
             padding: 6px 0;
             line-height: 1.1;
         }
-        .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--accent); }
+        .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--blue); }
 
         .menu-open .mobile-menu { display: block; }
 
@@ -135,8 +154,8 @@
             padding: 40px 6vw 80px 9vw;
             box-sizing: border-box;
         }
-        .section { 
-            font-family: 'Yrsa', Georgia, 'Times New Roman', serif; 
+        .section {
+            font-family: 'Geist', system-ui, sans-serif;
             max-width: 540px;
         }
 
@@ -155,123 +174,133 @@
             text-decoration: none;
             border-bottom: none;
             transition: color .2s ease;
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-weight: 700;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-weight: 600;
             font-size: clamp(20px, 2.4vw, 28px);
             text-transform: uppercase;
             letter-spacing: 0.02em;
         }
         .forum-nav .back-arrow:hover {
-            color: var(--accent);
+            color: var(--blue);
         }
         .forum-nav .forum-label {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-weight: 700;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-weight: 500;
             font-size: clamp(20px, 2.4vw, 28px);
-            color: var(--text);
+            color: var(--foreground);
             text-transform: uppercase;
             letter-spacing: 0.02em;
         }
         .section .forum-title {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif !important;
+            font-family: 'Geist', system-ui, sans-serif !important;
             font-weight: 400 !important;
-            font-size: clamp(12px, 0.9vw, 14px) !important;
-            line-height: 1.2 !important;
+            font-size: clamp(12px, 0.85vw, 14px) !important;
+            line-height: 1.6 !important;
             margin: 0 0 20px 0 !important;
             letter-spacing: 0 !important;
-            color: var(--text) !important;
+            color: var(--muted-foreground) !important;
         }
         .section .forum-title a {
-            color: var(--muted);
-            text-decoration: none;
-            border-bottom: none;
-            transition: color .2s ease;
+            color: var(--muted-foreground);
+            text-decoration: underline;
+            text-decoration-color: rgba(255,255,255,0.2);
+            text-underline-offset: 3px;
+            text-decoration-thickness: 1px;
+            transition: color .2s ease, text-decoration-color .2s ease;
         }
         .section .forum-title a:hover {
-            color: var(--accent);
+            color: var(--blue);
+            text-decoration-color: var(--blue);
         }
         .forum-divider {
             width: 100%;
             height: 1px;
-            background-color: var(--muted);
+            background-color: var(--border);
             margin: 0 0 20px 0;
-            opacity: 0.5;
         }
 
         /* Question cards */
-        .forum-container { 
-            max-width: 540px; 
+        .forum-container {
+            max-width: 540px;
         }
-        .question-card { 
-            background: var(--card-bg); 
-            border-radius: 8px; 
-            margin-bottom: 12px; 
-            padding: 16px; 
+        .question-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            padding: 16px;
             transition: background-color .2s ease;
         }
         .question-card:hover {
-            background: #ddd;
+            background: #2a2a2a;
         }
         .question-text {
-            font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
-            font-size: clamp(15px, 1.3vw, 18px);
-            color: var(--text);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(15px, 1.1vw, 16px);
+            color: var(--foreground);
             cursor: pointer;
-            line-height: 1.3;
+            line-height: 1.6;
             margin-bottom: 8px;
         }
         .question-meta {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(10px, 0.7vw, 12px);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(12px, 0.9vw, 14px);
             color: var(--muted);
-            line-height: 1.2;
+            line-height: 1.4;
         }
-        .status-unanswered { color: #c00; }
-        .status-answered { color: #090; }
+        .status-unanswered { color: #ef4444; }
+        .status-answered { color: #22c55e; }
 
         /* Pagination */
-        .pagination { 
-            text-align: center; 
-            margin: 24px 0; 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
+        .pagination {
+            text-align: center;
+            margin: 24px 0;
+            font-family: 'Geist', system-ui, sans-serif;
         }
-        .pagination a { 
-            color: var(--muted) !important; 
-            text-decoration: none; 
+        .pagination a {
+            color: var(--muted) !important;
+            text-decoration: none;
             border-bottom: none;
-            font-size: clamp(11px, 0.8vw + 1px, 14px); 
-            margin: 0 4px; 
+            font-size: clamp(12px, 0.9vw, 14px);
+            margin: 0 4px;
             transition: color .2s ease;
         }
-        .pagination a:hover { 
-            color: var(--accent) !important; 
+        .pagination a:hover {
+            color: var(--blue) !important;
         }
-        .pagination span { 
-            color: var(--text); 
-            font-size: clamp(11px, 0.8vw + 1px, 14px); 
-            margin: 0 2px; 
+        .pagination span {
+            color: var(--muted);
+            font-size: clamp(12px, 0.9vw, 14px);
+            margin: 0 2px;
+        }
+        .pagination .page-number {
+            font-family: 'Geist Mono', ui-monospace, monospace;
+            font-variant-numeric: tabular-nums;
+            font-feature-settings: 'zero' 1;
+            color: var(--muted);
+            font-size: clamp(12px, 0.9vw, 14px);
+            margin: 0 4px;
         }
 
         /* Add button */
-        .sticky-add-btn { 
-            position: fixed; 
-            bottom: 32px; 
-            right: 32px; 
-            background: var(--text); 
-            color: var(--bg); 
-            border: none; 
-            border-radius: 50px; 
-            padding: 12px 20px; 
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(11px, 0.8vw + 1px, 14px); 
-            cursor: pointer; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-            z-index: 100; 
+        .sticky-add-btn {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: var(--foreground);
+            color: var(--background);
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 100;
             transition: all .2s ease;
         }
-        .sticky-add-btn:hover { 
-            background: var(--accent); 
-            color: #fff;
+        .sticky-add-btn:hover {
+            opacity: 0.85;
         }
 
         /* Modal */
@@ -287,18 +316,18 @@
             justify-content: center;
         }
         .modal-content {
-            background: var(--bg);
+            background: var(--card);
             padding: 32px 24px;
-            border-radius: 10px;
+            border-radius: 8px;
             max-width: 400px;
             width: 90vw;
-            border: 1px solid #ddd;
+            border: 1px solid var(--border);
         }
         .modal h3 {
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-weight: 700;
-            font-size: clamp(16px, 1.2vw + 8px, 20px);
-            color: var(--text);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-weight: 600;
+            font-size: clamp(18px, 1.4vw, 22px);
+            color: var(--foreground);
             margin-bottom: 1rem;
             letter-spacing: 0.02em;
             text-transform: uppercase;
@@ -309,36 +338,39 @@
             margin-bottom: 12px;
             background: transparent;
             border: none;
-            border-bottom: 1px solid var(--muted);
-            color: var(--text);
-            font-family: 'Yrsa', Georgia, 'Times New Roman', serif;
-            font-size: clamp(15px, 1.3vw, 18px);
+            border-bottom: 1px solid var(--border);
+            color: var(--foreground);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(15px, 1.1vw, 16px);
             outline: none;
             box-sizing: border-box;
         }
+        .modal input::placeholder {
+            color: var(--muted);
+        }
         .modal input:focus {
-            border-bottom-color: var(--accent);
+            border-bottom-color: var(--muted);
         }
         .modal-btn {
             padding: 8px 16px;
             background: transparent;
-            border: 1px solid var(--text);
-            color: var(--text);
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(11px, 0.8vw + 1px, 14px);
+            border: 1px solid var(--border);
+            color: var(--foreground);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: 13px;
             cursor: pointer;
             transition: all .2s ease;
             margin-right: 8px;
         }
         .modal-btn:hover {
-            background: var(--text);
-            color: var(--bg);
+            background: var(--foreground);
+            color: var(--background);
         }
         .modal-status {
             margin-top: 12px;
-            font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;
-            font-size: clamp(11px, 0.8vw + 1px, 14px);
-            color: #c00;
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: 13px;
+            color: #ef4444;
         }
 
         /* Mobile adjustments */
@@ -354,29 +386,28 @@
                 gap: 0;
             }
             .menu-toggle { display: block; }
-            .nav { 
-                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
-                display: none; 
+            .nav {
+                font-family: 'Geist', system-ui, sans-serif;
+                display: none;
             }
             .content { padding: 20px; }
-            .name { 
-                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
-                font-size: 14px; 
-                letter-spacing: 0.04em; 
-                line-height: 1.15; 
-                margin: 0; 
+            .name {
+                font-family: 'Geist', system-ui, sans-serif;
+                font-size: 14px;
+                letter-spacing: 0.04em;
+                line-height: 1.15;
+                margin: 0;
             }
-            .clock { 
-                font-family: 'Roboto', system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif;  
-                font-style: normal; 
-                font-size: 14px; 
-                letter-spacing: 0.04em; 
-                line-height: 1.15; 
-                margin: 0; 
+            .clock {
+                font-family: 'Geist Mono', ui-monospace, monospace;
+                font-size: 13px;
+                letter-spacing: 0.04em;
+                line-height: 1.15;
+                margin: 0;
             }
-            .section { 
-                font-family: 'Yrsa', Georgia, 'Times New Roman', serif;  
-                max-width: 540px; 
+            .section {
+                font-family: 'Geist', system-ui, sans-serif;
+                max-width: 540px;
             }
         }
     </style>
@@ -407,12 +438,12 @@ KHANDELWAL</a></div>
                     <h1 class="forum-title">When I was recruiting for finance and tech, I was lost. I started this to be the "big brother" I wish I had. 3 years on, I've mentored over 50 students, with several receiving offers from institutions such as Bank of America, BCG, and Province Firm. Talk to me about 1-on-1 mentoring sessions, resume building help, interview guidance and prep, and networking opportunities. Contact me <a href="https://www.linkedin.com/company/jesterinapatagonia/" target="_blank">here</a></h1>
                     <div class="forum-divider"></div>
                 </div>
-                
+
                 <div class="forum-container">
                     <div id="questionsList"></div>
                     <div class="pagination">
                         <span><</span><a href="#" id="prevPage">Newer</a>
-                        <span id="pageInfo"></span>
+                        <span id="pageInfo" class="page-number"></span>
                         <a href="#" id="nextPage">Older</a><span>></span>
                     </div>
                 </div>
@@ -430,7 +461,7 @@ KHANDELWAL</a></div>
     </div>
 
     <button class="sticky-add-btn" onclick="openAddModal()">+ Add a question</button>
-    
+
     <!-- Modal for adding question -->
     <div id="addModal" style="display:none;" class="modal">
         <div class="modal-content">
@@ -450,20 +481,20 @@ KHANDELWAL</a></div>
         // Dubai clock
         const el = document.getElementById('dubai-clock');
         if (el) {
-            const fmt = new Intl.DateTimeFormat('en-GB', { 
-                timeZone: 'Asia/Dubai', 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                second: '2-digit', 
-                hour12: false 
+            const fmt = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Dubai',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
             });
             function update() {
                 const parts = fmt.formatToParts(new Date());
                 let hh = '00', mm = '00', ss = '00';
-                for (const p of parts) { 
-                    if (p.type === 'hour') hh = p.value; 
-                    if (p.type === 'minute') mm = p.value; 
-                    if (p.type === 'second') ss = p.value; 
+                for (const p of parts) {
+                    if (p.type === 'hour') hh = p.value;
+                    if (p.type === 'minute') mm = p.value;
+                    if (p.type === 'second') ss = p.value;
                 }
                 el.textContent = `${hh}:${mm}:${ss}`;
             }
@@ -476,7 +507,7 @@ KHANDELWAL</a></div>
         const menu = document.getElementById('mobile-menu');
         function openMenu() {
             document.body.classList.add('menu-open');
-            toggle.textContent = '×';
+            toggle.textContent = '\u00d7';
             toggle.setAttribute('aria-label', 'Close menu');
             toggle.setAttribute('aria-expanded', 'true');
             menu.hidden = false;
@@ -494,8 +525,8 @@ KHANDELWAL</a></div>
             });
 
             // Close on link click
-            menu.addEventListener('click', function(e) { 
-                if (e.target.tagName === 'A') closeMenu(); 
+            menu.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') closeMenu();
             });
         }
     })();
@@ -503,7 +534,7 @@ KHANDELWAL</a></div>
     let page = 1;
     const limit = 10;
     let totalLoaded = 0;
-    
+
     async function fetchQuestions() {
         const skip = (page - 1) * limit;
         const res = await fetch('https://personalwebsite-xzmk.onrender.com/questions?skip=' + skip + '&limit=' + limit);
@@ -512,7 +543,7 @@ KHANDELWAL</a></div>
         const list = document.getElementById('questionsList');
         list.innerHTML = '';
         if (questions.length === 0) {
-            list.innerHTML = '<p style="color:var(--muted);font-size:clamp(15px, 1.3vw, 18px);font-family:\'Yrsa\', Georgia, \'Times New Roman\', serif;">No questions yet. Be the first to ask!</p>';
+            list.innerHTML = '<p style="color:var(--muted);font-size:clamp(14px, 1.1vw, 16px);font-family:\'Geist\', system-ui, sans-serif;">No questions yet. Be the first to ask!</p>';
         }
         questions.forEach(q => {
             const card = document.createElement('div');
@@ -522,17 +553,17 @@ KHANDELWAL</a></div>
                 <div class="question-meta">
                     <span class="${q.status === 'answered' ? 'status-answered' : 'status-unanswered'}">${q.status.charAt(0).toUpperCase() + q.status.slice(1)}</span>
                     &nbsp;|&nbsp;
-                    <span>${q.reply_count} replies</span>
+                    <span style="font-family:'Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-feature-settings:'zero' 1">${q.reply_count} replies</span>
                     &nbsp;|&nbsp;
-                    <span>${new Date(q.timestamp).toLocaleString()}</span>
+                    <span style="font-family:'Geist Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-feature-settings:'zero' 1">${new Date(q.timestamp).toLocaleString()}</span>
                     ${q.nickname ? `&nbsp;|&nbsp;<span>by ${q.nickname}</span>` : ''}
                 </div>
             `;
             list.appendChild(card);
         });
-        document.getElementById('pageInfo').textContent = `Page ${page}`;
+        document.getElementById('pageInfo').textContent = `${page}`;
     }
-    
+
     document.getElementById('prevPage').onclick = function(e) {
         e.preventDefault();
         if (page > 1) { page--; fetchQuestions(); }
@@ -541,9 +572,9 @@ KHANDELWAL</a></div>
         e.preventDefault();
         if (totalLoaded === limit) { page++; fetchQuestions(); }
     };
-    
+
     document.addEventListener("DOMContentLoaded", function() { fetchQuestions(); });
-    
+
     // Modal logic
     function openAddModal() {
         document.getElementById('addModal').style.display = 'flex';
@@ -554,7 +585,7 @@ KHANDELWAL</a></div>
     }
     window.openAddModal = openAddModal;
     window.closeAddModal = closeAddModal;
-    
+
     document.getElementById('modalQuestionForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         const question = document.getElementById('modalQuestionInput').value.trim();
@@ -574,19 +605,19 @@ KHANDELWAL</a></div>
             if (!res.ok) throw new Error('Failed to submit question.');
             document.getElementById('modalQuestionInput').value = '';
             document.getElementById('modalNicknameInput').value = '';
-            statusDiv.style.color = '#090';
+            statusDiv.style.color = '#22c55e';
             statusDiv.textContent = 'Question submitted!';
             setTimeout(() => { closeAddModal(); fetchQuestions(); }, 1000);
         } catch (err) {
-            statusDiv.style.color = '#c00';
+            statusDiv.style.color = '#ef4444';
             statusDiv.textContent = 'Error: ' + err.message;
         }
     });
-    
+
     // Wake up backend on page load
     (function wakeBackend() {
                  fetch('https://personalwebsite-xzmk.onrender.com/ping').catch(() => {});
     })();
     </script>
 </body>
-</html> 
+</html>
