@@ -224,6 +224,7 @@
             font-feature-settings: 'zero' 1;
             line-height: 1.4;
         }
+        /* DELETE UI — commented out
         .lt-delete-btn {
             position: absolute;
             top: 10px;
@@ -277,6 +278,7 @@
             color: #ef4444;
             width: 100%;
         }
+        */
         .lt-empty {
             font-family: 'Geist', system-ui, sans-serif;
             font-size: clamp(15px, 1.1vw, 16px);
@@ -477,7 +479,7 @@ KHANDELWAL</a></div>
             + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
     }
 
-    // Delete
+    /* DELETE UI — commented out
     async function deletePost(id, cardEl, token) {
         const res = await fetch(API_BASE + '/livetweets/' + id, {
             method: 'DELETE',
@@ -526,6 +528,7 @@ KHANDELWAL</a></div>
         confirmBtn.addEventListener('click', tryDelete);
         tokenInput.addEventListener('keydown', e => { if (e.key === 'Enter') tryDelete(); });
     }
+    */
 
     function renderCard(tweet) {
         const card = document.createElement('div');
@@ -533,7 +536,10 @@ KHANDELWAL</a></div>
         card.dataset.id = tweet.id;
         card.innerHTML =
             '<div class="lt-card-content">' + escapeHtml(tweet.content) + '</div>' +
-            '<div class="lt-card-meta">' + formatTs(tweet.created_at) + '</div>' +
+            '<div class="lt-card-meta">' + formatTs(tweet.created_at) + '</div>';
+
+        /* DELETE UI — commented out
+        card.innerHTML +=
             '<button class="lt-delete-btn" aria-label="Delete post">\xd7</button>';
 
         card.querySelector('.lt-delete-btn').addEventListener('click', function(e) {
@@ -550,12 +556,13 @@ KHANDELWAL</a></div>
                 showTokenPrompt(card, tweet.id);
             }
         });
+        */
 
         return card;
     }
 
     async function fetchPosts() {
-        if (document.querySelector('.lt-token-prompt')) return;
+        // if (document.querySelector('.lt-token-prompt')) return; // DELETE UI — commented out
         try {
             const res = await fetch(API_BASE + '/livetweets');
             if (!res.ok) return;
