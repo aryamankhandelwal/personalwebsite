@@ -220,17 +220,37 @@
 <body>
     <div class="wrap">
         <div class="top">
-            <p class="label">Admin · Tracker</p>
+            <p class="label">Admin</p>
             <form class="logout-form" method="post" action="/admin/logout">
                 <button type="submit">Log out</button>
             </form>
         </div>
-        <p class="desc">Add and manage companies in the public tracker.</p>
+        <p class="desc">Manage live tweets and tracker companies.</p>
         <div class="divider"></div>
 
         {% if banner %}
         <div class="banner">{{ banner }}</div>
         {% endif %}
+
+        <h2>Post live tweet</h2>
+        <form class="form-card" method="post" action="/admin/livetweets" id="tweet-form">
+            <div class="field">
+                <label for="tweet-content">Content</label>
+                <textarea name="content" id="tweet-content" placeholder="What's on your mind?" required></textarea>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button type="submit" class="submit-btn">Post</button>
+                <span style="font-family:'Roboto',system-ui,sans-serif;font-size:clamp(10px,0.7vw,12px);color:var(--muted);">&#8984;/Ctrl + Enter</span>
+            </div>
+        </form>
+        <script>
+        document.getElementById('tweet-content').addEventListener('keydown', function(e) {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                e.preventDefault();
+                if (this.value.trim()) document.getElementById('tweet-form').submit();
+            }
+        });
+        </script>
 
         <h2>Add company</h2>
         <form class="form-card" method="post" action="/admin/tracker/companies">

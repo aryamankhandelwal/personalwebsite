@@ -268,7 +268,7 @@ async def delete_reply(reply_id: int, db: AsyncSession = Depends(get_db)):
     await db.commit()
     return {"status": "deleted"} 
 
-@app.post("/livetweets", response_model=LiveTweetOut)
+@app.post("/livetweets", response_model=LiveTweetOut, dependencies=[Depends(admin_auth)])
 async def create_livetweet(lt: LiveTweetCreate, db: AsyncSession = Depends(get_db)):
     tweet = LiveTweet(content=lt.content)
     db.add(tweet)
@@ -341,6 +341,8 @@ async def admin_root(request: Request, db: AsyncSession = Depends(get_db)):
         banner = "Featured updated."
     elif ok == "archived":
         banner = "Company archived."
+    elif ok == "tweeted":
+        banner = "Live tweet posted."
 
     return templates.TemplateResponse(
         request,
@@ -352,6 +354,16 @@ async def admin_root(request: Request, db: AsyncSession = Depends(get_db)):
             "banner": banner,
         },
     )
+
+
+@app.post("/admin/livetweets", include_in_schema=False)
+async def admin_post_livetweet(request: Request, content: str = Form(...), db: AsyncSession = Depends(get_db)):
+    if not request.session.get("authed"):
+        return RedirectResponse(url="/admin", status_code=303)
+    tweet = LiveTweet(content=content.strip())
+    db.add(tweet)
+    await db.commit()
+    return RedirectResponse(url="/admin?ok=tweeted", status_code=303)
 
 
 @app.post("/admin/login", include_in_schema=False)

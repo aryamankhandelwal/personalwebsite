@@ -283,63 +283,6 @@
             color: var(--muted);
         }
 
-        /* Compose panel */
-        .lt-compose {
-            position: fixed;
-            bottom: 32px;
-            right: 32px;
-            width: 280px;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            z-index: 100;
-        }
-        #lt-input {
-            width: 100%;
-            box-sizing: border-box;
-            background: transparent;
-            border: none;
-            border-bottom: 1px solid var(--border);
-            color: var(--foreground);
-            font-family: 'Geist', system-ui, sans-serif;
-            font-size: clamp(15px, 1.1vw, 16px);
-            line-height: 1.6;
-            padding: 8px 0;
-            outline: none;
-            resize: none;
-            min-height: 120px;
-        }
-        #lt-input::placeholder { color: var(--muted); }
-        #lt-input:focus { border-bottom-color: var(--muted); }
-        #lt-error {
-            font-family: 'Geist', system-ui, sans-serif;
-            font-size: 13px;
-            color: #ef4444;
-            margin-top: 8px;
-            min-height: 18px;
-        }
-        #lt-submit {
-            margin-top: 12px;
-            padding: 8px 16px;
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--foreground);
-            font-family: 'Geist', system-ui, sans-serif;
-            font-size: 13px;
-            cursor: not-allowed;
-            transition: all .2s ease;
-            opacity: 0.35;
-        }
-        #lt-submit:not(:disabled) {
-            opacity: 1;
-            cursor: pointer;
-        }
-        #lt-submit:not(:disabled):hover {
-            background: var(--foreground);
-            color: var(--background);
-        }
-
         /* Mobile */
         @media (max-width: 768px) {
             .page { flex-direction: column; }
@@ -375,15 +318,6 @@
             .section {
                 font-family: 'Geist', system-ui, sans-serif;
                 max-width: 540px;
-            }
-            .lt-compose {
-                position: static;
-                width: 100%;
-                background: transparent;
-                border: none;
-                border-radius: 0;
-                padding: 0;
-                margin-bottom: 20px;
             }
         }
     </style>
@@ -429,12 +363,6 @@ KHANDELWAL</a></div>
         <a href="/tracker.html">Tracker</a>
         <a href="/interests.html">Interests</a>
         <a href="/livetweets.html">Live Tweets</a>
-    </div>
-
-    <div class="lt-compose">
-        <textarea id="lt-input" placeholder="What's on your mind?" rows="6"></textarea>
-        <div id="lt-error"></div>
-        <button id="lt-submit" disabled>Post</button>
     </div>
 
     <script>
@@ -535,29 +463,6 @@ KHANDELWAL</a></div>
         }
     })();
 
-    // Validation
-    function validate(text) {
-        if (!text.trim()) return { valid: false, error: '' };
-        const lines = text.split('\n');
-        const trimmedLines = lines.map(l => l.trimEnd());
-        let lastNonEmpty = '';
-        for (let i = trimmedLines.length - 1; i >= 0; i--) {
-            if (trimmedLines[i] !== '') { lastNonEmpty = trimmedLines[i]; break; }
-        }
-        const hasKeyword = text.toLowerCase().includes('masterjester');
-        const lastLineIsKeyword = lastNonEmpty.toLowerCase() === 'masterjester';
-        if (!hasKeyword) return { valid: false, error: 'Missing keyword: message must end with "masterjester" on its own line.' };
-        if (!lastLineIsKeyword) return { valid: false, error: 'Keyword must be the very last line, alone, with no other text.' };
-        return { valid: true, error: '' };
-    }
-
-    function stripKeyword(text) {
-        const lines = text.split('\n');
-        while (lines.length && lines[lines.length - 1].trim() === '') lines.pop();
-        lines.pop();
-        return lines.join('\n').trimEnd();
-    }
-
     function escapeHtml(str) {
         return str
             .replace(/&/g, '&amp;')
@@ -570,48 +475,6 @@ KHANDELWAL</a></div>
         return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
             + ' at '
             + d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-    }
-
-    // Compose
-    const input = document.getElementById('lt-input');
-    const submitBtn = document.getElementById('lt-submit');
-    const errorDiv = document.getElementById('lt-error');
-
-    input.addEventListener('input', function() {
-        const { valid } = validate(this.value);
-        submitBtn.disabled = !valid;
-        errorDiv.textContent = '';
-    });
-
-    input.addEventListener('keydown', function(e) {
-        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-            e.preventDefault();
-            if (!submitBtn.disabled) submitPost();
-        }
-    });
-
-    submitBtn.addEventListener('click', submitPost);
-
-    async function submitPost() {
-        const raw = input.value;
-        const { valid } = validate(raw);
-        if (!valid) return;
-        const content = stripKeyword(raw);
-        submitBtn.disabled = true;
-        try {
-            const res = await fetch(API_BASE + '/livetweets', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content })
-            });
-            if (!res.ok) throw new Error();
-            input.value = '';
-            errorDiv.textContent = '';
-            fetchPosts();
-        } catch (_) {
-            errorDiv.textContent = 'Could not post.';
-            submitBtn.disabled = false;
-        }
     }
 
     // Delete
