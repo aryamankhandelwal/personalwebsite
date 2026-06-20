@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interests — Aryaman Khandelwal</title>
+<link rel="icon" type="image/x-icon" href="images/header.png">
+<style>
+  @font-face { font-family: 'Geist'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Geist'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Geist'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-SemiBold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Geist Mono'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-mono/GeistMono-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+
+  :root {
+    --background: #1a1a1a;
+    --foreground: #ededed;
+    --muted: #888888;
+    --muted-foreground: #a1a1a1;
+    --border: rgba(255,255,255,0.10);
+    --card: #232323;
+    --blue: #5e96f7;
+  }
+
+  html {
+    scrollbar-gutter: stable;
+  }
+  html, body {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: 'Geist', system-ui, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: none;
+  }
+
+  /* Layout */
+  .page {
+    display: flex;
+    min-height: 100dvh;
+  }
+  .sidebar {
+    width: 10vw;
+    min-width: 120px;
+    max-width: 180px;
+    padding: 48px 16px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    box-sizing: border-box;
+  }
+  .name {
+    font-family: 'Geist', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: clamp(14px, 1vw, 16px);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    color: var(--foreground);
+    white-space: pre-line;
+    margin: 0;
+  }
+  .name a { color: inherit; text-decoration: none; border-bottom: none; transition: color .2s ease; }
+  .name a:hover, .name a:focus-visible { color: var(--blue); border-bottom: none; }
+
+  .clock {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-weight: 400;
+    font-size: clamp(13px, 0.9vw, 15px);
+    letter-spacing: 0.04em;
+    color: #9a9a9a;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'zero' 1;
+    line-height: 1.2;
+    margin: 0;
+  }
+
+  /* Desktop nav under clock */
+  .nav {
+    font-family: 'Geist', system-ui, sans-serif;
+    margin-top: 14px;
+  }
+  .nav a {
+    font-family: 'Geist', system-ui, sans-serif;
+    display: block;
+    font-size: clamp(12px, 0.85vw, 14px);
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: none;
+    padding: 3px 0;
+    line-height: 1.2;
+    transition: color .2s ease;
+  }
+  .nav a:hover, .nav a:focus-visible {
+    color: var(--blue);
+  }
+
+  /* Mobile menu toggle */
+  .menu-toggle {
+    display: none;
+    position: fixed;
+    top: 10px;
+    right: 12px;
+    z-index: 1001;
+    font-family: 'Geist', system-ui, sans-serif;
+    font-size: 28px;
+    line-height: 1;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    color: var(--foreground);
+    cursor: pointer;
+  }
+
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--background);
+    padding: 72px 24px 24px 24px;
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+  .mobile-menu a {
+    font-family: 'Geist', system-ui, sans-serif;
+    display: block;
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: none;
+    padding: 6px 0;
+    line-height: 1.1;
+  }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible { color: var(--blue); }
+
+  .menu-open .mobile-menu { display: block; }
+
+  .content {
+    flex: 0.8;
+    padding: 40px 6vw 80px 9vw;
+    box-sizing: border-box;
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 768px) {
+    .page { flex-direction: column; }
+    .sidebar {
+      width: 100%;
+      max-width: none;
+      min-width: 0;
+      height: auto;
+      position: relative;
+      padding: 24px 20px 0 20px;
+      gap: 0;
+    }
+    .menu-toggle { display: block; }
+    .nav {
+      font-family: 'Geist', system-ui, sans-serif;
+      display: none;
+    }
+    .content { padding: 20px; }
+    .name {
+      font-family: 'Geist', system-ui, sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      line-height: 1.15;
+      margin: 0;
+    }
+    .clock {
+      font-family: 'Geist Mono', ui-monospace, monospace;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      line-height: 1.15;
+      margin: 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <button class="menu-toggle" id="menu-toggle" aria-label="Open menu" aria-expanded="false">+</button>
+  <div class="page">
+    <aside class="sidebar" aria-label="Site identity">
+      <div class="name"><a href="/index.html">ARYAMAN
+KHANDELWAL</a></div>
+      <div class="clock" id="dubai-clock" aria-label="Local time (Dubai, 24h)">17:00:00</div>
+      <nav class="nav" aria-label="Primary">
+        <a href="/blog.html">Blog</a>
+        <a href="/forum.html">Jester's Courtyard</a>
+        <a href="/builds.html">Builds</a>
+        <a href="/tracker.html">Tracker</a>
+        <a href="/interests.html">Interests</a>
+        <a href="/livetweets.html">Live Tweets</a>
+      </nav>
+    </aside>
+    <main class="content" id="main-content">
+    </main>
+  </div>
+
+  <div class="mobile-menu" id="mobile-menu" aria-label="Mobile navigation" hidden>
+    <a href="/blog.html">Blog</a>
+    <a href="/forum.html">Jester's Courtyard</a>
+    <a href="/builds.html">Builds</a>
+    <a href="/tracker.html">Tracker</a>
+    <a href="/interests.html">Interests</a>
+    <a href="/livetweets.html">Live Tweets</a>
+  </div>
+
+  <script>
+    (function() {
+      // Dubai clock with scramble animation
+      const el = document.getElementById('dubai-clock');
+      if (el) {
+        const fmt = new Intl.DateTimeFormat('en-GB', {
+          timeZone: 'Asia/Dubai',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+        let isHovered = false;
+        let scrambleAnim = null;
+
+        function getTimeStr() {
+          const parts = fmt.formatToParts(new Date());
+          let hh = '00', mm = '00', ss = '00';
+          for (const p of parts) {
+            if (p.type === 'hour') hh = p.value;
+            if (p.type === 'minute') mm = p.value;
+            if (p.type === 'second') ss = p.value;
+          }
+          return hh + ':' + mm + ':' + ss;
+        }
+
+        function scrambleTo(target, done) {
+          if (scrambleAnim) cancelAnimationFrame(scrambleAnim);
+          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:';
+          const len = Math.max(el.textContent.length, target.length);
+          const padded = target.padEnd(len);
+          let iter = 0;
+          const maxIter = 20;
+          function step() {
+            let out = '';
+            let settled = 0;
+            for (let i = 0; i < padded.length; i++) {
+              if (iter >= maxIter - (padded.length - 1 - i)) {
+                out += padded[i];
+                settled++;
+              } else {
+                out += chars[Math.floor(Math.random() * chars.length)];
+              }
+            }
+            el.textContent = out.trimEnd();
+            iter++;
+            if (settled < padded.length) {
+              scrambleAnim = requestAnimationFrame(step);
+            } else {
+              scrambleAnim = null;
+              if (done) done();
+            }
+          }
+          scrambleAnim = requestAnimationFrame(step);
+        }
+
+        function update() {
+          if (!isHovered) el.textContent = getTimeStr();
+        }
+        update();
+        setInterval(update, 1000);
+
+        el.addEventListener('mouseenter', function() {
+          isHovered = true;
+          scrambleTo('DUBAI');
+        });
+        el.addEventListener('mouseleave', function() {
+          isHovered = false;
+          scrambleTo(getTimeStr(), function() { isHovered = false; });
+        });
+        el.style.cursor = 'default';
+      }
+
+      // Mobile menu toggle
+      const toggle = document.getElementById('menu-toggle');
+      const menu = document.getElementById('mobile-menu');
+      function openMenu() {
+        document.body.classList.add('menu-open');
+        toggle.textContent = '×';
+        toggle.setAttribute('aria-label', 'Close menu');
+        toggle.setAttribute('aria-expanded', 'true');
+        menu.hidden = false;
+      }
+      function closeMenu() {
+        document.body.classList.remove('menu-open');
+        toggle.textContent = '+';
+        toggle.setAttribute('aria-label', 'Open menu');
+        toggle.setAttribute('aria-expanded', 'false');
+        menu.hidden = true;
+      }
+      if (toggle && menu) {
+        toggle.addEventListener('click', function() {
+          if (document.body.classList.contains('menu-open')) closeMenu(); else openMenu();
+        });
+
+        // Close on link click
+        menu.addEventListener('click', function(e) {
+          if (e.target.tagName === 'A') closeMenu();
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
