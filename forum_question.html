@@ -658,28 +658,75 @@ KHANDELWAL</a></div>
 
     <script>
     (function() {
-        // Dubai clock
+        // Dubai clock with scramble animation
         const el = document.getElementById('dubai-clock');
         if (el) {
-            const fmt = new Intl.DateTimeFormat('en-GB', {
-                timeZone: 'Asia/Dubai',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-            function update() {
-                const parts = fmt.formatToParts(new Date());
-                let hh = '00', mm = '00', ss = '00';
-                for (const p of parts) {
-                    if (p.type === 'hour') hh = p.value;
-                    if (p.type === 'minute') mm = p.value;
-                    if (p.type === 'second') ss = p.value;
-                }
-                el.textContent = `${hh}:${mm}:${ss}`;
+          const fmt = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Asia/Dubai',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          });
+          let isHovered = false;
+          let scrambleAnim = null;
+
+          function getTimeStr() {
+            const parts = fmt.formatToParts(new Date());
+            let hh = '00', mm = '00', ss = '00';
+            for (const p of parts) {
+              if (p.type === 'hour') hh = p.value;
+              if (p.type === 'minute') mm = p.value;
+              if (p.type === 'second') ss = p.value;
             }
-            update();
-            setInterval(update, 1000);
+            return hh + ':' + mm + ':' + ss;
+          }
+
+          function scrambleTo(target, done) {
+            if (scrambleAnim) cancelAnimationFrame(scrambleAnim);
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:';
+            const len = Math.max(el.textContent.length, target.length);
+            const padded = target.padEnd(len);
+            let iter = 0;
+            const maxIter = 20;
+            function step() {
+              let out = '';
+              let settled = 0;
+              for (let i = 0; i < padded.length; i++) {
+                if (iter >= maxIter - (padded.length - 1 - i)) {
+                  out += padded[i];
+                  settled++;
+                } else {
+                  out += chars[Math.floor(Math.random() * chars.length)];
+                }
+              }
+              el.textContent = out.trimEnd();
+              iter++;
+              if (settled < padded.length) {
+                scrambleAnim = requestAnimationFrame(step);
+              } else {
+                scrambleAnim = null;
+                if (done) done();
+              }
+            }
+            scrambleAnim = requestAnimationFrame(step);
+          }
+
+          function update() {
+            if (!isHovered) el.textContent = getTimeStr();
+          }
+          update();
+          setInterval(update, 1000);
+
+          el.addEventListener('mouseenter', function() {
+            isHovered = true;
+            scrambleTo('DUBAI');
+          });
+          el.addEventListener('mouseleave', function() {
+            isHovered = false;
+            scrambleTo(getTimeStr(), function() { isHovered = false; });
+          });
+          el.style.cursor = 'default';
         }
 
         // Mobile menu toggle
