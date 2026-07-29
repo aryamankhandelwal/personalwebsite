@@ -1,7 +1,7 @@
 import os
 from fastapi import FastAPI, Depends, Form, HTTPException, Header, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from sqlalchemy import update
@@ -303,6 +303,15 @@ async def list_tracker_companies(db: AsyncSession = Depends(get_db)):
 
 
 # --- Admin (cookie-protected) ---
+
+# Same icon the public site uses. Served under /admin/ so the Vercel rewrite
+# (/admin/:path* -> Render) reaches it from the main domain too.
+ADMIN_FAVICON = os.path.join(os.path.dirname(__file__), 'images', 'header.png')
+
+
+@app.get("/admin/favicon.png", include_in_schema=False)
+def admin_favicon():
+    return FileResponse(ADMIN_FAVICON, media_type="image/png")
 
 def _admin_banner(request: Request) -> Optional[str]:
     return {
