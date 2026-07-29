@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin · Edit — Aryaman Khandelwal</title>
+    <title>{% block title %}Admin{% endblock %} — Aryaman Khandelwal</title>
     <link rel="icon" type="image/x-icon" href="/static/header.png">
     <style>
         @font-face { font-family: 'Geist'; src: url('https://cdn.jsdelivr.net/npm/geist@1.7.2/dist/fonts/geist-sans/Geist-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
@@ -47,31 +47,66 @@
             letter-spacing: -0.02em;
             margin: 0;
         }
-        .back-link {
+        .logout-form { margin: 0; }
+        .logout-form button {
+            background: transparent;
+            border: none;
             color: var(--muted);
             font-family: 'Geist', system-ui, sans-serif;
             font-size: 13px;
-            text-decoration: none;
-            border-bottom: none;
-            transition: color .2s ease;
+            cursor: pointer;
+            padding: 0;
         }
-        .back-link:hover { color: var(--foreground); }
+        .logout-form button:hover { color: var(--foreground); }
         .desc {
             font-size: clamp(13px, 1vw, 15px);
             color: var(--muted);
             margin: 0 0 20px 0;
         }
-        .divider {
-            width: 100%;
-            height: 1px;
-            background-color: var(--border);
-            margin: 0 0 24px 0;
+        .tabs {
+            display: flex;
+            gap: 24px;
+            border-bottom: 1px solid var(--border);
+            margin: 0 0 28px 0;
+        }
+        .tab {
+            display: inline-block;
+            padding: 0 0 10px 0;
+            margin-bottom: -1px;
+            border-bottom: 1px solid transparent;
+            color: var(--muted);
+            font-size: 14px;
+            text-decoration: none;
+            transition: color .2s ease, border-color .2s ease;
+        }
+        .tab:hover { color: var(--foreground); }
+        .tab.active {
+            color: var(--foreground);
+            border-bottom-color: var(--foreground);
+        }
+        .banner {
+            background: var(--card);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: var(--foreground);
+            border-left: 2px solid var(--blue);
         }
         h2 {
             font-weight: 600;
             font-size: clamp(18px, 1.6vw, 22px);
             letter-spacing: -0.01em;
-            margin: 0 0 12px 0;
+            margin: 32px 0 12px 0;
+        }
+        h2:first-of-type { margin-top: 0; }
+        h3 {
+            font-weight: 500;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--muted);
+            margin: 20px 0 10px 0;
         }
         .form-card {
             background: var(--card);
@@ -133,12 +168,6 @@
             color: var(--foreground);
             cursor: pointer;
         }
-        .actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            margin-top: 8px;
-        }
         .submit-btn {
             padding: 8px 16px;
             background: transparent;
@@ -153,92 +182,114 @@
             background: var(--foreground);
             color: var(--background);
         }
-        .cancel-link {
-            color: var(--muted);
-            font-family: 'Geist', system-ui, sans-serif;
-            font-size: 13px;
-            text-decoration: none;
-            border-bottom: none;
-            transition: color .2s ease;
+        .sector-block { margin-bottom: 20px; }
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
         }
-        .cancel-link:hover { color: var(--foreground); }
-        .meta {
+        .row.featured { border-left: 2px solid var(--blue); }
+        .row.archived { opacity: 0.45; }
+        .row-info {
+            font-size: clamp(14px, 1.1vw, 16px);
+            line-height: 1.3;
+            min-width: 0;
+        }
+        .row-info .name { font-weight: 500; }
+        .row-info .meta {
             font-family: 'Geist Mono', monospace;
             font-size: 11px;
             color: var(--muted);
-            margin-top: 16px;
+            margin-top: 2px;
+        }
+        .row-actions { display: flex; gap: 6px; flex-shrink: 0; margin-left: 12px; align-items: center; }
+        .row-actions form { margin: 0; }
+        .row-actions button,
+        .row-actions .row-edit {
+            padding: 4px 10px;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--foreground);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all .2s ease;
+            text-decoration: none;
+            line-height: 1.4;
+        }
+        .row-actions button:hover,
+        .row-actions .row-edit:hover {
+            border-color: var(--muted);
+            background: var(--foreground);
+            color: var(--background);
+        }
+        .empty {
+            font-size: 14px;
+            color: var(--muted);
+            font-style: italic;
+        }
+        .hint {
+            font-family: 'Geist Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        /* Live tweet composer */
+        .compose-card { padding: 22px 22px 18px 22px; }
+        .compose-card .field { margin-bottom: 16px; }
+        .field textarea.compose-box {
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 320px;
+            background: #1c1c1c;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--foreground);
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(15px, 1.2vw, 17px);
+            line-height: 1.65;
+            padding: 16px;
+            outline: none;
+            resize: vertical;
+        }
+        .field textarea.compose-box:focus { border-color: var(--muted); }
+        .compose-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .field-row { flex-direction: column; gap: 0; }
+            .field textarea.compose-box { min-height: 220px; }
         }
     </style>
 </head>
 <body>
     <div class="wrap">
         <div class="top">
-            <p class="label">Edit company</p>
-            <a class="back-link" href="/admin/tracker">← Back</a>
+            <p class="label">Admin</p>
+            <form class="logout-form" method="post" action="/admin/logout">
+                <button type="submit">Log out</button>
+            </form>
         </div>
-        <p class="desc">Update {{ company.name }}.</p>
-        <div class="divider"></div>
+        <p class="desc">{% block desc %}{% endblock %}</p>
 
-        <form class="form-card" method="post" action="/admin/tracker/companies/{{ company.id }}/edit">
-            <div class="field-row">
-                <div class="field">
-                    <label for="name">Name</label>
-                    <input type="text" name="name" id="name" value="{{ company.name }}" required>
-                </div>
-                <div class="field">
-                    <label for="sector">Sector</label>
-                    <select name="sector" id="sector" required>
-                        {% for s in sectors %}
-                        <option value="{{ s }}" {% if s == company.sector %}selected{% endif %}>{{ s }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            <div class="field">
-                <label for="description">Description (one line)</label>
-                <input type="text" name="description" id="description" value="{{ company.description }}" required>
-            </div>
-            <div class="field">
-                <label for="alpha">Alpha (your view on their edge)</label>
-                <textarea name="alpha" id="alpha">{% if company.alpha %}{{ company.alpha }}{% endif %}</textarea>
-            </div>
-            <div class="field-row">
-                <div class="field">
-                    <label for="founders">Founders</label>
-                    <input type="text" name="founders" id="founders" value="{{ company.founders or '' }}">
-                </div>
-                <div class="field">
-                    <label for="stage">Stage</label>
-                    <input type="text" name="stage" id="stage" value="{{ company.stage or '' }}" placeholder="e.g. Seed, Series A">
-                </div>
-            </div>
-            <div class="field-row">
-                <div class="field">
-                    <label for="region">Country / Region</label>
-                    <input type="text" name="region" id="region" value="{{ company.region or '' }}">
-                </div>
-                <div class="field">
-                    <label for="website">Website</label>
-                    <input type="url" name="website" id="website" value="{{ company.website or '' }}" placeholder="https://...">
-                </div>
-            </div>
-            <div class="field">
-                <label for="notable_investors">Notable investors</label>
-                <input type="text" name="notable_investors" id="notable_investors" value="{{ company.notable_investors or '' }}">
-            </div>
-            <div class="checks">
-                <label><input type="checkbox" name="is_featured" value="true" {% if company.is_featured %}checked{% endif %}> Featured</label>
-                <label><input type="checkbox" name="is_archived" value="true" {% if company.is_archived %}checked{% endif %}> Archived</label>
-            </div>
-            <div class="actions">
-                <button type="submit" class="submit-btn">Save changes</button>
-                <a class="cancel-link" href="/admin/tracker">Cancel</a>
-            </div>
-        </form>
+        <nav class="tabs">
+            <a class="tab {% if tab == 'tweets' %}active{% endif %}" href="/admin">Live tweets</a>
+            <a class="tab {% if tab == 'tracker' %}active{% endif %}" href="/admin/tracker">Tracker</a>
+        </nav>
 
-        <div class="meta">
-            Added {{ company.date_added }} · ID {{ company.id }}
-        </div>
+        {% if banner %}
+        <div class="banner">{{ banner }}</div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
     </div>
 </body>
 </html>

@@ -304,12 +304,36 @@ async def list_tracker_companies(db: AsyncSession = Depends(get_db)):
 
 # --- Admin (cookie-protected) ---
 
+def _admin_banner(request: Request) -> Optional[str]:
+    return {
+        "created": "Company added.",
+        "updated": "Company updated.",
+        "featured": "Featured updated.",
+        "archived": "Company archived.",
+        "tweeted": "Live tweet posted.",
+    }.get(request.query_params.get("ok"))
+
+
 @app.get("/admin", include_in_schema=False)
-async def admin_root(request: Request, db: AsyncSession = Depends(get_db)):
+async def admin_root(request: Request):
+    """Tab 1 — live tweet composer (also the login screen when signed out)."""
     if not request.session.get("authed"):
         return templates.TemplateResponse(
             request, "admin_login.html", {"error": None}
         )
+
+    return templates.TemplateResponse(
+        request,
+        "admin_dashboard.html",
+        {"tab": "tweets", "banner": _admin_banner(request)},
+    )
+
+
+@app.get("/admin/tracker", include_in_schema=False)
+async def admin_tracker(request: Request, db: AsyncSession = Depends(get_db)):
+    """Tab 2 — add / manage tracker companies."""
+    if not request.session.get("authed"):
+        return RedirectResponse(url="/admin", status_code=303)
 
     result = await db.execute(
         select(TrackerCompany).order_by(
@@ -331,27 +355,15 @@ async def admin_root(request: Request, db: AsyncSession = Depends(get_db)):
             # Companies whose sector got renamed/removed: surface them under "Others"
             active_by_sector.setdefault('Others', []).append(c)
 
-    banner = None
-    ok = request.query_params.get("ok")
-    if ok == "created":
-        banner = "Company added."
-    elif ok == "updated":
-        banner = "Company updated."
-    elif ok == "featured":
-        banner = "Featured updated."
-    elif ok == "archived":
-        banner = "Company archived."
-    elif ok == "tweeted":
-        banner = "Live tweet posted."
-
     return templates.TemplateResponse(
         request,
-        "admin_dashboard.html",
+        "admin_tracker.html",
         {
+            "tab": "tracker",
             "sectors": TRACKER_SECTORS,
             "active_by_sector": active_by_sector,
             "archived_companies": archived_companies,
-            "banner": banner,
+            "banner": _admin_banner(request),
         },
     )
 
@@ -440,7 +452,7 @@ async def admin_create_company(
         )
 
     await db.commit()
-    return RedirectResponse(url="/admin?ok=created", status_code=303)
+    return RedirectResponse(url="/admin/tracker?ok=created", status_code=303)
 
 
 @app.get("/admin/tracker/companies/{company_id}/edit", include_in_schema=False)
@@ -516,7 +528,7 @@ async def admin_edit_submit(
         )
 
     await db.commit()
-    return RedirectResponse(url="/admin?ok=updated", status_code=303)
+    return RedirectResponse(url="/admin/tracker?ok=updated", status_code=303)
 
 
 @app.post("/admin/tracker/companies/{company_id}/feature", include_in_schema=False)
@@ -544,7 +556,7 @@ async def admin_toggle_feature(
             company.is_archived = False
 
     await db.commit()
-    return RedirectResponse(url="/admin?ok=featured", status_code=303)
+    return RedirectResponse(url="/admin/tracker?ok=featured", status_code=303)
 
 
 @app.post("/admin/tracker/companies/{company_id}/archive", include_in_schema=False)
@@ -559,7 +571,7 @@ async def admin_archive(
     company.is_archived = True
     company.is_featured = False
     await db.commit()
-    return RedirectResponse(url="/admin?ok=archived", status_code=303)
+    return RedirectResponse(url="/admin/tracker?ok=archived", status_code=303)
 
 
 @app.get("/ping", include_in_schema=False)

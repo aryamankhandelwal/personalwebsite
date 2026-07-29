@@ -1,0 +1,114 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Tracker{% endblock %}
+{% block desc %}Manage tracker companies.{% endblock %}
+
+{% block content %}
+<h2>Add company</h2>
+<form class="form-card" method="post" action="/admin/tracker/companies">
+    <div class="field-row">
+        <div class="field">
+            <label for="name">Name</label>
+            <input type="text" name="name" id="name" required>
+        </div>
+        <div class="field">
+            <label for="sector">Sector</label>
+            <select name="sector" id="sector" required>
+                {% for s in sectors %}
+                <option value="{{ s }}">{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="field">
+        <label for="description">Description (one line)</label>
+        <input type="text" name="description" id="description" required>
+    </div>
+    <div class="field">
+        <label for="alpha">Alpha (your view on their edge)</label>
+        <textarea name="alpha" id="alpha"></textarea>
+    </div>
+    <div class="field-row">
+        <div class="field">
+            <label for="founders">Founders</label>
+            <input type="text" name="founders" id="founders">
+        </div>
+        <div class="field">
+            <label for="stage">Stage</label>
+            <input type="text" name="stage" id="stage" placeholder="e.g. Seed, Series A">
+        </div>
+    </div>
+    <div class="field-row">
+        <div class="field">
+            <label for="region">Country / Region</label>
+            <input type="text" name="region" id="region">
+        </div>
+        <div class="field">
+            <label for="website">Website</label>
+            <input type="url" name="website" id="website" placeholder="https://...">
+        </div>
+    </div>
+    <div class="field">
+        <label for="notable_investors">Notable investors</label>
+        <input type="text" name="notable_investors" id="notable_investors">
+    </div>
+    <div class="checks">
+        <label><input type="checkbox" name="is_featured" value="true"> Mark as featured</label>
+        <label><input type="checkbox" name="is_archived" value="true"> Archive on add</label>
+    </div>
+    <button type="submit" class="submit-btn">Add company</button>
+</form>
+
+<h2>Current companies</h2>
+{% for s in sectors %}
+<div class="sector-block">
+    <h3>{{ s }}</h3>
+    {% set active = active_by_sector.get(s, []) %}
+    {% if active %}
+        {% for c in active %}
+        <div class="row {% if c.is_featured %}featured{% endif %}">
+            <div class="row-info">
+                <div class="name">{{ c.name }}</div>
+                <div class="meta">
+                    {%- if c.stage %}{{ c.stage }}{% endif -%}
+                    {%- if c.stage and c.region %} · {% endif -%}
+                    {%- if c.region %}{{ c.region }}{% endif -%}
+                    {%- if c.is_featured %} · Featured{% endif -%}
+                </div>
+            </div>
+            <div class="row-actions">
+                <a class="row-edit" href="/admin/tracker/companies/{{ c.id }}/edit">Edit</a>
+                <form method="post" action="/admin/tracker/companies/{{ c.id }}/feature">
+                    <button type="submit">{% if c.is_featured %}Unfeature{% else %}Feature{% endif %}</button>
+                </form>
+                <form method="post" action="/admin/tracker/companies/{{ c.id }}/archive">
+                    <button type="submit">Archive</button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty">No companies yet.</div>
+    {% endif %}
+</div>
+{% endfor %}
+
+{% if archived_companies %}
+<h2>Archived</h2>
+{% for c in archived_companies %}
+<div class="row archived">
+    <div class="row-info">
+        <div class="name">{{ c.name }}</div>
+        <div class="meta">
+            {{ c.sector }}
+            {%- if c.stage %} · {{ c.stage }}{% endif -%}
+            {%- if c.region %} · {{ c.region }}{% endif -%}
+        </div>
+    </div>
+    <div class="row-actions">
+        <a class="row-edit" href="/admin/tracker/companies/{{ c.id }}/edit">Edit</a>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+{% endblock %}
