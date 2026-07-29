@@ -306,7 +306,7 @@ async def list_tracker_companies(db: AsyncSession = Depends(get_db)):
 
 # Same icon the public site uses. Served under /admin/ so the Vercel rewrite
 # (/admin/:path* -> Render) reaches it from the main domain too.
-ADMIN_FAVICON = os.path.join(os.path.dirname(__file__), 'images', 'header.png')
+ADMIN_FAVICON = os.path.join(os.path.dirname(__file__), 'images', 'favicon-32.png')
 
 
 @app.get("/admin/favicon.png", include_in_schema=False)
