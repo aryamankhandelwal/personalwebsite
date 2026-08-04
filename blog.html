@@ -292,6 +292,19 @@
   @media (prefers-reduced-motion: reduce) {
     .blog-loading { animation: none; }
   }
+  /* Shown when the backend can't be reached, so an out-of-date list doesn't
+     quietly pass for a complete one. */
+  .api-notice {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-size: clamp(14px, 1vw, 15px);
+    line-height: 1.5;
+    color: var(--muted);
+    background: var(--card);
+    border-left: 2px solid var(--blue);
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin: 0 0 20px 0;
+  }
 
   /* Mobile adjustments */
   @media (max-width: 768px) {
@@ -434,16 +447,32 @@ KHANDELWAL</a></div>
             failsafeTimer = setTimeout(release, FAILSAFE_MS);
           }
 
+          function showApiNotice() {
+            if (document.getElementById('api-notice')) return;
+            var note = document.createElement('p');
+            note.id = 'api-notice';
+            note.className = 'api-notice';
+            note.textContent = "My cron job failed and I haven't fixed it yet :) Please bear with me";
+            list.parentNode.insertBefore(note, list);
+          }
+
+          var failed = false;
           fetch(API_BASE + '/blogposts')
-            .then(function(res) { return res.ok ? res.json() : null; })
-            .then(function(posts) {
-              if (posts) {
-                render(posts);
-                try { localStorage.setItem(CACHE_KEY, JSON.stringify(posts)); } catch (e) {}
-              }
+            .then(function(res) {
+              if (!res.ok) throw new Error('bad status');
+              return res.json();
             })
-            .catch(function() {})
-            .then(release);
+            .then(function(posts) {
+              render(posts);
+              try { localStorage.setItem(CACHE_KEY, JSON.stringify(posts)); } catch (e) {}
+            })
+            .catch(function() { failed = true; })
+            .then(function() {
+              release();
+              // Say so rather than let stale or partial lists pass unremarked —
+              // the cached titles may be missing whatever was posted since.
+              if (failed) showApiNotice();
+            });
         })();
         </script>
       </section>

@@ -277,6 +277,18 @@
             font-style: italic;
             padding: 4px 0 8px 0;
         }
+        /* Shown when the backend can't be reached. */
+        .api-notice {
+            font-family: 'Geist', system-ui, sans-serif;
+            font-size: clamp(14px, 1vw, 15px);
+            line-height: 1.5;
+            color: var(--muted);
+            background: var(--card);
+            border-left: 2px solid var(--blue);
+            border-radius: 4px;
+            padding: 10px 14px;
+            margin: 0 0 20px 0;
+        }
 
         /* Modal */
         .tk-modal-backdrop {
@@ -717,19 +729,36 @@ KHANDELWAL</a></div>
         if (e.key === 'Escape') closeModal();
     });
 
+    function setApiNotice(show) {
+        const board = document.getElementById('tk-board');
+        const existing = document.getElementById('api-notice');
+        if (!show) {
+            if (existing) existing.remove();
+            return;
+        }
+        if (existing) return;
+        const note = document.createElement('p');
+        note.id = 'api-notice';
+        note.className = 'api-notice';
+        note.textContent = "My cron job failed and I haven't fixed it yet :) Please bear with me";
+        board.parentNode.insertBefore(note, board);
+    }
+
     async function load() {
         const board = document.getElementById('tk-board');
         try {
             const res = await fetch(API_BASE + '/tracker_companies');
             if (!res.ok) throw new Error('fetch failed');
             const all = await res.json();
+            setApiNotice(false);
             board.innerHTML = '';
             for (const sector of SECTORS) {
                 const items = all.filter(c => c.sector === sector);
                 board.appendChild(renderColumn(sector, items));
             }
         } catch (_) {
-            board.innerHTML = '<div class="tk-empty">Could not load companies.</div>';
+            board.innerHTML = '';
+            setApiNotice(true);
         }
     }
 
