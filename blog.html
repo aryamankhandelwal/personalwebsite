@@ -349,6 +349,70 @@ KHANDELWAL</a></div>
           <li class="blog-item"><a href="blogs/blog2.html">What Arshad Nadeem's olympic gold could mean for Pakistan's economy</a></li>
           <li class="blog-item"><a href="blogs/blog1.html">The Tech Wedding Cake</a></li>
         </ul>
+
+        <!-- Runs here rather than at the end of the body so the cached titles are
+             in the list before the browser's first paint — otherwise posts from
+             the API pop in a beat after the hand-written ones, which reads as a
+             glitch. -->
+        <script>
+        (function() {
+          var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+          var API_BASE = isLocal ? 'http://localhost:8000' : 'https://personalwebsite-xzmk.onrender.com';
+          var CACHE_KEY = 'blog_posts_v1';
+          // How long to hold the list back on a first visit while waiting for the
+          // API. Past this we show the hand-written posts rather than keep staring
+          // at nothing — a sleeping Render dyno can take tens of seconds.
+          var HOLD_MS = 1200;
+
+          var list = document.getElementById('blog-list');
+          var firstStatic = list.firstElementChild;
+          var injected = [];
+
+          function render(posts) {
+            injected.forEach(function(node) { node.remove(); });
+            injected = posts.map(function(post) {
+              var item = document.createElement('li');
+              item.className = 'blog-item';
+              var link = document.createElement('a');
+              link.href = '/blogs/p/' + post.slug;
+              link.textContent = post.title;
+              item.appendChild(link);
+              list.insertBefore(item, firstStatic);
+              return item;
+            });
+          }
+
+          // Repeat visits paint the full list synchronously from cache, so
+          // everything is on screen together with no network round trip.
+          var cached = null;
+          try { cached = JSON.parse(localStorage.getItem(CACHE_KEY)); } catch (e) {}
+          if (cached && cached.length) render(cached);
+
+          // First visit has nothing to paint, so briefly hold the whole list back
+          // and reveal it in one go. Hiding is done from JS and always released,
+          // so a blocked script can never leave the list invisible.
+          var held = false;
+          if (!cached) {
+            list.style.visibility = 'hidden';
+            held = true;
+          }
+          function release() {
+            if (held) { list.style.visibility = ''; held = false; }
+          }
+          var timer = setTimeout(release, HOLD_MS);
+
+          fetch(API_BASE + '/blogposts')
+            .then(function(res) { return res.ok ? res.json() : null; })
+            .then(function(posts) {
+              if (posts) {
+                render(posts);
+                try { localStorage.setItem(CACHE_KEY, JSON.stringify(posts)); } catch (e) {}
+              }
+            })
+            .catch(function() {})
+            .then(function() { clearTimeout(timer); release(); });
+        })();
+        </script>
       </section>
     </main>
   </div>
@@ -465,35 +529,5 @@ KHANDELWAL</a></div>
     })();
   </script>
 
-  <script>
-    // Posts published from /admin/blog live in the API, not in this file. Fetch
-    // them and slot them in above the older hand-written ones. If the API is
-    // asleep or unreachable the page is exactly what it was before.
-    (function() {
-      var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-      var API_BASE = isLocal ? 'http://localhost:8000' : 'https://personalwebsite-xzmk.onrender.com';
-
-      // Wake the free-tier dyno now so clicking through to a post is quick.
-      fetch(API_BASE + '/ping').catch(function() {});
-
-      fetch(API_BASE + '/blogposts')
-        .then(function(res) { return res.ok ? res.json() : []; })
-        .then(function(posts) {
-          if (!posts.length) return;
-          var list = document.getElementById('blog-list');
-          var first = list.firstElementChild;
-          posts.forEach(function(post) {
-            var item = document.createElement('li');
-            item.className = 'blog-item';
-            var link = document.createElement('a');
-            link.href = '/blogs/p/' + post.slug;
-            link.textContent = post.title;
-            item.appendChild(link);
-            list.insertBefore(item, first);
-          });
-        })
-        .catch(function() {});
-    })();
-  </script>
 </body>
 </html>
