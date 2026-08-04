@@ -268,10 +268,14 @@
             .field-row { flex-direction: column; gap: 0; }
             .field textarea.compose-box { min-height: 220px; }
         }
+
+        /* Tabs that need more room than the 880px reading measure. */
+        .wrap.wide { max-width: 1180px; }
     </style>
+    {% block head_extra %}{% endblock %}
 </head>
 <body>
-    <div class="wrap">
+    <div class="wrap {% block wrap_class %}{% endblock %}">
         <div class="top">
             <p class="label">Admin</p>
             <form class="logout-form" method="post" action="/admin/logout">
@@ -282,6 +286,7 @@
 
         <nav class="tabs">
             <a class="tab {% if tab == 'tweets' %}active{% endif %}" href="/admin">Live tweets</a>
+            <a class="tab {% if tab == 'blog' %}active{% endif %}" href="/admin/blog">Blog</a>
             <a class="tab {% if tab == 'tracker' %}active{% endif %}" href="/admin/tracker">Tracker</a>
         </nav>
 

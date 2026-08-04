@@ -1,9 +1,13 @@
 """SQLAlchemy models for the Ask Me Anything app."""
-from datetime import datetime
-from sqlalchemy import Boolean, Column, Date, Integer, String, Text, DateTime, ForeignKey, func
-from sqlalchemy.orm import declarative_base, relationship
+from datetime import datetime, timezone
+from sqlalchemy import Boolean, Column, Date, Integer, LargeBinary, String, Text, DateTime, ForeignKey, func
+from sqlalchemy.orm import declarative_base, deferred, relationship
 
 Base = declarative_base()
+
+
+def _utcnow():
+    return datetime.now(timezone.utc)
 
 class Question(Base):
     """Database model for a submitted question."""
@@ -61,3 +65,48 @@ class TrackerCompany(Base):
     is_archived = Column(Boolean, server_default='false', default=False, nullable=False)
     date_added = Column(Date, server_default=func.current_date(), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+class BlogPost(Base):
+    """A blog post, drafted in the admin panel and published to the public site."""
+    __tablename__ = 'blog_posts'
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(Text, nullable=False, server_default='', default='')
+    # Raw editor text. Blank lines separate paragraphs; [Image #N] tokens
+    # reference the BlogImage rows below. Rendered by blogfmt.render().
+    content = Column(Text, nullable=False, server_default='', default='')
+    # Month picker in the admin, so this is always the 1st of the month.
+    # Displayed as "August 2026" to match the older hand-written posts.
+    date_posted = Column(Date, nullable=True)
+    slug = Column(String(200), nullable=True, unique=True, index=True)
+    status = Column(String(20), nullable=False, server_default='draft', default='draft')
+    # Python-side defaults as well as server ones, so the values are readable on the
+    # object straight after a commit without an extra round trip.
+    created_at = Column(DateTime(timezone=True), server_default=func.now(),
+                        default=_utcnow, nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(),
+                        default=_utcnow, onupdate=_utcnow, nullable=False)
+    published_at = Column(DateTime(timezone=True), nullable=True)
+    images = relationship('BlogImage', back_populates='post', cascade='all, delete-orphan',
+                          order_by='BlogImage.n', lazy='selectin')
+
+class BlogImage(Base):
+    """An image dropped into a blog post.
+
+    Bytes live in the database because Render's filesystem is ephemeral — anything
+    written to disk is lost on restart. Images are downscaled before storage.
+    """
+    __tablename__ = 'blog_images'
+    id = Column(Integer, primary_key=True, index=True)
+    post_id = Column(Integer, ForeignKey('blog_posts.id'), nullable=False, index=True)
+    # Per-post ordinal behind the [Image #N] token. Assigned as max(n)+1 and never
+    # reused, so a token keeps pointing at the same image after other images go away.
+    n = Column(Integer, nullable=False)
+    # Deferred so listing a post's images doesn't drag every blob into memory.
+    # Reading it needs an explicit undefer() — a lazy load would blow up under async.
+    data = deferred(Column(LargeBinary, nullable=False))
+    mime = Column(String(40), nullable=False)
+    width = Column(Integer, nullable=False)
+    height = Column(Integer, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(),
+                        default=_utcnow, nullable=False)
+    post = relationship('BlogPost', back_populates='images')

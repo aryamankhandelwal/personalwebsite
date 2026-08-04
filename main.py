@@ -1,18 +1,23 @@
+import io
 import os
-from fastapi import FastAPI, Depends, Form, HTTPException, Header, Request
+import re
+import unicodedata
+from fastapi import FastAPI, Depends, File, Form, HTTPException, Header, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
-from sqlalchemy import update
+from sqlalchemy import func as sa_func, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from sqlalchemy.orm import undefer
 from dotenv import load_dotenv
 from pydantic import BaseModel
-from models import Base, Question, Reply, LiveTweet, TrackerCompany
+from models import Base, BlogImage, BlogPost, Question, Reply, LiveTweet, TrackerCompany
 from database import engine, get_db
 from typing import Optional
-from datetime import date, datetime
+from datetime import date, datetime, timezone
+import blogfmt
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), 'backend', '.env'))
@@ -290,6 +295,173 @@ async def delete_livetweet(tweet_id: int, db: AsyncSession = Depends(get_db)):
     await db.commit()
     return {"status": "deleted"}
 
+# --- Blog ---
+
+# Posts are drafted in /admin/blog and served from here. The public blog pages are
+# static HTML on Vercel that fetch this API, so a published post is live immediately
+# with no redeploy. The twelve older posts remain hand-written files under blogs/.
+
+IMAGE_MAX_WIDTH = 1080   # 2x the 540px content column, for retina
+IMAGE_MAX_HEIGHT = 1400
+MAX_UPLOAD_BYTES = 10 * 1024 * 1024
+
+
+class BlogDraftIn(BaseModel):
+    """Editor state sent by the admin autosave and by publish."""
+    title: Optional[str] = ""
+    content: Optional[str] = ""
+    date_posted: Optional[str] = None  # "YYYY-MM" from the month picker
+
+
+def _date_label(value: Optional[date]) -> str:
+    """"August 2026" — the format every existing post uses."""
+    return value.strftime('%B %Y') if value else ""
+
+
+def _parse_month(value: Optional[str]) -> Optional[date]:
+    """Accept "YYYY-MM" from <input type="month">, normalised to the 1st."""
+    if not value:
+        return None
+    value = value.strip()
+    try:
+        if len(value) == 7:
+            return date.fromisoformat(value + '-01')
+        return date.fromisoformat(value).replace(day=1)
+    except ValueError:
+        return None
+
+
+def _slugify(title: str) -> str:
+    ascii_only = unicodedata.normalize('NFKD', title or '').encode('ascii', 'ignore').decode('ascii')
+    slug = re.sub(r'[^a-z0-9]+', '-', ascii_only.lower()).strip('-')
+    return slug[:80].strip('-') or 'post'
+
+
+async def _unique_slug(db: AsyncSession, base: str, post_id: int) -> str:
+    candidate, suffix = base, 1
+    while True:
+        owner = (await db.execute(
+            select(BlogPost.id).where(BlogPost.slug == candidate)
+        )).scalars().first()
+        if owner is None or owner == post_id:
+            return candidate
+        suffix += 1
+        candidate = f"{base}-{suffix}"
+
+
+def _process_image(raw: bytes):
+    """Downscale and re-encode an upload. Returns (bytes, mime, width, height).
+
+    thumbnail() caps width and height together while preserving the aspect ratio,
+    and never upscales — so a very wide or very tall photo comes back in
+    proportion, just small enough to sit in the blog column.
+    """
+    from PIL import Image, ImageOps, UnidentifiedImageError
+
+    try:
+        image = ImageOps.exif_transpose(Image.open(io.BytesIO(raw)))
+    except (UnidentifiedImageError, OSError):
+        raise HTTPException(status_code=400, detail="That file isn't a readable image.")
+
+    if image.mode in ('RGBA', 'LA', 'P'):
+        # Flatten transparency onto the page background so screenshots with an
+        # alpha channel don't come out with black edges.
+        image = image.convert('RGBA')
+        backdrop = Image.new('RGB', image.size, (26, 26, 26))  # --background #1a1a1a
+        backdrop.paste(image, mask=image.split()[-1])
+        image = backdrop
+    elif image.mode != 'RGB':
+        image = image.convert('RGB')
+
+    image.thumbnail((IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT), Image.LANCZOS)
+
+    buffer = io.BytesIO()
+    try:
+        image.save(buffer, format='WEBP', quality=82, method=4)
+        mime = 'image/webp'
+    except Exception:
+        buffer = io.BytesIO()
+        image.save(buffer, format='JPEG', quality=85, optimize=True)
+        mime = 'image/jpeg'
+    return buffer.getvalue(), mime, image.width, image.height
+
+
+def _iso_utc(value: Optional[datetime]) -> Optional[str]:
+    """Always stamp an offset. Timestamps are written in UTC, but SQLite hands
+    them back naive, and the browser would read a naive string as local time."""
+    if value is None:
+        return None
+    if value.tzinfo is None:
+        value = value.replace(tzinfo=timezone.utc)
+    return value.isoformat()
+
+
+def _blogpost_json(post: BlogPost) -> dict:
+    return {
+        "id": post.id,
+        "title": post.title or "",
+        "content": post.content or "",
+        "date_posted": post.date_posted.isoformat()[:7] if post.date_posted else None,
+        "date_label": _date_label(post.date_posted),
+        "slug": post.slug,
+        "status": post.status,
+        "updated_at": _iso_utc(post.updated_at),
+        "published_at": _iso_utc(post.published_at),
+        "images": [
+            {"n": i.n, "id": i.id, "width": i.width, "height": i.height}
+            for i in post.images
+        ],
+    }
+
+
+@app.get("/blogposts")
+async def list_blogposts(db: AsyncSession = Depends(get_db)):
+    """Published posts, newest first — consumed by blog.html."""
+    result = await db.execute(
+        select(BlogPost)
+        .where(BlogPost.status == 'published')
+        .order_by(BlogPost.published_at.desc(), BlogPost.id.desc())
+    )
+    return [
+        {"slug": p.slug, "title": p.title, "date_label": _date_label(p.date_posted)}
+        for p in result.scalars().all()
+    ]
+
+
+@app.get("/blogposts/{slug}")
+async def get_blogpost(slug: str, request: Request, db: AsyncSession = Depends(get_db)):
+    """A single published post, body already rendered to HTML."""
+    result = await db.execute(
+        select(BlogPost).where(BlogPost.slug == slug, BlogPost.status == 'published')
+    )
+    post = result.scalars().first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return {
+        "slug": post.slug,
+        "title": post.title,
+        "date_label": _date_label(post.date_posted),
+        "content_html": blogfmt.render(
+            post.content, {i.n: i for i in post.images}, str(request.base_url)
+        ),
+    }
+
+
+@app.get("/blogimages/{image_id}")
+async def get_blogimage(image_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(BlogImage).options(undefer(BlogImage.data)).where(BlogImage.id == image_id)
+    )
+    image = result.scalars().first()
+    if not image:
+        raise HTTPException(status_code=404, detail="Not found")
+    return Response(
+        content=image.data,
+        media_type=image.mime,
+        headers={"Cache-Control": "public, max-age=31536000, immutable"},
+    )
+
+
 @app.get("/tracker_companies", response_model=list[TrackerCompanyOut])
 async def list_tracker_companies(db: AsyncSession = Depends(get_db)):
     result = await db.execute(
@@ -385,6 +557,146 @@ async def admin_post_livetweet(request: Request, content: str = Form(...), db: A
     db.add(tweet)
     await db.commit()
     return RedirectResponse(url="/admin?ok=tweeted", status_code=303)
+
+
+# --- Admin: blog ---
+
+@app.get("/admin/blog", include_in_schema=False)
+async def admin_blog(request: Request, db: AsyncSession = Depends(get_db)):
+    """Tab 2 — two-pane draft editor. Every post is embedded as JSON so switching
+    between drafts is instant and never navigates away from unsaved text."""
+    if not request.session.get("authed"):
+        return RedirectResponse(url="/admin", status_code=303)
+
+    result = await db.execute(
+        select(BlogPost).order_by(BlogPost.updated_at.desc(), BlogPost.id.desc())
+    )
+    posts = [_blogpost_json(p) for p in result.scalars().all()]
+
+    return templates.TemplateResponse(
+        request,
+        "admin_blog.html",
+        {"tab": "blog", "posts": posts, "banner": _admin_banner(request)},
+    )
+
+
+async def _get_blogpost_or_404(db: AsyncSession, post_id: int) -> BlogPost:
+    post = await db.get(BlogPost, post_id)
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    return post
+
+
+def _apply_draft(post: BlogPost, payload: BlogDraftIn) -> None:
+    post.title = (payload.title or "").strip()
+    post.content = payload.content or ""
+    post.date_posted = _parse_month(payload.date_posted)
+
+
+@app.post("/admin/blog/drafts", include_in_schema=False)
+async def admin_create_blog_draft(
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    post = BlogPost(title="", content="", status="draft", images=[])
+    db.add(post)
+    await db.commit()
+    return _blogpost_json(post)
+
+
+@app.post("/admin/blog/drafts/{post_id}/save", include_in_schema=False)
+async def admin_save_blog_draft(
+    post_id: int,
+    payload: BlogDraftIn,
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    """Autosave target. Also hit via sendBeacon when the tab goes away."""
+    post = await _get_blogpost_or_404(db, post_id)
+    _apply_draft(post, payload)
+    await db.commit()
+    return {"id": post.id, "updated_at": _iso_utc(post.updated_at)}
+
+
+@app.post("/admin/blog/drafts/{post_id}/publish", include_in_schema=False)
+async def admin_publish_blog_draft(
+    post_id: int,
+    payload: BlogDraftIn,
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    post = await _get_blogpost_or_404(db, post_id)
+    _apply_draft(post, payload)  # publish carries the latest editor state with it
+
+    if not post.title:
+        raise HTTPException(status_code=400, detail="Give the post a title before publishing.")
+    if post.date_posted is None:
+        post.date_posted = date.today().replace(day=1)
+    if not post.slug:
+        # Frozen once assigned, so editing a published post never breaks its link.
+        post.slug = await _unique_slug(db, _slugify(post.title), post.id)
+    if post.status != 'published':
+        post.status = 'published'
+        post.published_at = datetime.now(timezone.utc)
+
+    await db.commit()
+    return _blogpost_json(post)
+
+
+@app.post("/admin/blog/drafts/{post_id}/delete", include_in_schema=False)
+async def admin_delete_blog_draft(
+    post_id: int,
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    post = await _get_blogpost_or_404(db, post_id)
+    await db.delete(post)  # cascades to its images
+    await db.commit()
+    return {"status": "deleted"}
+
+
+@app.post("/admin/blog/drafts/{post_id}/images", include_in_schema=False)
+async def admin_upload_blog_image(
+    post_id: int,
+    file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    post = await _get_blogpost_or_404(db, post_id)
+
+    raw = await file.read()
+    if not raw:
+        raise HTTPException(status_code=400, detail="Empty file.")
+    if len(raw) > MAX_UPLOAD_BYTES:
+        raise HTTPException(status_code=413, detail="Image is larger than 10MB.")
+
+    data, mime, width, height = _process_image(raw)
+
+    # Ordinals are never reused, so [Image #2] keeps meaning the same image.
+    next_n = (await db.execute(
+        select(sa_func.coalesce(sa_func.max(BlogImage.n), 0)).where(BlogImage.post_id == post.id)
+    )).scalar_one() + 1
+
+    image = BlogImage(post_id=post.id, n=next_n, data=data, mime=mime, width=width, height=height)
+    db.add(image)
+    await db.flush()  # populate image.id
+    image_id = image.id
+    await db.commit()
+    return {"id": image_id, "n": next_n, "width": width, "height": height}
+
+
+@app.post("/admin/blog/images/{image_id}/delete", include_in_schema=False)
+async def admin_delete_blog_image(
+    image_id: int,
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    image = await db.get(BlogImage, image_id)
+    if not image:
+        raise HTTPException(status_code=404, detail="Not found")
+    await db.delete(image)
+    await db.commit()
+    return {"status": "deleted"}
 
 
 @app.post("/admin/login", include_in_schema=False)

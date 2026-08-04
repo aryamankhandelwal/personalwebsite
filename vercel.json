@@ -1,6 +1,7 @@
 {
   "rewrites": [
     { "source": "/admin/:path*", "destination": "https://personalwebsite-xzmk.onrender.com/admin/:path*" },
-    { "source": "/admin", "destination": "https://personalwebsite-xzmk.onrender.com/admin" }
+    { "source": "/admin", "destination": "https://personalwebsite-xzmk.onrender.com/admin" },
+    { "source": "/blogs/p/:slug", "destination": "/blogs/post.html" }
   ]
 }

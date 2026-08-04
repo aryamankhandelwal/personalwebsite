@@ -333,7 +333,9 @@ KHANDELWAL</a></div>
           <div class="blog-divider"></div>
         </div>
 
-        <ul class="blog-list">
+        <!-- Posts written in /admin/blog are fetched from the API and prepended
+             above these hand-written ones. -->
+        <ul class="blog-list" id="blog-list">
           <li class="blog-item"><a href="blogs/blog12.html">On the current state of India…</a></li>
           <li class="blog-item"><a href="blogs/blog11.html">Vibe coding and anti-technocracy</a></li>
           <li class="blog-item"><a href="blogs/blog10.html">Tech startup barriers to entry are high</a></li>
@@ -460,6 +462,37 @@ KHANDELWAL</a></div>
           if (e.target.tagName === 'A') closeMenu();
         });
       }
+    })();
+  </script>
+
+  <script>
+    // Posts published from /admin/blog live in the API, not in this file. Fetch
+    // them and slot them in above the older hand-written ones. If the API is
+    // asleep or unreachable the page is exactly what it was before.
+    (function() {
+      var isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+      var API_BASE = isLocal ? 'http://localhost:8000' : 'https://personalwebsite-xzmk.onrender.com';
+
+      // Wake the free-tier dyno now so clicking through to a post is quick.
+      fetch(API_BASE + '/ping').catch(function() {});
+
+      fetch(API_BASE + '/blogposts')
+        .then(function(res) { return res.ok ? res.json() : []; })
+        .then(function(posts) {
+          if (!posts.length) return;
+          var list = document.getElementById('blog-list');
+          var first = list.firstElementChild;
+          posts.forEach(function(post) {
+            var item = document.createElement('li');
+            item.className = 'blog-item';
+            var link = document.createElement('a');
+            link.href = '/blogs/p/' + post.slug;
+            link.textContent = post.title;
+            item.appendChild(link);
+            list.insertBefore(item, first);
+          });
+        })
+        .catch(function() {});
     })();
   </script>
 </body>

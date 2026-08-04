@@ -1,0 +1,782 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Blog{% endblock %}
+{% block desc %}Draft, then publish straight to the blog.{% endblock %}
+{% block wrap_class %}wide{% endblock %}
+
+{% block head_extra %}
+<style>
+    /* The panes below set display:flex, which would otherwise out-specify the
+       user-agent rule behind the `hidden` attribute. */
+    [hidden] { display: none !important; }
+
+    /* Two-pane editor: list of posts on the left, the open post on the right. */
+    .notes {
+        display: flex;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        overflow: hidden;
+        height: calc(100dvh - 240px);
+        min-height: 460px;
+    }
+
+    /* Left pane */
+    .notes-list {
+        width: 260px;
+        flex-shrink: 0;
+        border-right: 1px solid var(--border);
+        background: var(--card);
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+    .notes-list-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+    }
+    .notes-list-top .count {
+        font-family: 'Geist Mono', monospace;
+        font-size: 11px;
+        color: var(--muted);
+    }
+    .notes-list-top .submit-btn { padding: 4px 10px; font-size: 12px; }
+    .notes-scroll { overflow-y: auto; flex: 1; min-height: 0; }
+
+    .note-group {
+        padding: 14px 14px 6px 14px;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+    }
+    .note-row {
+        padding: 9px 14px;
+        border-bottom: 1px solid var(--border);
+        border-left: 2px solid transparent;
+        cursor: pointer;
+        transition: background .15s ease;
+    }
+    .note-row:hover { background: rgba(255,255,255,0.03); }
+    .note-row.active {
+        background: rgba(255,255,255,0.06);
+        border-left-color: var(--blue);
+    }
+    .note-row .note-title {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--foreground);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.4;
+    }
+    .note-row .note-title.untitled { color: var(--muted); font-style: italic; font-weight: 400; }
+    .note-row .note-meta {
+        font-family: 'Geist Mono', monospace;
+        font-size: 11px;
+        color: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 1px;
+    }
+
+    /* Right pane */
+    .notes-editor {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        background: #1c1c1c;
+    }
+    .editor-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+    }
+    .editor-title {
+        flex: 1;
+        min-width: 0;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--foreground);
+        font-family: 'Geist', system-ui, sans-serif;
+        font-weight: 500;
+        font-size: clamp(18px, 1.8vw, 22px);
+        letter-spacing: -0.01em;
+        padding: 0;
+    }
+    .editor-title::placeholder { color: var(--muted); }
+    .editor-date {
+        flex-shrink: 0;
+        background: transparent;
+        border: none;
+        outline: none;
+        color: var(--muted);
+        font-family: 'Geist Mono', monospace;
+        font-size: 12px;
+        padding: 4px 0;
+        cursor: pointer;
+    }
+    .editor-date:focus, .editor-date:hover { color: var(--foreground); }
+    .editor-date::-webkit-calendar-picker-indicator { filter: invert(0.55); cursor: pointer; }
+
+    .editor-body {
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        box-sizing: border-box;
+        background: transparent;
+        border: none;
+        outline: none;
+        resize: none;
+        color: var(--foreground);
+        font-family: 'Geist', system-ui, sans-serif;
+        font-size: clamp(15px, 1.2vw, 17px);
+        line-height: 1.65;
+        padding: 18px;
+    }
+    .editor-body::placeholder { color: var(--muted); }
+    .editor-body.dropping { background: rgba(94,150,247,0.08); }
+
+    .editor-images {
+        display: flex;
+        gap: 8px;
+        padding: 10px 18px;
+        border-top: 1px solid var(--border);
+        overflow-x: auto;
+        flex-shrink: 0;
+    }
+    .thumb { position: relative; flex-shrink: 0; }
+    .thumb img {
+        display: block;
+        height: 56px;
+        width: auto;
+        max-width: 120px;
+        object-fit: cover;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .thumb-tag {
+        position: absolute;
+        left: 3px;
+        bottom: 3px;
+        background: rgba(0,0,0,0.65);
+        color: var(--foreground);
+        font-family: 'Geist Mono', monospace;
+        font-size: 10px;
+        line-height: 1;
+        padding: 2px 4px;
+        border-radius: 3px;
+        pointer-events: none;
+    }
+    .thumb-del {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 16px;
+        height: 16px;
+        line-height: 14px;
+        text-align: center;
+        padding: 0;
+        border-radius: 50%;
+        border: 1px solid var(--border);
+        background: var(--background);
+        color: var(--muted);
+        font-size: 12px;
+        cursor: pointer;
+    }
+    .thumb-del:hover { color: var(--foreground); border-color: var(--muted); }
+
+    .editor-foot {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 18px;
+        border-top: 1px solid var(--border);
+        flex-shrink: 0;
+    }
+    .editor-foot .spacer { margin-left: auto; }
+    .editor-status { font-size: 12px; color: var(--muted); }
+    .editor-status.error { color: #ef4444; }
+    .editor-link {
+        font-size: 12px;
+        color: var(--muted);
+        text-decoration: none;
+        transition: color .2s ease;
+    }
+    .editor-link:hover { color: var(--blue); }
+    .editor-delete {
+        background: transparent;
+        border: none;
+        padding: 0;
+        color: var(--muted);
+        font-family: 'Geist', system-ui, sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+    }
+    .editor-delete:hover { color: #ef4444; }
+
+    .notes-blank {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        font-size: 14px;
+        font-style: italic;
+    }
+
+    @media (max-width: 900px) {
+        .notes { flex-direction: column; height: auto; min-height: 0; }
+        .notes-list { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+        .notes-scroll { max-height: 220px; }
+        .notes-editor { min-height: 60dvh; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="notes">
+    <aside class="notes-list">
+        <div class="notes-list-top">
+            <span class="count" id="post-count"></span>
+            <button type="button" class="submit-btn" id="new-draft">+ New</button>
+        </div>
+        <div class="notes-scroll" id="notes-scroll"></div>
+    </aside>
+
+    <section class="notes-editor" id="notes-editor" hidden>
+        <div class="editor-head">
+            <input type="text" id="post-title" class="editor-title" placeholder="Title" autocomplete="off" spellcheck="true">
+            <input type="month" id="post-date" class="editor-date" aria-label="Date posted">
+        </div>
+        <textarea id="post-body" class="editor-body" placeholder="Start writing. Blank line for a new paragraph, [text](url) for a link, **bold** for bold. Drag or paste an image in anywhere."></textarea>
+        <div class="editor-images" id="editor-images" hidden></div>
+        <div class="editor-foot">
+            <button type="button" class="submit-btn" id="publish-btn">Post</button>
+            <span class="hint">&#8984;/Ctrl + Enter</span>
+            <span class="editor-status" id="editor-status"></span>
+            <span class="spacer"></span>
+            <a class="editor-link" id="view-link" target="_blank" rel="noopener" hidden>View post &#8599;</a>
+            <button type="button" class="editor-delete" id="delete-btn">Delete</button>
+        </div>
+    </section>
+
+    <div class="notes-blank" id="notes-blank">No posts yet.</div>
+</div>
+
+<script id="posts-data" type="application/json">{{ posts | tojson }}</script>
+<script>
+(function () {
+    var posts = JSON.parse(document.getElementById('posts-data').textContent);
+
+    var listEl = document.getElementById('notes-scroll');
+    var countEl = document.getElementById('post-count');
+    var editorEl = document.getElementById('notes-editor');
+    var blankEl = document.getElementById('notes-blank');
+    var titleEl = document.getElementById('post-title');
+    var dateEl = document.getElementById('post-date');
+    var bodyEl = document.getElementById('post-body');
+    var imagesEl = document.getElementById('editor-images');
+    var statusEl = document.getElementById('editor-status');
+    var viewLinkEl = document.getElementById('view-link');
+    var publishBtn = document.getElementById('publish-btn');
+
+    var currentId = null;
+    // Tracked per post id, so switching drafts mid-save can never strand text.
+    var dirtyIds = new Set();
+    var saveTimer = null;
+    var saving = false;
+    var publishing = false;
+    var uploadSeq = 0;
+
+    function byId(id) {
+        for (var i = 0; i < posts.length; i++) { if (posts[i].id === id) return posts[i]; }
+        return null;
+    }
+
+    function setStatus(text, isError) {
+        statusEl.textContent = text || '';
+        statusEl.classList.toggle('error', !!isError);
+    }
+
+    function clockString() {
+        var d = new Date();
+        return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+    }
+
+    function relativeTime(iso) {
+        if (!iso) return '';
+        var then = new Date(iso);
+        if (isNaN(then)) return '';
+        var mins = Math.floor((Date.now() - then.getTime()) / 60000);
+        if (mins < 1) return 'just now';
+        if (mins < 60) return mins + 'm ago';
+        if (mins < 1440) return Math.floor(mins / 60) + 'h ago';
+        return then.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function snippet(text) {
+        var flat = (text || '').replace(/\s+/g, ' ').trim();
+        if (!flat) return 'No text';
+        return flat.length > 42 ? flat.slice(0, 42).trim() + '…' : flat;
+    }
+
+    /* ---- left pane ---- */
+
+    function sortedGroups() {
+        var drafts = posts.filter(function (p) { return p.status !== 'published'; });
+        var published = posts.filter(function (p) { return p.status === 'published'; });
+        drafts.sort(function (a, b) { return (b.updated_at || '').localeCompare(a.updated_at || ''); });
+        published.sort(function (a, b) {
+            return (b.published_at || b.updated_at || '').localeCompare(a.published_at || a.updated_at || '');
+        });
+        return [
+            { label: 'Drafts', items: drafts },
+            { label: 'Published', items: published }
+        ];
+    }
+
+    function renderList() {
+        listEl.innerHTML = '';
+        var groups = sortedGroups();
+
+        groups.forEach(function (group) {
+            if (!group.items.length) return;
+
+            var heading = document.createElement('div');
+            heading.className = 'note-group';
+            heading.textContent = group.label;
+            listEl.appendChild(heading);
+
+            group.items.forEach(function (post) {
+                var row = document.createElement('div');
+                row.className = 'note-row' + (post.id === currentId ? ' active' : '');
+
+                var title = document.createElement('div');
+                title.className = 'note-title' + (post.title ? '' : ' untitled');
+                title.textContent = post.title || 'Untitled';
+
+                var meta = document.createElement('div');
+                meta.className = 'note-meta';
+                var stamp = group.label === 'Published'
+                    ? (post.date_label || relativeTime(post.published_at))
+                    : relativeTime(post.updated_at);
+                meta.textContent = (stamp ? stamp + ' · ' : '') + snippet(post.content);
+
+                row.appendChild(title);
+                row.appendChild(meta);
+                row.addEventListener('click', function () { selectPost(post.id); });
+                listEl.appendChild(row);
+            });
+        });
+
+        countEl.textContent = posts.length + (posts.length === 1 ? ' post' : ' posts');
+        var hasPosts = posts.length > 0;
+        editorEl.hidden = !hasPosts || currentId === null;
+        blankEl.hidden = !editorEl.hidden;
+    }
+
+    /* ---- right pane ---- */
+
+    function renderEditor() {
+        var post = byId(currentId);
+        if (!post) { renderList(); return; }
+        titleEl.value = post.title || '';
+        dateEl.value = post.date_posted || '';
+        bodyEl.value = post.content || '';
+        renderMeta();
+        renderImages();
+    }
+
+    function renderMeta() {
+        var post = byId(currentId);
+        if (!post) return;
+        publishBtn.textContent = post.status === 'published' ? 'Update' : 'Post';
+        if (post.status === 'published' && post.slug) {
+            viewLinkEl.hidden = false;
+            viewLinkEl.href = '/blogs/p/' + post.slug;
+        } else {
+            viewLinkEl.hidden = true;
+        }
+    }
+
+    function renderImages() {
+        var post = byId(currentId);
+        imagesEl.innerHTML = '';
+        if (!post || !post.images || !post.images.length) { imagesEl.hidden = true; return; }
+        imagesEl.hidden = false;
+
+        post.images.forEach(function (image) {
+            var wrap = document.createElement('div');
+            wrap.className = 'thumb';
+
+            var img = document.createElement('img');
+            img.src = '/blogimages/' + image.id;
+            img.alt = '';
+            img.title = 'Insert [Image #' + image.n + '] at the cursor';
+            img.addEventListener('click', function () {
+                insertAtCaret('\n\n[Image #' + image.n + ']\n\n');
+                syncFromFields();
+            });
+
+            var tag = document.createElement('span');
+            tag.className = 'thumb-tag';
+            tag.textContent = '#' + image.n;
+
+            var del = document.createElement('button');
+            del.type = 'button';
+            del.className = 'thumb-del';
+            del.textContent = '×';
+            del.title = 'Remove this image';
+            del.addEventListener('click', function () { removeImage(image); });
+
+            wrap.appendChild(img);
+            wrap.appendChild(tag);
+            wrap.appendChild(del);
+            imagesEl.appendChild(wrap);
+        });
+    }
+
+    /* ---- selection ---- */
+
+    function selectPost(id) {
+        if (id === currentId) return;
+        flushSaves();
+        currentId = id;
+        var url = new URL(window.location.href);
+        url.searchParams.set('draft', String(id));
+        history.replaceState(null, '', url);
+        setStatus('');
+        renderEditor();
+        renderList();
+    }
+
+    /* ---- saving ---- */
+
+    function syncFromFields() {
+        var post = byId(currentId);
+        if (!post) return;
+        post.title = titleEl.value;
+        post.date_posted = dateEl.value || null;
+        post.content = bodyEl.value;
+        markDirty(post.id);
+    }
+
+    function markDirty(id) {
+        dirtyIds.add(id);
+        setStatus('Unsaved…');
+        scheduleSave(800);
+    }
+
+    function scheduleSave(delay) {
+        clearTimeout(saveTimer);
+        saveTimer = setTimeout(flushSaves, delay);
+    }
+
+    function payloadFor(post) {
+        return { title: post.title, content: post.content, date_posted: post.date_posted };
+    }
+
+    async function flushSaves() {
+        clearTimeout(saveTimer);
+        if (saving || !dirtyIds.size) return;
+        saving = true;
+        var ids = Array.from(dirtyIds);
+        dirtyIds.clear();
+        setStatus('Saving…');
+
+        var failed = false;
+        for (var i = 0; i < ids.length; i++) {
+            var post = byId(ids[i]);
+            if (!post) continue;
+            try {
+                var res = await fetch('/admin/blog/drafts/' + post.id + '/save', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payloadFor(post))
+                });
+                if (!res.ok) throw new Error('save failed');
+                var data = await res.json();
+                post.updated_at = data.updated_at;
+            } catch (err) {
+                dirtyIds.add(post.id);  // keep it dirty and try again shortly
+                failed = true;
+            }
+        }
+
+        saving = false;
+        if (failed) {
+            setStatus('Couldn’t save — retrying', true);
+            scheduleSave(4000);
+        } else {
+            setStatus('Saved ' + clockString());
+            renderList();
+        }
+    }
+
+    // Last-ditch save when the tab is closed or backgrounded mid-sentence.
+    function beaconSave() {
+        dirtyIds.forEach(function (id) {
+            var post = byId(id);
+            if (!post) return;
+            var blob = new Blob([JSON.stringify(payloadFor(post))], { type: 'application/json' });
+            navigator.sendBeacon('/admin/blog/drafts/' + post.id + '/save', blob);
+        });
+        dirtyIds.clear();
+    }
+
+    /* ---- images ---- */
+
+    function insertAtCaret(text) {
+        var start = bodyEl.selectionStart;
+        var end = bodyEl.selectionEnd;
+        bodyEl.value = bodyEl.value.slice(0, start) + text + bodyEl.value.slice(end);
+        bodyEl.selectionStart = bodyEl.selectionEnd = start + text.length;
+        bodyEl.focus();
+    }
+
+    function replaceInPost(id, from, to) {
+        var post = byId(id);
+        if (!post) return;
+        post.content = post.content.split(from).join(to);
+        if (id === currentId) {
+            var caret = bodyEl.selectionStart;
+            var at = bodyEl.value.indexOf(from);
+            bodyEl.value = post.content;
+            if (at >= 0 && caret > at) caret += to.length - from.length;
+            bodyEl.selectionStart = bodyEl.selectionEnd = Math.max(0, Math.min(caret, bodyEl.value.length));
+        }
+        dirtyIds.add(id);
+    }
+
+    async function uploadImage(file) {
+        if (currentId === null) return;
+        var id = currentId;
+        var marker = '[uploading ' + (++uploadSeq) + '…]';
+
+        insertAtCaret('\n\n' + marker + '\n\n');
+        syncFromFields();
+
+        try {
+            var form = new FormData();
+            form.append('file', file);
+            var res = await fetch('/admin/blog/drafts/' + id + '/images', {
+                method: 'POST',
+                credentials: 'same-origin',
+                body: form
+            });
+            if (!res.ok) {
+                var problem = await res.json().catch(function () { return {}; });
+                throw new Error(problem.detail || 'Image upload failed.');
+            }
+            var image = await res.json();
+            var post = byId(id);
+            post.images.push(image);
+            replaceInPost(id, marker, '[Image #' + image.n + ']');
+            if (id === currentId) renderImages();
+            flushSaves();
+        } catch (err) {
+            replaceInPost(id, marker, '');
+            setStatus(err.message || 'Image upload failed.', true);
+        }
+    }
+
+    async function removeImage(image) {
+        var id = currentId;
+        try {
+            var res = await fetch('/admin/blog/images/' + image.id + '/delete', {
+                method: 'POST',
+                credentials: 'same-origin'
+            });
+            if (!res.ok) throw new Error('Could not remove that image.');
+            var post = byId(id);
+            post.images = post.images.filter(function (i) { return i.id !== image.id; });
+            replaceInPost(id, '[Image #' + image.n + ']', '');
+            renderImages();
+            flushSaves();
+        } catch (err) {
+            setStatus(err.message, true);
+        }
+    }
+
+    function imageFilesFrom(list) {
+        return Array.prototype.slice.call(list || []).filter(function (f) {
+            return f && f.type && f.type.indexOf('image/') === 0;
+        });
+    }
+
+    /* ---- actions ---- */
+
+    async function createDraft() {
+        await flushSaves();
+        try {
+            var res = await fetch('/admin/blog/drafts', { method: 'POST', credentials: 'same-origin' });
+            if (!res.ok) throw new Error('Could not create a draft.');
+            var post = await res.json();
+            posts.unshift(post);
+            currentId = null;       // force selectPost to run its side effects
+            selectPost(post.id);
+            titleEl.focus();
+        } catch (err) {
+            setStatus(err.message, true);
+        }
+    }
+
+    async function publish() {
+        var post = byId(currentId);
+        if (!post || publishing) return;
+
+        syncFromFields();
+        if (!post.title.trim()) {
+            setStatus('Give the post a title first.', true);
+            titleEl.focus();
+            return;
+        }
+        var wasPublished = post.status === 'published';
+        if (wasPublished && !window.confirm('Update the published post?')) return;
+
+        publishing = true;
+        publishBtn.disabled = true;
+        setStatus(wasPublished ? 'Updating…' : 'Publishing…');
+        dirtyIds.delete(post.id);   // publish carries the latest text with it
+        clearTimeout(saveTimer);
+
+        try {
+            var res = await fetch('/admin/blog/drafts/' + post.id + '/publish', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payloadFor(post))
+            });
+            if (!res.ok) {
+                var problem = await res.json().catch(function () { return {}; });
+                throw new Error(problem.detail || 'Could not publish.');
+            }
+            Object.assign(post, await res.json());
+            dateEl.value = post.date_posted || '';
+            renderMeta();
+            renderList();
+            setStatus(wasPublished ? 'Updated — live now.' : 'Published — live now.');
+        } catch (err) {
+            dirtyIds.add(post.id);
+            setStatus(err.message, true);
+        } finally {
+            publishing = false;
+            publishBtn.disabled = false;
+        }
+    }
+
+    async function deleteCurrent() {
+        var post = byId(currentId);
+        if (!post) return;
+        var label = post.title || 'this untitled draft';
+        if (!window.confirm('Delete ' + label + '? This cannot be undone.')) return;
+
+        try {
+            var res = await fetch('/admin/blog/drafts/' + post.id + '/delete', {
+                method: 'POST',
+                credentials: 'same-origin'
+            });
+            if (!res.ok) throw new Error('Could not delete that post.');
+            dirtyIds.delete(post.id);
+            posts = posts.filter(function (p) { return p.id !== post.id; });
+            currentId = posts.length ? posts[0].id : null;
+            if (currentId !== null) renderEditor();
+            renderList();
+            setStatus('Deleted.');
+        } catch (err) {
+            setStatus(err.message, true);
+        }
+    }
+
+    /* ---- wiring ---- */
+
+    titleEl.addEventListener('input', syncFromFields);
+    bodyEl.addEventListener('input', syncFromFields);
+    dateEl.addEventListener('change', syncFromFields);
+    titleEl.addEventListener('blur', flushSaves);
+    bodyEl.addEventListener('blur', flushSaves);
+
+    document.getElementById('new-draft').addEventListener('click', createDraft);
+    publishBtn.addEventListener('click', publish);
+    document.getElementById('delete-btn').addEventListener('click', deleteCurrent);
+
+    document.addEventListener('keydown', function (e) {
+        if (!(e.metaKey || e.ctrlKey) || e.key !== 'Enter' || e.isComposing) return;
+        if (e.target === titleEl || e.target === bodyEl || e.target === dateEl) {
+            e.preventDefault();
+            publish();
+        }
+    });
+
+    bodyEl.addEventListener('dragover', function (e) {
+        if (e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') !== -1) {
+            e.preventDefault();
+            bodyEl.classList.add('dropping');
+        }
+    });
+    bodyEl.addEventListener('dragleave', function () { bodyEl.classList.remove('dropping'); });
+    bodyEl.addEventListener('drop', function (e) {
+        var files = imageFilesFrom(e.dataTransfer && e.dataTransfer.files);
+        bodyEl.classList.remove('dropping');
+        if (!files.length) return;
+        e.preventDefault();
+        files.forEach(uploadImage);
+    });
+    bodyEl.addEventListener('paste', function (e) {
+        var items = (e.clipboardData && e.clipboardData.items) || [];
+        var files = [];
+        for (var i = 0; i < items.length; i++) {
+            if (items[i].kind === 'file') {
+                var file = items[i].getAsFile();
+                if (file && file.type.indexOf('image/') === 0) files.push(file);
+            }
+        }
+        if (!files.length) return;
+        e.preventDefault();
+        files.forEach(uploadImage);
+    });
+
+    window.addEventListener('pagehide', beaconSave);
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') beaconSave();
+    });
+
+    /* ---- boot ---- */
+
+    var requested = parseInt(new URLSearchParams(window.location.search).get('draft'), 10);
+    var initial = byId(requested);
+    if (!initial) {
+        initial = posts.filter(function (p) { return p.status !== 'published'; })
+            .sort(function (a, b) { return (b.updated_at || '').localeCompare(a.updated_at || ''); })[0]
+            || posts[0];
+    }
+
+    if (initial) {
+        currentId = initial.id;
+        renderEditor();
+        renderList();
+        bodyEl.focus();
+    } else {
+        renderList();
+        createDraft();
+    }
+
+    // Keep the relative timestamps in the list honest.
+    setInterval(renderList, 60000);
+})();
+</script>
+{% endblock %}
