@@ -94,13 +94,20 @@
         flex-direction: column;
         background: #1c1c1c;
     }
-    .editor-head {
+    /* The editor and preview headers are sized together so their rules line up
+       across the divider — the title input is much taller than the preview
+       label, so padding alone won't match them. */
+    .editor-head, .preview-top {
+        height: 58px;
+        box-sizing: border-box;
+        flex-shrink: 0;
+        border-bottom: 1px solid var(--border);
         display: flex;
         align-items: center;
+        padding: 0 18px;
+    }
+    .editor-head {
         gap: 12px;
-        padding: 14px 18px;
-        border-bottom: 1px solid var(--border);
-        flex-shrink: 0;
     }
     .editor-title {
         flex: 1;
@@ -227,14 +234,9 @@
         border-left: 1px solid var(--border);
         background: var(--background);
     }
-    .preview-top {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        padding: 14px 18px;
-        border-bottom: 1px solid var(--border);
-        flex-shrink: 0;
-    }
+    .preview-top { gap: 12px; }
+    /* "Preview" stays left; the render state and close button sit together right. */
+    #preview-state { margin-left: auto; }
     .preview-label {
         font-size: 11px;
         text-transform: uppercase;
@@ -307,8 +309,22 @@
     }
     .preview-empty { color: var(--muted); font-style: italic; font-size: 14px; }
 
+    .preview-close {
+        background: transparent;
+        border: none;
+        padding: 0;
+        color: var(--muted);
+        font-family: 'Geist', system-ui, sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+        line-height: 1;
+    }
+    .preview-close:hover { color: var(--foreground); }
+
     /* Collapsed by choice, or automatically when there isn't room. */
     .notes.no-preview .notes-preview { display: none; }
+    /* Nothing to toggle once the viewport has hidden the pane for us. */
+    @media (max-width: 1100px) { .preview-toggle { display: none; } }
     .editor-foot .spacer { margin-left: auto; }
     .editor-status { font-size: 12px; color: var(--muted); }
     .editor-status.error { color: #ef4444; }
@@ -382,6 +398,7 @@
             <span class="hint">&#8984;/Ctrl + Enter</span>
             <span class="editor-status" id="editor-status"></span>
             <span class="spacer"></span>
+            <button type="button" class="editor-delete preview-toggle" id="preview-toggle">Hide preview</button>
             <a class="editor-link" id="view-link" target="_blank" rel="noopener" hidden>View post &#8599;</a>
             <button type="button" class="editor-delete" id="delete-btn">Delete</button>
         </div>
@@ -391,6 +408,7 @@
         <div class="preview-top">
             <span class="preview-label">Preview</span>
             <span class="preview-label" id="preview-state"></span>
+            <button type="button" class="preview-close" id="preview-close" title="Hide preview (&#8984;/Ctrl + /)">&times;</button>
         </div>
         <div class="preview-scroll">
             <h2 class="preview-title" id="preview-title"></h2>
@@ -548,7 +566,7 @@
 
     async function refreshPreview() {
         var post = byId(currentId);
-        if (!post) return;
+        if (!post || previewIsHidden()) return;  // don't render into a hidden pane
 
         previewTitleEl.textContent = post.title || 'Untitled';
         previewDateEl.textContent = post.date_posted ? monthLabel(post.date_posted) : '';
@@ -577,6 +595,28 @@
             if (ticket !== previewSeq) return;
             previewStateEl.textContent = 'preview unavailable';
         }
+    }
+
+    /* ---- preview visibility ---- */
+
+    var PREVIEW_HIDDEN_KEY = 'blog_preview_hidden';
+    var notesEl = document.querySelector('.notes');
+    var previewToggleEl = document.getElementById('preview-toggle');
+
+    function setPreviewHidden(hidden) {
+        notesEl.classList.toggle('no-preview', hidden);
+        previewToggleEl.textContent = hidden ? 'Show preview' : 'Hide preview';
+        try { localStorage.setItem(PREVIEW_HIDDEN_KEY, hidden ? '1' : ''); } catch (e) {}
+        // Text typed while it was hidden never rendered, so catch up on reveal.
+        if (!hidden) schedulePreview(0);
+    }
+
+    function togglePreview() {
+        setPreviewHidden(!notesEl.classList.contains('no-preview'));
+    }
+
+    function previewIsHidden() {
+        return notesEl.classList.contains('no-preview');
     }
 
     function monthLabel(value) {
@@ -903,9 +943,18 @@
     document.getElementById('new-draft').addEventListener('click', createDraft);
     publishBtn.addEventListener('click', publish);
     document.getElementById('delete-btn').addEventListener('click', deleteCurrent);
+    previewToggleEl.addEventListener('click', togglePreview);
+    document.getElementById('preview-close').addEventListener('click', togglePreview);
 
     document.addEventListener('keydown', function (e) {
-        if (!(e.metaKey || e.ctrlKey) || e.key !== 'Enter' || e.isComposing) return;
+        if (!(e.metaKey || e.ctrlKey) || e.isComposing) return;
+
+        if (e.key === '/') {
+            e.preventDefault();
+            togglePreview();
+            return;
+        }
+        if (e.key !== 'Enter') return;
         if (e.target === titleEl || e.target === bodyEl || e.target === dateEl) {
             e.preventDefault();
             publish();
@@ -972,6 +1021,11 @@
     });
 
     /* ---- boot ---- */
+
+    var storedHidden = '';
+    try { storedHidden = localStorage.getItem(PREVIEW_HIDDEN_KEY) || ''; } catch (e) {}
+    notesEl.classList.toggle('no-preview', !!storedHidden);
+    previewToggleEl.textContent = storedHidden ? 'Show preview' : 'Hide preview';
 
     var requested = parseInt(new URLSearchParams(window.location.search).get('draft'), 10);
     var initial = byId(requested);
