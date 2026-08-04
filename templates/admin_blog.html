@@ -206,6 +206,109 @@
         border-top: 1px solid var(--border);
         flex-shrink: 0;
     }
+    .syntax-hint {
+        font-family: 'Geist Mono', monospace;
+        font-size: 11px;
+        color: var(--muted);
+        padding: 8px 18px;
+        border-top: 1px solid var(--border);
+        flex-shrink: 0;
+        line-height: 1.9;
+    }
+    .syntax-hint b { color: #b8b8b8; font-weight: 400; }
+
+    /* Preview pane — rendered by the server through the same code as the
+       published page, so what's shown here is exactly what ships. */
+    .notes-preview {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        border-left: 1px solid var(--border);
+        background: var(--background);
+    }
+    .preview-top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding: 14px 18px;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+    }
+    .preview-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+    }
+    .preview-scroll { overflow-y: auto; flex: 1; min-height: 0; padding: 20px 22px 40px 22px; }
+    .preview-title {
+        font-family: 'Geist', system-ui, sans-serif; font-weight: 500;
+        font-size: clamp(20px, 2vw, 26px); line-height: 1.3;
+        margin: 0 0 8px 0; color: var(--foreground);
+    }
+    .preview-date {
+        font-family: 'Geist Mono', monospace;
+        font-size: 12px; color: var(--muted); margin-bottom: 18px;
+    }
+
+    /* Mirrors blogs/post.html so the preview reads like the real post. */
+    .preview-body {
+        font-family: 'Geist', system-ui, sans-serif;
+        font-size: 15px; line-height: 1.6; color: #a1a1a1;
+    }
+    .preview-body p { margin: 0 0 16px 0; }
+    .preview-body a {
+        color: #a1a1a1; text-decoration: underline;
+        text-decoration-color: rgba(255,255,255,0.2); text-underline-offset: 3px;
+    }
+    .preview-body img {
+        max-width: 100%; max-height: 400px; width: auto; height: auto;
+        display: block; border-radius: 6px; margin: 4px 0 20px 0;
+    }
+    /* text-transform is reset explicitly: admin_base styles bare h3 as a small
+       uppercase label, which would otherwise shout through the preview. */
+    .preview-body .blog-heading {
+        font-weight: 600; font-size: 18px; line-height: 1.35;
+        color: var(--foreground); letter-spacing: -0.01em; margin: 28px 0 10px 0;
+        text-transform: none;
+    }
+    .preview-body .blog-subheading {
+        font-weight: 500; font-size: 15px; line-height: 1.4;
+        color: var(--foreground); margin: 22px 0 8px 0;
+        text-transform: none; letter-spacing: 0;
+    }
+    .preview-body > *:first-child { margin-top: 0; }
+    .preview-body blockquote {
+        margin: 20px 0; padding: 2px 0 2px 18px;
+        border-left: 2px solid var(--border);
+        color: var(--muted); font-style: italic;
+    }
+    .preview-body ul { margin: 0 0 16px 0; padding-left: 0; list-style: none; }
+    .preview-body ul li { position: relative; padding-left: 1.2em; margin-bottom: 6px; }
+    .preview-body ul li::before { content: '—'; position: absolute; left: 0; color: var(--muted); }
+    .preview-body .tweet {
+        border: 1px solid var(--border); border-radius: 10px;
+        padding: 14px 16px; margin: 22px 0; background: rgba(255,255,255,0.02);
+    }
+    .preview-body .tweet-head {
+        display: flex; align-items: center; gap: 10px;
+        text-decoration: none; margin-bottom: 10px;
+    }
+    .preview-body .tweet-avatar { width: 44px; height: 44px; border-radius: 50%; margin: 0; flex-shrink: 0; }
+    .preview-body .tweet-who { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+    .preview-body .tweet-name { font-weight: 500; font-size: 15px; color: var(--foreground); }
+    .preview-body .tweet-handle { font-size: 13px; color: var(--muted); }
+    .preview-body .tweet-text { font-size: 15px; line-height: 1.5; color: #a1a1a1; white-space: pre-wrap; }
+    .preview-body .tweet-date {
+        display: inline-block; margin-top: 10px;
+        font-family: 'Geist Mono', monospace; font-size: 12px;
+        color: var(--muted); text-decoration: none;
+    }
+    .preview-empty { color: var(--muted); font-style: italic; font-size: 14px; }
+
+    /* Collapsed by choice, or automatically when there isn't room. */
+    .notes.no-preview .notes-preview { display: none; }
     .editor-foot .spacer { margin-left: auto; }
     .editor-status { font-size: 12px; color: var(--muted); }
     .editor-status.error { color: #ef4444; }
@@ -237,6 +340,11 @@
         font-style: italic;
     }
 
+    /* Below this the three columns stop being readable, so drop the preview. */
+    @media (max-width: 1100px) {
+        .notes-preview { display: none; }
+    }
+
     @media (max-width: 900px) {
         .notes { flex-direction: column; height: auto; min-height: 0; }
         .notes-list { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
@@ -261,8 +369,14 @@
             <input type="text" id="post-title" class="editor-title" placeholder="Title" autocomplete="off" spellcheck="true">
             <input type="month" id="post-date" class="editor-date" aria-label="Date posted">
         </div>
-        <textarea id="post-body" class="editor-body" placeholder="Start writing. Blank line for a new paragraph, [text](url) for a link, **bold** for bold. Drag or paste an image in anywhere."></textarea>
+        <textarea id="post-body" class="editor-body" placeholder="Start writing. Drag or paste an image in anywhere, or paste a tweet URL on its own line."></textarea>
         <div class="editor-images" id="editor-images" hidden></div>
+        <div class="syntax-hint">
+            <b>/</b> heading &nbsp;·&nbsp; <b>//</b> subheading &nbsp;·&nbsp;
+            <b>-</b> bullet &nbsp;·&nbsp; <b>&gt;</b> quote &nbsp;·&nbsp;
+            <b>#</b> private note &nbsp;·&nbsp; <b>**bold**</b> &nbsp;·&nbsp;
+            <b>[text](url)</b> &nbsp;·&nbsp; tweet URL on its own line
+        </div>
         <div class="editor-foot">
             <button type="button" class="submit-btn" id="publish-btn">Post</button>
             <span class="hint">&#8984;/Ctrl + Enter</span>
@@ -270,6 +384,18 @@
             <span class="spacer"></span>
             <a class="editor-link" id="view-link" target="_blank" rel="noopener" hidden>View post &#8599;</a>
             <button type="button" class="editor-delete" id="delete-btn">Delete</button>
+        </div>
+    </section>
+
+    <section class="notes-preview" id="notes-preview">
+        <div class="preview-top">
+            <span class="preview-label">Preview</span>
+            <span class="preview-label" id="preview-state"></span>
+        </div>
+        <div class="preview-scroll">
+            <h2 class="preview-title" id="preview-title"></h2>
+            <div class="preview-date" id="preview-date"></div>
+            <div class="preview-body" id="preview-body"></div>
         </div>
     </section>
 
@@ -293,6 +419,12 @@
     var viewLinkEl = document.getElementById('view-link');
     var publishBtn = document.getElementById('publish-btn');
 
+    var previewEl = document.getElementById('notes-preview');
+    var previewTitleEl = document.getElementById('preview-title');
+    var previewDateEl = document.getElementById('preview-date');
+    var previewBodyEl = document.getElementById('preview-body');
+    var previewStateEl = document.getElementById('preview-state');
+
     var currentId = null;
     // Tracked per post id, so switching drafts mid-save can never strand text.
     var dirtyIds = new Set();
@@ -300,6 +432,8 @@
     var saving = false;
     var publishing = false;
     var uploadSeq = 0;
+    var previewTimer = null;
+    var previewSeq = 0;
 
     function byId(id) {
         for (var i = 0; i < posts.length; i++) { if (posts[i].id === id) return posts[i]; }
@@ -385,6 +519,7 @@
         countEl.textContent = posts.length + (posts.length === 1 ? ' post' : ' posts');
         var hasPosts = posts.length > 0;
         editorEl.hidden = !hasPosts || currentId === null;
+        previewEl.hidden = editorEl.hidden;
         blankEl.hidden = !editorEl.hidden;
     }
 
@@ -398,6 +533,59 @@
         bodyEl.value = post.content || '';
         renderMeta();
         renderImages();
+        schedulePreview(0);
+    }
+
+    /* ---- preview ---- */
+
+    // Rendered server-side by the same function the published page uses, so the
+    // preview can't drift from the real output. Debounced, since each refresh
+    // is a round trip.
+    function schedulePreview(delay) {
+        clearTimeout(previewTimer);
+        previewTimer = setTimeout(refreshPreview, delay === undefined ? 350 : delay);
+    }
+
+    async function refreshPreview() {
+        var post = byId(currentId);
+        if (!post) return;
+
+        previewTitleEl.textContent = post.title || 'Untitled';
+        previewDateEl.textContent = post.date_posted ? monthLabel(post.date_posted) : '';
+
+        if (!(post.content || '').trim()) {
+            previewBodyEl.innerHTML = '<p class="preview-empty">Nothing to preview yet.</p>';
+            previewStateEl.textContent = '';
+            return;
+        }
+
+        var ticket = ++previewSeq;
+        previewStateEl.textContent = 'rendering…';
+        try {
+            var res = await fetch('/admin/blog/drafts/' + post.id + '/preview', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: post.content })
+            });
+            if (!res.ok) throw new Error('preview failed');
+            var data = await res.json();
+            if (ticket !== previewSeq) return;  // a newer render already won
+            previewBodyEl.innerHTML = data.content_html;
+            previewStateEl.textContent = '';
+        } catch (err) {
+            if (ticket !== previewSeq) return;
+            previewStateEl.textContent = 'preview unavailable';
+        }
+    }
+
+    function monthLabel(value) {
+        var parts = String(value).split('-');
+        if (parts.length < 2) return '';
+        var months = ['January','February','March','April','May','June',
+                      'July','August','September','October','November','December'];
+        var month = months[parseInt(parts[1], 10) - 1];
+        return month ? month + ' ' + parts[0] : '';
     }
 
     function renderMeta() {
@@ -478,6 +666,7 @@
         dirtyIds.add(id);
         setStatus('Unsaved…');
         scheduleSave(800);
+        if (id === currentId) schedulePreview();
     }
 
     function scheduleSave(delay) {
@@ -560,6 +749,7 @@
             bodyEl.selectionStart = bodyEl.selectionEnd = Math.max(0, Math.min(caret, bodyEl.value.length));
         }
         dirtyIds.add(id);
+        if (id === currentId) schedulePreview(0);
     }
 
     async function uploadImage(file) {
@@ -720,6 +910,32 @@
             e.preventDefault();
             publish();
         }
+    });
+
+    // Enter inside a bullet or quote carries the marker to the next line, and a
+    // second Enter on the empty marker drops back to ordinary text — the
+    // behaviour lists have in Gmail and most editors.
+    bodyEl.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' || e.shiftKey || e.metaKey || e.ctrlKey || e.altKey || e.isComposing) return;
+        if (bodyEl.selectionStart !== bodyEl.selectionEnd) return;  // leave selections alone
+
+        var value = bodyEl.value;
+        var caret = bodyEl.selectionStart;
+        var lineStart = value.lastIndexOf('\n', caret - 1) + 1;
+        var match = value.slice(lineStart, caret).match(/^([->])\s+(.*)$/);
+        if (!match) return;
+
+        e.preventDefault();
+        if (match[2].trim() === '') {
+            // Nothing typed after the marker: strip it and leave the list.
+            bodyEl.value = value.slice(0, lineStart) + value.slice(caret);
+            bodyEl.selectionStart = bodyEl.selectionEnd = lineStart;
+        } else {
+            var insert = '\n' + match[1] + ' ';
+            bodyEl.value = value.slice(0, caret) + insert + value.slice(caret);
+            bodyEl.selectionStart = bodyEl.selectionEnd = caret + insert.length;
+        }
+        syncFromFields();
     });
 
     bodyEl.addEventListener('dragover', function (e) {

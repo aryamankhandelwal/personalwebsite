@@ -138,6 +138,74 @@
     max-width: 100%; max-height: 640px; width: auto; height: auto;
     display: block; border-radius: 6px; margin: 4px 0 20px 0;
   }
+
+  /* Section headings — "/ Heading" and "// Subheading" in the editor. */
+  .blog-content .blog-heading {
+    font-family: 'Geist', system-ui, sans-serif; font-weight: 600;
+    font-size: clamp(17px, 1.4vw, 19px); line-height: 1.35;
+    color: var(--foreground); letter-spacing: -0.01em;
+    margin: 32px 0 10px 0;
+  }
+  .blog-content .blog-subheading {
+    font-family: 'Geist', system-ui, sans-serif; font-weight: 500;
+    font-size: clamp(15px, 1.15vw, 16px); line-height: 1.4;
+    color: var(--foreground);
+    margin: 24px 0 8px 0;
+  }
+  .blog-content > *:first-child { margin-top: 0; }
+
+  /* "> quoted line" */
+  .blog-content blockquote {
+    margin: 20px 0; padding: 2px 0 2px 18px;
+    border-left: 2px solid var(--border);
+    color: var(--muted); font-style: italic;
+  }
+
+  /* "- list item" */
+  .blog-content ul {
+    margin: 0 0 16px 0; padding-left: 0; list-style: none;
+  }
+  .blog-content ul li {
+    position: relative; padding-left: 1.2em; margin-bottom: 6px;
+  }
+  .blog-content ul li::before {
+    content: '—'; position: absolute; left: 0; color: var(--muted);
+  }
+
+  /* Embedded tweets. Rendered from our own copy of the tweet — no third-party
+     script, no tracking, and the card survives the tweet being deleted. */
+  .blog-content .tweet {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; margin: 22px 0;
+    background: rgba(255,255,255,0.02);
+  }
+  .blog-content .tweet-head {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; border-bottom: none; margin-bottom: 10px;
+  }
+  .blog-content .tweet-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    display: block; margin: 0; flex-shrink: 0;
+  }
+  .blog-content .tweet-who { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+  .blog-content .tweet-name {
+    font-weight: 500; font-size: 15px; color: var(--foreground);
+  }
+  .blog-content .tweet-handle {
+    font-size: 13px; color: var(--muted);
+  }
+  .blog-content .tweet-head:hover .tweet-name { color: var(--blue); }
+  .blog-content .tweet-text {
+    font-size: clamp(15px, 1.1vw, 16px); line-height: 1.5;
+    color: var(--muted-foreground); white-space: pre-wrap; word-wrap: break-word;
+  }
+  .blog-content .tweet-date {
+    display: inline-block; margin-top: 10px;
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 12px; color: var(--muted);
+    text-decoration: none; border-bottom: none;
+  }
+  .blog-content .tweet-date:hover { color: var(--blue); }
   .blog-status {
     font-family: 'Geist', system-ui, sans-serif;
     font-size: clamp(15px, 1.1vw, 16px);

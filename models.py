@@ -110,3 +110,26 @@ class BlogImage(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(),
                         default=_utcnow, nullable=False)
     post = relationship('BlogPost', back_populates='images')
+
+class BlogTweet(Base):
+    """A tweet embedded in a post, copied into our own database.
+
+    Stored rather than embedded live so the post keeps rendering if the tweet is
+    deleted or X changes its embed API, and so no third-party script or tracking
+    is loaded on the public site. Keyed by tweet id and shared across posts.
+    """
+    __tablename__ = 'blog_tweets'
+    tweet_id = Column(String(30), primary_key=True, index=True)
+    url = Column(Text, nullable=False)
+    author_name = Column(Text, nullable=False, server_default='', default='')
+    author_handle = Column(Text, nullable=False, server_default='', default='')
+    text = Column(Text, nullable=False, server_default='', default='')
+    date_label = Column(String(40), nullable=False, server_default='', default='')
+    avatar = deferred(Column(LargeBinary, nullable=True))
+    avatar_mime = Column(String(40), nullable=True)
+    fetched_at = Column(DateTime(timezone=True), server_default=func.now(),
+                        default=_utcnow, nullable=False)
+
+    @property
+    def has_avatar(self):
+        return self.avatar_mime is not None
