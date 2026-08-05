@@ -32,7 +32,7 @@ _IMAGE_LINE_RE = re.compile(r'^\[Image\s*#(\d+)\]$')
 # One dash per nesting level: "- top", "-- under it", "--- under that".
 # The dashes must be followed by a space, so "-5 degrees" stays prose.
 _LIST_RE = re.compile(r'^(-+)(?:[ \t]+(.*))?$')
-MAX_LIST_DEPTH = 4  # matches the depths the stylesheets give markers to
+MAX_LIST_DEPTH = 4  # deeper than this and the indent marches off the column
 _TWEET_URL_RE = re.compile(
     r'^https?://(?:www\.|mobile\.)?(?:twitter\.com|x\.com)/[^/\s]+/status(?:es)?/(\d+)',
     re.IGNORECASE,

@@ -161,25 +161,20 @@
     color: var(--muted); font-style: italic;
   }
 
-  /* "- item", nested with "--", "---", "----". The marker carries one dash per
-     level, so depth is legible from the mark itself as well as the indent. */
+  /* "- item", nested with "--", "---". Every level keeps the same single dash;
+     depth shows in the indent alone. Each nested list steps in by its own
+     padding plus the parent item's, so the ladder is even at any depth without
+     a rule per level. */
   .blog-content ul {
     margin: 0 0 16px 0; padding-left: 0; list-style: none;
   }
-  .blog-content ul ul { margin: 6px 0 0 0; padding-left: 0.8em; }
+  .blog-content ul ul { margin: 6px 0 0 0; padding-left: 0.4em; }
   .blog-content ul li {
     position: relative; padding-left: 1.4em; margin-bottom: 6px;
   }
   .blog-content ul li::before {
     content: '—'; position: absolute; left: 0; color: var(--muted);
-    letter-spacing: 0.08em;
   }
-  .blog-content ul ul li { padding-left: 2.5em; }
-  .blog-content ul ul li::before { content: '——'; }
-  .blog-content ul ul ul li { padding-left: 3.6em; }
-  .blog-content ul ul ul li::before { content: '———'; }
-  .blog-content ul ul ul ul li { padding-left: 4.7em; }
-  .blog-content ul ul ul ul li::before { content: '————'; }
 
   /* Embedded tweets. Rendered from our own copy of the tweet — no third-party
      script, no tracking, and the card survives the tweet being deleted. */

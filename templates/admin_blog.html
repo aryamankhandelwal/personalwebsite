@@ -286,17 +286,9 @@
         color: var(--muted); font-style: italic;
     }
     .preview-body ul { margin: 0 0 16px 0; padding-left: 0; list-style: none; }
-    .preview-body ul ul { margin: 6px 0 0 0; padding-left: 0.8em; }
+    .preview-body ul ul { margin: 6px 0 0 0; padding-left: 0.4em; }
     .preview-body ul li { position: relative; padding-left: 1.4em; margin-bottom: 6px; }
-    .preview-body ul li::before {
-        content: '—'; position: absolute; left: 0; color: var(--muted); letter-spacing: 0.08em;
-    }
-    .preview-body ul ul li { padding-left: 2.5em; }
-    .preview-body ul ul li::before { content: '——'; }
-    .preview-body ul ul ul li { padding-left: 3.6em; }
-    .preview-body ul ul ul li::before { content: '———'; }
-    .preview-body ul ul ul ul li { padding-left: 4.7em; }
-    .preview-body ul ul ul ul li::before { content: '————'; }
+    .preview-body ul li::before { content: '—'; position: absolute; left: 0; color: var(--muted); }
     .preview-body .tweet {
         border: 1px solid var(--border); border-radius: 10px;
         padding: 14px 16px; margin: 22px 0; background: rgba(255,255,255,0.02);
