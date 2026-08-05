@@ -29,6 +29,10 @@ from typing import Optional
 _LINK_RE = re.compile(r'\[([^\[\]]+)\]\((\S+?)\)')
 _BOLD_RE = re.compile(r'\*\*(\S(?:[^*]*\S)?)\*\*')
 _IMAGE_LINE_RE = re.compile(r'^\[Image\s*#(\d+)\]$')
+# One dash per nesting level: "- top", "-- under it", "--- under that".
+# The dashes must be followed by a space, so "-5 degrees" stays prose.
+_LIST_RE = re.compile(r'^(-+)(?:[ \t]+(.*))?$')
+MAX_LIST_DEPTH = 4  # matches the depths the stylesheets give markers to
 _TWEET_URL_RE = re.compile(
     r'^https?://(?:www\.|mobile\.)?(?:twitter\.com|x\.com)/[^/\s]+/status(?:es)?/(\d+)',
     re.IGNORECASE,
@@ -129,6 +133,36 @@ def _tweet_card(tweet, base: str) -> str:
     )
 
 
+def _render_list(items) -> str:
+    """Turn [(depth, html), …] into properly nested <ul>s.
+
+    A sublist belongs inside the <li> above it, not beside it, so the browser
+    indents it and CSS can pick the marker off the nesting depth. A level that
+    jumps ahead of its parent — "---" with no "--" above it — is pulled back to
+    the deepest level that actually exists rather than dropped.
+    """
+    root = []
+    stack = [root]  # stack[n] holds the children of the item at depth n
+    for depth, html_text in items:
+        depth = max(1, min(depth, len(stack)))
+        while len(stack) > depth:
+            stack.pop()
+        node = {'html': html_text, 'children': []}
+        stack[-1].append(node)
+        stack.append(node['children'])
+    return _render_list_nodes(root)
+
+
+def _render_list_nodes(nodes) -> str:
+    if not nodes:
+        return ''
+    parts = ['<ul>']
+    for node in nodes:
+        parts.append('<li>' + node['html'] + _render_list_nodes(node['children']) + '</li>')
+    parts.append('</ul>')
+    return ''.join(parts)
+
+
 def render(content: str, images: dict = None, tweets: dict = None, base_url: str = '') -> str:
     """Render editor text to the HTML that goes inside `.blog-content`.
 
@@ -187,18 +221,18 @@ def render(content: str, images: dict = None, tweets: dict = None, base_url: str
                 out.append('<blockquote>{}</blockquote>'.format('<br>'.join(quoted)))
             continue
 
-        if line.startswith('- ') or line == '-':
+        if _LIST_RE.match(line):
             items = []
             while index < total:
-                current = lines[index].strip()
-                if not (current.startswith('- ') or current == '-'):
+                item = _LIST_RE.match(lines[index].strip())
+                if not item:
                     break
-                text = current[1:].strip()
+                text = (item.group(2) or '').strip()
                 if text:
-                    items.append('<li>{}</li>'.format(_inline(text)))
+                    items.append((min(len(item.group(1)), MAX_LIST_DEPTH), _inline(text)))
                 index += 1
             if items:
-                out.append('<ul>{}</ul>'.format(''.join(items)))
+                out.append(_render_list(items))
             continue
 
         image_match = _IMAGE_LINE_RE.match(line)
@@ -242,8 +276,7 @@ def _starts_block(line: str) -> bool:
     """Whether a line opens a new block, so a paragraph should stop before it."""
     return (
         line.startswith(('/', '>', '#'))
-        or line.startswith('- ')
-        or line == '-'
+        or _LIST_RE.match(line) is not None
         or _IMAGE_LINE_RE.match(line) is not None
         or tweet_id_from(line) is not None
     )

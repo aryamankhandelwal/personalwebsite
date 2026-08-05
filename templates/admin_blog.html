@@ -286,8 +286,17 @@
         color: var(--muted); font-style: italic;
     }
     .preview-body ul { margin: 0 0 16px 0; padding-left: 0; list-style: none; }
-    .preview-body ul li { position: relative; padding-left: 1.2em; margin-bottom: 6px; }
-    .preview-body ul li::before { content: '—'; position: absolute; left: 0; color: var(--muted); }
+    .preview-body ul ul { margin: 6px 0 0 0; padding-left: 0.8em; }
+    .preview-body ul li { position: relative; padding-left: 1.4em; margin-bottom: 6px; }
+    .preview-body ul li::before {
+        content: '—'; position: absolute; left: 0; color: var(--muted); letter-spacing: 0.08em;
+    }
+    .preview-body ul ul li { padding-left: 2.5em; }
+    .preview-body ul ul li::before { content: '——'; }
+    .preview-body ul ul ul li { padding-left: 3.6em; }
+    .preview-body ul ul ul li::before { content: '———'; }
+    .preview-body ul ul ul ul li { padding-left: 4.7em; }
+    .preview-body ul ul ul ul li::before { content: '————'; }
     .preview-body .tweet {
         border: 1px solid var(--border); border-radius: 10px;
         padding: 14px 16px; margin: 22px 0; background: rgba(255,255,255,0.02);
@@ -404,7 +413,7 @@
         <div class="editor-images" id="editor-images" hidden></div>
         <div class="syntax-hint">
             <b>/</b> heading &nbsp;·&nbsp; <b>//</b> subheading &nbsp;·&nbsp;
-            <b>-</b> bullet &nbsp;·&nbsp; <b>&gt;</b> quote &nbsp;·&nbsp;
+            <b>-</b> bullet (<b>--</b> nests) &nbsp;·&nbsp; <b>&gt;</b> quote &nbsp;·&nbsp;
             <b>#</b> private note &nbsp;·&nbsp; <b>**bold**</b> &nbsp;·&nbsp;
             <b>[text](url)</b> &nbsp;·&nbsp; tweet URL on its own line
         </div>
@@ -974,9 +983,9 @@
         }
     });
 
-    // Enter inside a bullet or quote carries the marker to the next line, and a
-    // second Enter on the empty marker drops back to ordinary text — the
-    // behaviour lists have in Gmail and most editors.
+    // Enter inside a bullet or quote carries the marker — and its nesting level —
+    // to the next line. Enter on an empty marker steps out one level at a time
+    // and finally back to ordinary text, the way lists behave in Gmail.
     bodyEl.addEventListener('keydown', function (e) {
         if (e.key !== 'Enter' || e.shiftKey || e.metaKey || e.ctrlKey || e.altKey || e.isComposing) return;
         if (bodyEl.selectionStart !== bodyEl.selectionEnd) return;  // leave selections alone
@@ -984,18 +993,26 @@
         var value = bodyEl.value;
         var caret = bodyEl.selectionStart;
         var lineStart = value.lastIndexOf('\n', caret - 1) + 1;
-        var match = value.slice(lineStart, caret).match(/^([->])\s+(.*)$/);
+        var match = value.slice(lineStart, caret).match(/^(-+|>)[ \t]+(.*)$/);
         if (!match) return;
 
+        var marker = match[1];
         e.preventDefault();
-        if (match[2].trim() === '') {
-            // Nothing typed after the marker: strip it and leave the list.
-            bodyEl.value = value.slice(0, lineStart) + value.slice(caret);
-            bodyEl.selectionStart = bodyEl.selectionEnd = lineStart;
-        } else {
-            var insert = '\n' + match[1] + ' ';
+
+        if (match[2].trim() !== '') {
+            var insert = '\n' + marker + ' ';
             bodyEl.value = value.slice(0, caret) + insert + value.slice(caret);
             bodyEl.selectionStart = bodyEl.selectionEnd = caret + insert.length;
+        } else if (marker.length > 1) {
+            // Nothing typed at this depth: come out one level rather than
+            // abandoning the list entirely.
+            var shallower = marker.slice(1) + ' ';
+            bodyEl.value = value.slice(0, lineStart) + shallower + value.slice(caret);
+            bodyEl.selectionStart = bodyEl.selectionEnd = lineStart + shallower.length;
+        } else {
+            // Already at the top level: drop the marker and write prose.
+            bodyEl.value = value.slice(0, lineStart) + value.slice(caret);
+            bodyEl.selectionStart = bodyEl.selectionEnd = lineStart;
         }
         syncFromFields();
     });
