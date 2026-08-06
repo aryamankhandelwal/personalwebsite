@@ -315,105 +315,23 @@
   /* The card already has its own bottom padding. */
   .interest-body-inner > div > *:last-child { margin-bottom: 0; }
 
-  /* Chelsea score widget */
-  .score-widget {
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 14px 12px 14px;
-    margin-top: 4px;
-    background: rgba(255,255,255,0.02);
-  }
-  .score-match {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 8px;
-  }
-  .score-side {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    flex: 1;
-    min-width: 0;
-  }
-  /* Scoped past `.interest-body-inner img`, which is more specific than a bare
-     class and would otherwise force these back to auto sizing. */
-  .interest-body-inner img.score-crest {
-    width: 40px;
-    height: 40px;
-    max-width: 40px;
-    max-height: 40px;
-    object-fit: contain;
-    display: block;
-    margin: 0;
-    border-radius: 0;
-  }
-  .score-team {
+  .sport-label {
     font-size: 12px;
-    line-height: 1.3;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
     color: var(--muted);
-    text-align: center;
-    word-break: break-word;
+    margin: 22px 0 8px 0 !important;
   }
-  .score-middle {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    flex-shrink: 0;
-    padding: 4px 6px 0 6px;
-  }
-  .score-line {
-    font-family: 'Geist Mono', ui-monospace, monospace;
-    font-variant-numeric: tabular-nums;
-    font-feature-settings: 'zero' 1;
-    font-size: clamp(20px, 1.8vw, 24px);
-    line-height: 1;
-    color: var(--foreground);
-    white-space: nowrap;
-  }
-  .score-status {
-    font-family: 'Geist Mono', ui-monospace, monospace;
-    font-size: 11px;
-    letter-spacing: 0.04em;
-    color: var(--muted);
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .score-status.is-live { color: var(--blue); }
-  .score-status.is-live::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--blue);
-    animation: score-pulse 1.6s ease-in-out infinite;
-  }
-  @keyframes score-pulse {
-    0%, 100% { opacity: 0.35; }
-    50% { opacity: 1; }
-  }
-  .score-meta {
-    font-family: 'Geist Mono', ui-monospace, monospace;
-    font-size: 11px;
-    color: var(--muted);
-    text-align: center;
-    margin: 12px 0 0 0 !important;
-  }
-  .score-note {
-    font-size: 13px;
-    color: var(--muted);
-    font-style: italic;
-    text-align: center;
-    margin: 0 !important;
+  .sport-label span {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 14px;
+    color: var(--muted-foreground);
   }
 
   @media (prefers-reduced-motion: reduce) {
     .interest-body { transition: none; }
     .interest-chevron { transition: border-color .2s ease; }
-    .score-status.is-live::before { animation: none; opacity: 1; }
   }
 
   /* Mobile adjustments */
@@ -490,9 +408,6 @@ KHANDELWAL</a></div>
               <div class="interest-body-inner"><div>
                 <p>Football has been the biggest part of my life ever since I was four years old. I love both watching and playing it. I played competitive football until a few years ago, representing the India and FC Goa youth teams. I&rsquo;m a goalkeeper.</p>
                 <p>I have been a Chelsea and Petr Cech fan since day one, in particular after watching Cech&rsquo;s save against Portsmouth in December 2004. Our Champions League win in 2012 remains the favourite night of my life so far.</p>
-                <div class="score-widget" id="chelsea-score">
-                  <p class="score-note">Loading Chelsea&rsquo;s latest result&hellip;</p>
-                </div>
               </div></div>
             </div>
           </li>
@@ -541,7 +456,15 @@ KHANDELWAL</a></div>
             </button>
             <div class="interest-body" id="interest-other-sports" role="region">
               <div class="interest-body-inner"><div>
-                <p>Coming soon :)</p>
+                <p>Outside of football, I try to keep up with as many sports as I can as a spectator. I also play some of these recreationally if I get the chance. Below are the teams I&rsquo;ve picked for each sport I keep up with more regularly.</p>
+
+                <p class="sport-label">American Football: <span>San Francisco 49ers</span></p>
+
+                <p class="sport-label">Basketball: <span>Memphis Grizzlies</span></p>
+
+                <p class="sport-label">Cricket: <span>India + Rajasthan Royals</span></p>
+
+                <p class="sport-label">Rugby: <span>Neutral</span></p>
               </div></div>
             </div>
           </li>
@@ -689,129 +612,6 @@ KHANDELWAL</a></div>
           }
         });
       });
-
-      // Chelsea's latest result, from TheSportsDB. Their free tier needs no key
-      // of our own and sends CORS headers, so this runs straight from the page —
-      // no backend, nothing to deploy. It only fetches while the card is open.
-      (function() {
-        var CHELSEA = '133610';
-        var API = 'https://www.thesportsdb.com/api/v1/json/3/';
-        var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-        var box = document.getElementById('chelsea-score');
-        var card = document.getElementById('interest-football').closest('.interest');
-        var timer = null;
-
-        function crest(url) {
-          // /preview is ~40KB against ~200KB for the original, and far more
-          // than enough at the size these are drawn.
-          return url ? url + '/preview' : '';
-        }
-
-        function prettyDate(iso) {
-          var p = (iso || '').split('-');
-          if (p.length !== 3) return '';
-          return parseInt(p[2], 10) + ' ' + MONTHS[parseInt(p[1], 10) - 1] + ' ' + p[0];
-        }
-
-        function side(name, badge) {
-          var wrap = document.createElement('div');
-          wrap.className = 'score-side';
-          if (badge) {
-            var img = document.createElement('img');
-            img.className = 'score-crest';
-            img.src = crest(badge);
-            img.alt = '';
-            // Deliberately not lazy: these sit inside a collapsed container, so
-            // the viewport test never fires and the crests never load.
-            wrap.appendChild(img);
-          }
-          var label = document.createElement('span');
-          label.className = 'score-team';
-          label.textContent = name || '';
-          wrap.appendChild(label);
-          return wrap;
-        }
-
-        function draw(match, isLive) {
-          // Home on the left, away on the right — so Chelsea lands on whichever
-          // side they actually played.
-          var status = isLive
-            ? (match.strStatus === 'HT' ? 'HT'
-               : (match.strProgress ? match.strProgress + "'" : 'LIVE'))
-            : (match.strStatus || 'FT');
-
-          var row = document.createElement('div');
-          row.className = 'score-match';
-          row.appendChild(side(match.strHomeTeam, match.strHomeTeamBadge));
-
-          var middle = document.createElement('div');
-          middle.className = 'score-middle';
-          var line = document.createElement('span');
-          line.className = 'score-line';
-          line.textContent = (match.intHomeScore == null ? '–' : match.intHomeScore) +
-                             ' — ' +
-                             (match.intAwayScore == null ? '–' : match.intAwayScore);
-          var badge = document.createElement('span');
-          badge.className = 'score-status' + (isLive ? ' is-live' : '');
-          badge.textContent = status;
-          middle.appendChild(line);
-          middle.appendChild(badge);
-          row.appendChild(middle);
-
-          row.appendChild(side(match.strAwayTeam, match.strAwayTeamBadge));
-
-          box.innerHTML = '';
-          box.appendChild(row);
-
-          var meta = document.createElement('p');
-          meta.className = 'score-meta';
-          meta.textContent = [match.strLeague, prettyDate(match.dateEvent)]
-            .filter(Boolean).join(' · ');
-          box.appendChild(meta);
-        }
-
-        function note(text) {
-          box.innerHTML = '';
-          var p = document.createElement('p');
-          p.className = 'score-note';
-          p.textContent = text;
-          box.appendChild(p);
-        }
-
-        async function load() {
-          // A match in progress beats last week's result.
-          try {
-            var live = await (await fetch(API + 'livescore.php?s=Soccer')).json();
-            var found = (live.livescore || []).filter(function(e) {
-              return e.idHomeTeam === CHELSEA || e.idAwayTeam === CHELSEA;
-            })[0];
-            if (found) { draw(found, true); return true; }
-          } catch (_) {}
-
-          var res = await (await fetch(API + 'eventslast.php?id=' + CHELSEA)).json();
-          var last = (res.results || [])[0];
-          if (!last) { note('No recent result to show.'); return false; }
-          draw(last, false);
-          return false;
-        }
-
-        async function tick() {
-          clearTimeout(timer);
-          timer = null;
-          if (!card.classList.contains('open')) return;  // stop once it's closed
-          var isLive = false;
-          try {
-            isLive = await load();
-          } catch (_) {
-            note('Couldn’t reach the scores service.');
-          }
-          timer = setTimeout(tick, isLive ? 60000 : 300000);
-        }
-
-        document.addEventListener('interest:open', function(e) {
-          if (e.detail.id === 'interest-football') tick();
-        });
-      })();
 
       // Mobile menu toggle
       const toggle = document.getElementById('menu-toggle');
