@@ -237,6 +237,10 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    /* On the image itself, the way index.html does it. The wrapper's rounded
+       overflow clip can't be relied on once the wrapper is composited for the
+       hover transition — WebKit drops it and the corners come out square. */
+    border-radius: 6px;
   }
   .build-logo {
     position: absolute;
