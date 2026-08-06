@@ -249,18 +249,28 @@
     box-shadow: 0 6px 20px rgba(0,0,0,0.45);
   }
 
-  /* Colour is held back only where there is a pointer to hover with. On a
-     phone there is no hover, so the art would otherwise sit in black and white
-     forever. */
+  /* Black and white at rest on every device — colour is something you ask for. */
+  .build-cover { filter: grayscale(1); }
+
+  /* Hover stays gated: ungated, a tap on a touch screen can leave the card
+     stuck in its hovered state until you tap elsewhere. */
   @media (hover: hover) {
-    .build-cover { filter: grayscale(1); }
     .build-card:hover .build-cover {
       filter: grayscale(0);
       transform: translateY(-6px);
       box-shadow: 0 18px 40px rgba(0,0,0,0.45);
     }
   }
-  /* Keyboard users get the same reveal. */
+
+  /* Touch: colour arrives while the finger is down. Quicker than the hover
+     fade, since a press is brief, and no lift — the card shouldn't look like
+     it's rising away from the finger pressing it. */
+  .build-card:active .build-cover {
+    filter: grayscale(0);
+    transition: filter .18s ease;
+  }
+
+  /* Keyboard users get the same reveal as a hover. */
   .build-card:focus-visible .build-cover {
     filter: grayscale(0);
     transform: translateY(-6px);
@@ -384,6 +394,10 @@ KHANDELWAL</a></div>
 
   <script>
     (function() {
+      // iOS Safari won't apply :active styles unless the document is listening
+      // for touch, so the build card would never colour on press without this.
+      document.addEventListener('touchstart', function() {}, { passive: true });
+
       // Dubai clock with scramble animation
       const el = document.getElementById('dubai-clock');
       if (el) {
