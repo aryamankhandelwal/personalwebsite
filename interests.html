@@ -154,6 +154,265 @@
     padding: 40px 6vw 80px 9vw;
     box-sizing: border-box;
   }
+  .section {
+    max-width: 540px;
+  }
+
+  /* Page header — same treatment as every other page's. */
+  .interests-header {
+    margin-bottom: 20px;
+  }
+  .interests-nav {
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .interests-nav .back-arrow {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color .2s ease;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 600;
+    font-size: clamp(20px, 2.4vw, 28px);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .interests-nav .back-arrow:hover {
+    color: var(--blue);
+  }
+  .interests-nav .interests-label {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    font-size: clamp(20px, 2.4vw, 28px);
+    color: var(--foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .interests-title {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: clamp(12px, 0.85vw, 14px);
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+    letter-spacing: 0;
+    color: var(--muted-foreground);
+  }
+  .interests-divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--border);
+    margin: 0 0 24px 0;
+  }
+
+  /* One row per interest; clicking a face opens its body underneath. */
+  .interest-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .interest {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    overflow: hidden;
+  }
+  .interest-face {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px 16px;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-size: clamp(15px, 1.2vw, 17px);
+    color: var(--foreground);
+    transition: background .2s ease;
+  }
+  .interest-face:hover { background: rgba(255,255,255,0.03); }
+  .interest.open > .interest-face { background: rgba(255,255,255,0.05); }
+
+  .interest-chevron {
+    flex-shrink: 0;
+    width: 8px;
+    height: 8px;
+    border-right: 1.5px solid var(--muted);
+    border-bottom: 1.5px solid var(--muted);
+    transform: rotate(45deg);
+    margin-right: 4px;
+    margin-top: -4px;
+    transition: transform .3s ease, border-color .2s ease;
+  }
+  .interest-face:hover .interest-chevron { border-color: var(--foreground); }
+  .interest.open .interest-chevron {
+    transform: rotate(-135deg);
+    margin-top: 4px;
+  }
+
+  /* Animating grid-template-rows rather than max-height: 1fr resolves to the
+     content's own height, so a widget that loads and grows after the card is
+     already open just pushes it taller instead of being clipped. */
+  .interest-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .3s ease;
+  }
+  .interest.open .interest-body { grid-template-rows: 1fr; }
+  .interest-body-inner { overflow: hidden; }
+  .interest-body-inner > div {
+    padding: 16px 16px 18px 16px;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-size: clamp(15px, 1.1vw, 16px);
+    line-height: 1.6;
+    color: var(--muted-foreground);
+  }
+  .interest-body-inner p { margin: 0 0 16px 0; }
+  .interest-body-inner p:last-child { margin-bottom: 0; }
+  .interest-body-inner a {
+    color: var(--muted-foreground);
+    text-decoration: underline;
+    text-decoration-color: rgba(255,255,255,0.2);
+    text-underline-offset: 3px;
+    text-decoration-thickness: 1px;
+    transition: color .2s ease, text-decoration-color .2s ease;
+  }
+  .interest-body-inner a:hover {
+    color: var(--blue);
+    text-decoration-color: var(--blue);
+  }
+  .interest-body-inner img {
+    max-width: 100%;
+    max-height: 420px;
+    width: auto;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+    margin: 4px 0 16px 0;
+  }
+  .interest-body-inner ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0 0 16px 0;
+  }
+  .interest-body-inner ul li {
+    position: relative;
+    padding-left: 1.4em;
+    margin-bottom: 6px;
+  }
+  .interest-body-inner ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--muted);
+  }
+
+  /* Chelsea score widget */
+  .score-widget {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 14px 12px 14px;
+    margin-top: 4px;
+    background: rgba(255,255,255,0.02);
+  }
+  .score-match {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 8px;
+  }
+  .score-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+  }
+  /* Scoped past `.interest-body-inner img`, which is more specific than a bare
+     class and would otherwise force these back to auto sizing. */
+  .interest-body-inner img.score-crest {
+    width: 40px;
+    height: 40px;
+    max-width: 40px;
+    max-height: 40px;
+    object-fit: contain;
+    display: block;
+    margin: 0;
+    border-radius: 0;
+  }
+  .score-team {
+    font-size: 12px;
+    line-height: 1.3;
+    color: var(--muted);
+    text-align: center;
+    word-break: break-word;
+  }
+  .score-middle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 4px 6px 0 6px;
+  }
+  .score-line {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'zero' 1;
+    font-size: clamp(20px, 1.8vw, 24px);
+    line-height: 1;
+    color: var(--foreground);
+    white-space: nowrap;
+  }
+  .score-status {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .score-status.is-live { color: var(--blue); }
+  .score-status.is-live::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+    animation: score-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes score-pulse {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 1; }
+  }
+  .score-meta {
+    font-family: 'Geist Mono', ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin: 12px 0 0 0 !important;
+  }
+  .score-note {
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+    text-align: center;
+    margin: 0 !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .interest-body { transition: none; }
+    .interest-chevron { transition: border-color .2s ease; }
+    .score-status.is-live::before { animation: none; opacity: 1; }
+  }
 
   /* Mobile adjustments */
   @media (max-width: 768px) {
@@ -207,6 +466,96 @@ KHANDELWAL</a></div>
       </nav>
     </aside>
     <main class="content" id="main-content">
+      <section class="section" aria-labelledby="interests-heading">
+        <div class="interests-header">
+          <div class="interests-nav">
+            <a href="/index.html" class="back-arrow"><</a>
+            <span class="interests-label" id="interests-heading">INTERESTS</span>
+          </div>
+          <h1 class="interests-title">I've always had many and discrete interests. These are a few in my pursuit of building a life Leonardo Da Vinci would be proud of</h1>
+          <div class="interests-divider"></div>
+        </div>
+
+        <!-- Each body has a stable id so a widget — a scores tracker, say — can
+             be mounted into it later without restructuring anything. -->
+        <ul class="interest-list">
+          <li class="interest">
+            <button class="interest-face" type="button" aria-expanded="false" aria-controls="interest-football">
+              <span class="interest-name">Football</span>
+              <span class="interest-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="interest-body" id="interest-football" role="region">
+              <div class="interest-body-inner"><div>
+                <p>Football has been the biggest part of my life ever since I was four years old. I love both watching and playing it. I played competitive football until a few years ago, representing the India and FC Goa youth teams. I&rsquo;m a goalkeeper.</p>
+                <p>I have been a Chelsea and Petr Cech fan since day one, in particular after watching Cech&rsquo;s save against Portsmouth in December 2004. Our Champions League win in 2012 remains the favourite night of my life so far.</p>
+                <div class="score-widget" id="chelsea-score">
+                  <p class="score-note">Loading Chelsea&rsquo;s latest result&hellip;</p>
+                </div>
+              </div></div>
+            </div>
+          </li>
+
+          <li class="interest">
+            <button class="interest-face" type="button" aria-expanded="false" aria-controls="interest-weightlifting">
+              <span class="interest-name">Weightlifting</span>
+              <span class="interest-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="interest-body" id="interest-weightlifting" role="region">
+              <div class="interest-body-inner"><div>
+                <p>Coming soon :)</p>
+              </div></div>
+            </div>
+          </li>
+
+          <li class="interest">
+            <button class="interest-face" type="button" aria-expanded="false" aria-controls="interest-other-sports">
+              <span class="interest-name">Other sports</span>
+              <span class="interest-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="interest-body" id="interest-other-sports" role="region">
+              <div class="interest-body-inner"><div>
+                <p>Coming soon :)</p>
+              </div></div>
+            </div>
+          </li>
+
+          <li class="interest">
+            <button class="interest-face" type="button" aria-expanded="false" aria-controls="interest-music">
+              <span class="interest-name">Listening to music</span>
+              <span class="interest-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="interest-body" id="interest-music" role="region">
+              <div class="interest-body-inner"><div>
+                <p>Coming soon :)</p>
+              </div></div>
+            </div>
+          </li>
+
+          <li class="interest">
+            <button class="interest-face" type="button" aria-expanded="false" aria-controls="interest-french">
+              <span class="interest-name">Learning French</span>
+              <span class="interest-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="interest-body" id="interest-french" role="region">
+              <div class="interest-body-inner"><div>
+                <p>Coming soon :)</p>
+              </div></div>
+            </div>
+          </li>
+
+          <li class="interest">
+            <button class="interest-face" type="button" aria-expanded="false" aria-controls="interest-reading">
+              <span class="interest-name">Reading philosophy and fantasy</span>
+              <span class="interest-chevron" aria-hidden="true"></span>
+            </button>
+            <div class="interest-body" id="interest-reading" role="region">
+              <div class="interest-body-inner"><div>
+                <p>Coming soon :)</p>
+              </div></div>
+            </div>
+          </li>
+        </ul>
+      </section>
     </main>
   </div>
 
@@ -291,6 +640,151 @@ KHANDELWAL</a></div>
         });
         el.style.cursor = 'default';
       }
+
+      // Interests accordion — one open at a time.
+      var interests = document.querySelectorAll('.interest');
+      interests.forEach(function(item) {
+        var face = item.querySelector('.interest-face');
+        face.addEventListener('click', function() {
+          var wasOpen = item.classList.contains('open');
+          interests.forEach(function(other) {
+            other.classList.remove('open');
+            other.querySelector('.interest-face').setAttribute('aria-expanded', 'false');
+          });
+          if (!wasOpen) {
+            item.classList.add('open');
+            face.setAttribute('aria-expanded', 'true');
+            // Lets a widget added later start up the first time its card is
+            // opened, rather than doing work on every page load.
+            document.dispatchEvent(new CustomEvent('interest:open', {
+              detail: { id: item.querySelector('.interest-body').id }
+            }));
+          }
+        });
+      });
+
+      // Chelsea's latest result, from TheSportsDB. Their free tier needs no key
+      // of our own and sends CORS headers, so this runs straight from the page —
+      // no backend, nothing to deploy. It only fetches while the card is open.
+      (function() {
+        var CHELSEA = '133610';
+        var API = 'https://www.thesportsdb.com/api/v1/json/3/';
+        var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var box = document.getElementById('chelsea-score');
+        var card = document.getElementById('interest-football').closest('.interest');
+        var timer = null;
+
+        function crest(url) {
+          // /preview is ~40KB against ~200KB for the original, and far more
+          // than enough at the size these are drawn.
+          return url ? url + '/preview' : '';
+        }
+
+        function prettyDate(iso) {
+          var p = (iso || '').split('-');
+          if (p.length !== 3) return '';
+          return parseInt(p[2], 10) + ' ' + MONTHS[parseInt(p[1], 10) - 1] + ' ' + p[0];
+        }
+
+        function side(name, badge) {
+          var wrap = document.createElement('div');
+          wrap.className = 'score-side';
+          if (badge) {
+            var img = document.createElement('img');
+            img.className = 'score-crest';
+            img.src = crest(badge);
+            img.alt = '';
+            // Deliberately not lazy: these sit inside a collapsed container, so
+            // the viewport test never fires and the crests never load.
+            wrap.appendChild(img);
+          }
+          var label = document.createElement('span');
+          label.className = 'score-team';
+          label.textContent = name || '';
+          wrap.appendChild(label);
+          return wrap;
+        }
+
+        function draw(match, isLive) {
+          // Home on the left, away on the right — so Chelsea lands on whichever
+          // side they actually played.
+          var status = isLive
+            ? (match.strStatus === 'HT' ? 'HT'
+               : (match.strProgress ? match.strProgress + "'" : 'LIVE'))
+            : (match.strStatus || 'FT');
+
+          var row = document.createElement('div');
+          row.className = 'score-match';
+          row.appendChild(side(match.strHomeTeam, match.strHomeTeamBadge));
+
+          var middle = document.createElement('div');
+          middle.className = 'score-middle';
+          var line = document.createElement('span');
+          line.className = 'score-line';
+          line.textContent = (match.intHomeScore == null ? '–' : match.intHomeScore) +
+                             ' — ' +
+                             (match.intAwayScore == null ? '–' : match.intAwayScore);
+          var badge = document.createElement('span');
+          badge.className = 'score-status' + (isLive ? ' is-live' : '');
+          badge.textContent = status;
+          middle.appendChild(line);
+          middle.appendChild(badge);
+          row.appendChild(middle);
+
+          row.appendChild(side(match.strAwayTeam, match.strAwayTeamBadge));
+
+          box.innerHTML = '';
+          box.appendChild(row);
+
+          var meta = document.createElement('p');
+          meta.className = 'score-meta';
+          meta.textContent = [match.strLeague, prettyDate(match.dateEvent)]
+            .filter(Boolean).join(' · ');
+          box.appendChild(meta);
+        }
+
+        function note(text) {
+          box.innerHTML = '';
+          var p = document.createElement('p');
+          p.className = 'score-note';
+          p.textContent = text;
+          box.appendChild(p);
+        }
+
+        async function load() {
+          // A match in progress beats last week's result.
+          try {
+            var live = await (await fetch(API + 'livescore.php?s=Soccer')).json();
+            var found = (live.livescore || []).filter(function(e) {
+              return e.idHomeTeam === CHELSEA || e.idAwayTeam === CHELSEA;
+            })[0];
+            if (found) { draw(found, true); return true; }
+          } catch (_) {}
+
+          var res = await (await fetch(API + 'eventslast.php?id=' + CHELSEA)).json();
+          var last = (res.results || [])[0];
+          if (!last) { note('No recent result to show.'); return false; }
+          draw(last, false);
+          return false;
+        }
+
+        async function tick() {
+          clearTimeout(timer);
+          timer = null;
+          if (!card.classList.contains('open')) return;  // stop once it's closed
+          var isLive = false;
+          try {
+            isLive = await load();
+          } catch (_) {
+            note('Couldn’t reach the scores service.');
+          }
+          timer = setTimeout(tick, isLive ? 60000 : 300000);
+        }
+
+        document.addEventListener('interest:open', function(e) {
+          if (e.detail.id === 'interest-football') tick();
+        });
+      })();
 
       // Mobile menu toggle
       const toggle = document.getElementById('menu-toggle');
