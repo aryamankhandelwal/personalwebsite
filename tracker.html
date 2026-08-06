@@ -150,7 +150,13 @@
         }
 
         /* Header */
-        .tk-header { margin-bottom: 24px; }
+        .tk-header {
+            margin-bottom: 24px;
+            /* The board below runs the full width of the page, but the header
+               is the same 540px column every other page uses — without this the
+               rule ran on past the text it belongs to. */
+            max-width: 540px;
+        }
         .tk-nav {
             margin-bottom: 4px;
             display: flex;
@@ -185,7 +191,6 @@
             margin: 0 0 20px 0 !important;
             letter-spacing: 0 !important;
             color: var(--muted-foreground) !important;
-            max-width: 540px;
         }
         .tk-divider {
             width: 100%;
