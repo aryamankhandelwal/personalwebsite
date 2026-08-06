@@ -154,6 +154,143 @@
     padding: 40px 6vw 80px 9vw;
     box-sizing: border-box;
   }
+  .section {
+    max-width: 540px;
+  }
+
+  /* Page header — same treatment as the blog's, values copied from blog.html
+     so the two read as one site. Named for this page rather than shared,
+     because each page here carries its own stylesheet. */
+  .builds-header {
+    margin-bottom: 20px;
+  }
+  .builds-nav {
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .builds-nav .back-arrow {
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: none;
+    transition: color .2s ease;
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 600;
+    font-size: clamp(20px, 2.4vw, 28px);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .builds-nav .back-arrow:hover {
+    color: var(--blue);
+  }
+  .builds-nav .builds-label {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    font-size: clamp(20px, 2.4vw, 28px);
+    color: var(--foreground);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .builds-title {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: clamp(12px, 0.85vw, 14px);
+    line-height: 1.6;
+    margin: 0 0 20px 0;
+    letter-spacing: 0;
+    color: var(--muted-foreground);
+  }
+  .builds-divider {
+    width: 100%;
+    height: 1px;
+    background-color: var(--border);
+    margin: 0 0 24px 0;
+  }
+
+  /* One card per shipped thing. A list of one for now — the next build is a
+     single <li> away. */
+  .build-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .build-item { margin-bottom: 44px; }
+  .build-item:last-child { margin-bottom: 0; }
+  .build-card {
+    display: block;
+    border-bottom: none;
+  }
+
+  .build-cover {
+    position: relative;
+    width: 100%;
+    height: 240px;              /* matches the photo at the top of index.html */
+    border-radius: 6px;
+    overflow: hidden;
+    transition: transform .35s cubic-bezier(.2,.7,.3,1),
+                box-shadow .35s ease,
+                filter .5s ease;
+  }
+  .build-art {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .build-logo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(64px, 15%, 84px);
+    height: auto;
+    border-radius: 22%;         /* clips the corners baked into the app icon */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+  }
+
+  /* Colour is held back only where there is a pointer to hover with. On a
+     phone there is no hover, so the art would otherwise sit in black and white
+     forever. */
+  @media (hover: hover) {
+    .build-cover { filter: grayscale(1); }
+    .build-card:hover .build-cover {
+      filter: grayscale(0);
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+    }
+  }
+  /* Keyboard users get the same reveal. */
+  .build-card:focus-visible .build-cover {
+    filter: grayscale(0);
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+  }
+
+  .build-name {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    font-size: clamp(24px, 2.8vw, 32px);
+    line-height: 1.3;
+    margin: 16px 0 4px 0;
+    color: var(--foreground);
+  }
+  .build-tagline {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    font-size: clamp(15px, 1.1vw, 16px);
+    line-height: 1.6;
+    color: var(--muted-foreground);
+    margin: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .build-cover { transition: filter .5s ease; }
+    .build-card:hover .build-cover,
+    .build-card:focus-visible .build-cover {
+      transform: none;
+      box-shadow: none;
+    }
+  }
 
   /* Mobile adjustments */
   @media (max-width: 768px) {
@@ -207,7 +344,32 @@ KHANDELWAL</a></div>
       </nav>
     </aside>
     <main class="content" id="main-content">
-      <!-- Blank content area -->
+      <section class="section" aria-labelledby="builds-heading">
+        <div class="builds-header">
+          <div class="builds-nav">
+            <a href="/index.html" class="back-arrow"><</a>
+            <span class="builds-label" id="builds-heading">BUILDS</span>
+          </div>
+          <h1 class="builds-title">Agentic coding has empowered me to express my creativity in a new dimension. I owe much of the last 2 years of my life in particular to AI. Below is a selection of my &ldquo;artwork&rdquo;</h1>
+          <div class="builds-divider"></div>
+        </div>
+
+        <ul class="build-list">
+          <li class="build-item">
+            <!-- Only the cover is the link, so the name and tagline below stay
+                 inert text rather than reacting to the pointer. -->
+            <a class="build-card" href="https://apps.apple.com/us/app/tatube/id6762304287"
+               target="_blank" rel="noopener" aria-label="TaTube on the App Store">
+              <div class="build-cover">
+                <img class="build-art" src="images/tatube-cover.webp" alt="" width="1376" height="611">
+                <img class="build-logo" src="images/tatube-icon.webp" alt="TaTube" width="256" height="256">
+              </div>
+            </a>
+            <h2 class="build-name">TaTube</h2>
+            <p class="build-tagline">Letterboxd for TV (iOS app)</p>
+          </li>
+        </ul>
+      </section>
     </main>
   </div>
 
