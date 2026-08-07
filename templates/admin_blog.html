@@ -4,10 +4,147 @@
 {% block desc %}Draft, then publish straight to the blog.{% endblock %}
 
 {% block head_extra %}
+<link rel="manifest" href="/admin/manifest.json">
+<meta name="theme-color" content="#1a1a1a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="/images/app-icon-192.png">
 <style>
     /* The panes below set display:flex, which would otherwise out-specify the
        user-agent rule behind the `hidden` attribute. */
     [hidden] { display: none !important; }
+
+    /* Offline / sync state */
+    .net-banner {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        margin-bottom: 12px;
+        border-radius: 6px;
+        border-left: 2px solid var(--muted);
+        background: var(--card);
+        font-size: 13px;
+        color: var(--muted-foreground);
+    }
+    .net-banner.is-offline { border-left-color: #e0a33e; }
+    .net-banner.is-auth { border-left-color: #ef4444; }
+    .net-banner .spacer { margin-left: auto; }
+    .net-banner button {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--foreground);
+        font-family: 'Geist', system-ui, sans-serif;
+        font-size: 12px;
+        padding: 4px 10px;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+    .net-banner button:hover { background: var(--foreground); color: var(--background); }
+    .net-banner a { color: var(--blue); text-decoration: underline; }
+
+    /* Conflict prompt — the same draft changed here and elsewhere. */
+    .conflict-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        z-index: 200;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        box-sizing: border-box;
+    }
+    .conflict-modal {
+        background: var(--background);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        width: 100%;
+        max-width: 760px;
+        max-height: 84dvh;
+        display: flex;
+        flex-direction: column;
+    }
+    .conflict-head {
+        padding: 18px 20px 12px 20px;
+        border-bottom: 1px solid var(--border);
+    }
+    .conflict-head h2 {
+        margin: 0 0 6px 0;
+        font-size: 17px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+    }
+    .conflict-head p { margin: 0; font-size: 13px; color: var(--muted); }
+    .conflict-scroll { overflow-y: auto; padding: 6px 20px 4px 20px; }
+    .conflict-item { padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .conflict-item:last-child { border-bottom: none; }
+    .conflict-title { font-size: 15px; font-weight: 500; margin-bottom: 10px; }
+    .conflict-versions { display: flex; gap: 12px; }
+    .conflict-version {
+        flex: 1;
+        min-width: 0;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 10px 12px;
+        background: #1c1c1c;
+    }
+    .conflict-version h3 {
+        margin: 0 0 4px 0;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        font-weight: 500;
+    }
+    .conflict-when {
+        font-family: 'Geist Mono', monospace;
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 8px;
+    }
+    .conflict-excerpt {
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--muted-foreground);
+        white-space: pre-wrap;
+        max-height: 128px;
+        overflow: hidden;
+    }
+    .conflict-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .conflict-actions button {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--foreground);
+        font-family: 'Geist', system-ui, sans-serif;
+        font-size: 12px;
+        padding: 6px 12px;
+        cursor: pointer;
+        transition: all .2s ease;
+    }
+    .conflict-actions button:hover { background: var(--foreground); color: var(--background); }
+    .conflict-foot {
+        padding: 12px 20px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .conflict-foot .hint { margin-left: auto; }
+    .conflict-foot button {
+        background: transparent;
+        border: none;
+        padding: 0;
+        color: var(--muted);
+        font-family: 'Geist', system-ui, sans-serif;
+        font-size: 12px;
+        cursor: pointer;
+    }
+    .conflict-foot button:hover { color: var(--foreground); }
+
+    @media (max-width: 640px) {
+        .conflict-versions { flex-direction: column; }
+    }
 
     /* Two-pane editor: list of posts on the left, the open post on the right. */
     .notes {
@@ -290,9 +427,16 @@
     .preview-body ul li { position: relative; padding-left: 1.4em; margin-bottom: 6px; }
     .preview-body ul li::before { content: '—'; position: absolute; left: 0; color: var(--muted); }
     .preview-body .tweet {
+        position: relative;
         border: 1px solid var(--border); border-radius: 10px;
         padding: 14px 16px; margin: 22px 0; background: rgba(255,255,255,0.02);
     }
+    .preview-body .tweet-logo {
+        position: absolute; top: 14px; right: 16px;
+        display: block; width: 15px; height: 15px; color: var(--muted);
+    }
+    .preview-body .tweet-logo svg { display: block; width: 100%; height: 100%; }
+    .preview-body .tweet-head { padding-right: 26px; }
     .preview-body .tweet-head {
         display: flex; align-items: center; gap: 10px;
         text-decoration: none; margin-bottom: 10px;
@@ -385,6 +529,12 @@
 {% endblock %}
 
 {% block content %}
+<div class="net-banner" id="net-banner" hidden>
+    <span id="net-message"></span>
+    <span class="spacer"></span>
+    <button type="button" id="net-retry" hidden>Try again</button>
+</div>
+
 <div class="notes">
     <aside class="notes-list">
         <div class="notes-list-top">
@@ -436,6 +586,21 @@
     <div class="notes-blank" id="notes-blank">No posts yet.</div>
 </div>
 
+<div class="conflict-backdrop" id="conflict-backdrop" hidden>
+    <div class="conflict-modal" role="dialog" aria-modal="true" aria-labelledby="conflict-heading">
+        <div class="conflict-head">
+            <h2 id="conflict-heading">Two versions of the same draft</h2>
+            <p>These changed both on this device and somewhere else. Nothing has been
+               overwritten — pick which to keep.</p>
+        </div>
+        <div class="conflict-scroll" id="conflict-list"></div>
+        <div class="conflict-foot">
+            <button type="button" id="conflict-later">Decide later</button>
+            <span class="hint">Left alone until you choose</span>
+        </div>
+    </div>
+</div>
+
 <script id="posts-data" type="application/json">{{ posts | tojson }}</script>
 <script>
 (function () {
@@ -474,6 +639,83 @@
         return null;
     }
 
+    /* ---- the local draft store ----------------------------------------
+     * Drafts are mirrored into localStorage so the editor works with no
+     * connection. Text only — images are uploaded to the server, which is
+     * what would otherwise have forced IndexedDB.
+     *
+     * serverUpdatedAt is the important field: it is the server timestamp this
+     * copy was based on. Comparing it against the server's current value at
+     * sync time is what separates a safe push from a genuine conflict. */
+    var STORE_KEY = 'blogDrafts:v1';
+    var storageWarned = false;
+
+    function loadStore() {
+        try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+        catch (e) { return {}; }
+    }
+
+    function saveStore(store) {
+        try {
+            localStorage.setItem(STORE_KEY, JSON.stringify(store));
+            return true;
+        } catch (e) {
+            // A full quota must be visible. Silently failing here would mean
+            // believing your plane writing is safe when it isn't.
+            if (!storageWarned) {
+                storageWarned = true;
+                setStatus('This device is out of storage — drafts aren’t being kept offline', true);
+            }
+            return false;
+        }
+    }
+
+    function recordFor(post, store) {
+        var existing = store[post.id];
+        return {
+            id: post.id,
+            title: post.title || '',
+            content: post.content || '',
+            date_posted: post.date_posted || null,
+            serverUpdatedAt: post.updated_at || (existing && existing.serverUpdatedAt) || null,
+            localUpdatedAt: (existing && existing.localUpdatedAt) || post.updated_at || null,
+            dirty: false
+        };
+    }
+
+    // Called on every edit, so closing the lid mid-sentence loses nothing.
+    function rememberLocally(post) {
+        var store = loadStore();
+        var rec = store[post.id] || recordFor(post, store);
+        rec.id = post.id;
+        rec.title = post.title || '';
+        rec.content = post.content || '';
+        rec.date_posted = post.date_posted || null;
+        rec.localUpdatedAt = new Date().toISOString();
+        rec.dirty = true;
+        store[post.id] = rec;
+        saveStore(store);
+    }
+
+    function markSynced(id, serverUpdatedAt) {
+        var store = loadStore();
+        var rec = store[id];
+        if (!rec) return;
+        rec.serverUpdatedAt = serverUpdatedAt;
+        rec.dirty = false;
+        store[id] = rec;
+        saveStore(store);
+    }
+
+    function unsyncedCount() {
+        var store = loadStore();
+        return Object.keys(store).filter(function (k) { return store[k].dirty; }).length;
+    }
+
+    function isLocalId(id) {
+        return typeof id === 'string' && id.indexOf('local-') === 0;
+    }
+
     function setStatus(text, isError) {
         statusEl.textContent = text || '';
         statusEl.classList.toggle('error', !!isError);
@@ -501,11 +743,369 @@
         return flat.length > 42 ? flat.slice(0, 42).trim() + '…' : flat;
     }
 
+    /* ---- network state and sync ----------------------------------------
+     * Online/offline is decided by whether requests actually succeed. The
+     * online/offline events are hints only: navigator.onLine reports true on a
+     * captive portal with no route out, which is exactly a hotel or a plane. */
+    var online = true;
+    var authExpired = false;
+    var syncing = false;
+    var conflicts = [];
+
+    var bannerEl = document.getElementById('net-banner');
+    var bannerMsgEl = document.getElementById('net-message');
+    var bannerRetryEl = document.getElementById('net-retry');
+
+    function renderBanner() {
+        var pending = unsyncedCount();
+        bannerEl.classList.toggle('is-offline', !online);
+        bannerEl.classList.toggle('is-auth', authExpired);
+
+        if (authExpired) {
+            bannerMsgEl.innerHTML = 'Session expired — your writing is safe on this device. ' +
+                '<a href="/admin">Sign in</a> to sync it.';
+            bannerRetryEl.hidden = false;
+            bannerEl.hidden = false;
+        } else if (!online) {
+            bannerMsgEl.textContent = 'Offline — writing to this device' +
+                (pending ? ', ' + pending + ' change' + (pending === 1 ? '' : 's') + ' waiting to sync' : '');
+            bannerRetryEl.hidden = false;
+            bannerEl.hidden = false;
+        } else if (pending) {
+            bannerMsgEl.textContent = pending + ' change' + (pending === 1 ? '' : 's') + ' still to sync';
+            bannerRetryEl.hidden = false;
+            bannerEl.hidden = false;
+        } else {
+            bannerEl.hidden = true;
+        }
+        applyOnlineState();
+    }
+
+    // Publishing and image upload are server actions; offline they are disabled
+    // with the reason showing rather than failing at the moment you use them.
+    function applyOnlineState() {
+        var blocked = !online || authExpired;
+        publishBtn.disabled = blocked || publishing;
+        publishBtn.title = blocked ? 'Needs a connection' : '';
+        bodyEl.placeholder = blocked
+            ? 'Writing offline. Images and publishing need a connection.'
+            : 'Start writing. Drag or paste an image in anywhere, or paste a tweet URL on its own line.';
+        // The preview is rendered by the server, so there is nothing to show.
+        previewEl.hidden = blocked || editorEl.hidden;
+        if (!blocked && currentId !== null) schedulePreview(0);
+    }
+
+    function goOffline() {
+        if (!online) return;
+        online = false;
+        renderBanner();
+        renderList();
+    }
+
+    async function api(path, options) {
+        var res;
+        try {
+            res = await fetch(path, Object.assign({ credentials: 'same-origin' }, options || {}));
+        } catch (e) {
+            goOffline();
+            throw { offline: true };
+        }
+        if (res.status === 401) {
+            // Never mistake an expired session for a successful sync.
+            authExpired = true;
+            renderBanner();
+            throw { auth: true };
+        }
+        if (!res.ok) throw { status: res.status };
+        online = true;
+        authExpired = false;
+        return res;
+    }
+
+    function payloadFrom(rec) {
+        return { title: rec.title, content: rec.content, date_posted: rec.date_posted };
+    }
+
+    // A draft awaiting your decision must not be pushed by anything else. Without
+    // this the autosave timer happily overwrites the other device's version, which
+    // is the exact loss the prompt exists to prevent.
+    function isConflicted(id) {
+        return conflicts.some(function (c) {
+            return c.server.id === id || c.local.id === id;
+        });
+    }
+
+    async function sync() {
+        if (syncing) return;
+        syncing = true;
+        try {
+            var res = await api('/admin/blog/drafts.json?t=' + Date.now(), { cache: 'no-store' });
+            var server = await res.json();
+            var serverById = {};
+            server.forEach(function (p) { serverById[p.id] = p; });
+
+            var store = loadStore();
+            var found = [];
+            var pushed = false;
+
+            // 1. Push anything written on this device.
+            var ids = Object.keys(store);
+            for (var i = 0; i < ids.length; i++) {
+                var rec = store[ids[i]];
+                if (!rec.dirty) continue;
+                var srv = serverById[rec.id];
+
+                if (isLocalId(rec.id) || !srv) {
+                    // Created here while offline, or deleted on the server since.
+                    // Either way, recreate rather than lose the text.
+                    var made = await (await api('/admin/blog/drafts', { method: 'POST' })).json();
+                    var saved = await (await api('/admin/blog/drafts/' + made.id + '/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payloadFrom(rec))
+                    })).json();
+                    remapId(rec.id, made.id, saved.updated_at);
+                    store = loadStore();
+                    pushed = true;
+                } else if (srv.updated_at === rec.serverUpdatedAt) {
+                    // Nobody else touched it — a clean fast-forward.
+                    var out = await (await api('/admin/blog/drafts/' + rec.id + '/save', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payloadFrom(rec))
+                    })).json();
+                    markSynced(rec.id, out.updated_at);
+                    store = loadStore();
+                    pushed = true;
+                } else {
+                    // Copies, not references. hydrateFromStore() below writes the
+                    // local text straight into the objects in `server`, so holding
+                    // a reference here would leave both sides of the prompt showing
+                    // the same thing and the choice meaningless.
+                    found.push({
+                        local: JSON.parse(JSON.stringify(rec)),
+                        server: JSON.parse(JSON.stringify(srv))
+                    });
+                }
+            }
+
+            // The snapshot above predates those pushes. Reusing it would put the
+            // pre-sync text back in memory, and the next autosave would then
+            // write that over what was just sent — losing the offline edit.
+            if (pushed) {
+                server = await (await api('/admin/blog/drafts.json?t=' + Date.now(),
+                                          { cache: 'no-store' })).json();
+                serverById = {};
+                server.forEach(function (p) { serverById[p.id] = p; });
+            }
+
+            // 2. Pull the server's drafts down, without clobbering unsynced edits.
+            store = loadStore();
+            server.forEach(function (p) {
+                if (p.status !== 'draft') return;
+                var rec = store[p.id];
+                if (rec && rec.dirty) return;
+                store[p.id] = recordFor(p, store);
+            });
+            saveStore(store);
+
+            // 3. Refresh the working set from the server, keeping local edits on top.
+            posts = server;
+            hydrateFromStore();
+
+            // dirtyIds mirrors the store's dirty flags. Rebuilding it here stops a
+            // queued autosave from pushing a pre-sync copy over what just synced.
+            var settled = loadStore();
+            dirtyIds.clear();
+            Object.keys(settled).forEach(function (k) {
+                if (settled[k].dirty) dirtyIds.add(settled[k].id);
+            });
+            conflicts = found;
+            renderList();
+            if (currentId !== null && byId(currentId)) renderEditor();
+            renderBanner();
+            if (conflicts.length) showConflicts();
+        } catch (e) {
+            if (!e || (!e.offline && !e.auth)) goOffline();
+            renderBanner();
+        } finally {
+            syncing = false;
+        }
+    }
+
+    function remapId(oldId, newId, serverUpdatedAt) {
+        var store = loadStore();
+        var rec = store[oldId];
+        if (rec) {
+            delete store[oldId];
+            rec.id = newId;
+            rec.serverUpdatedAt = serverUpdatedAt;
+            rec.dirty = false;
+            store[newId] = rec;
+            saveStore(store);
+        }
+        var post = byId(oldId);
+        if (post) post.id = newId;
+        if (currentId === oldId) currentId = newId;
+        if (dirtyIds.has(oldId)) { dirtyIds.delete(oldId); }
+    }
+
+    // Overlay whatever this device holds on top of the server's view.
+    function hydrateFromStore() {
+        var store = loadStore();
+        Object.keys(store).forEach(function (id) {
+            var rec = store[id];
+            var post = byId(rec.id);
+            if (post) {
+                if (rec.dirty) {
+                    post.title = rec.title;
+                    post.content = rec.content;
+                    post.date_posted = rec.date_posted;
+                }
+            } else {
+                posts.push({
+                    id: rec.id, title: rec.title, content: rec.content,
+                    date_posted: rec.date_posted, date_label: '', slug: null,
+                    status: 'draft', updated_at: rec.localUpdatedAt,
+                    published_at: null, images: []
+                });
+            }
+        });
+    }
+
+    /* ---- conflict prompt ---- */
+
+    var conflictBackdrop = document.getElementById('conflict-backdrop');
+    var conflictListEl = document.getElementById('conflict-list');
+
+    function excerpt(text) {
+        var t = (text || '').trim();
+        return t.length > 240 ? t.slice(0, 240) + '…' : (t || '(empty)');
+    }
+
+    function whenLabel(iso) {
+        if (!iso) return '';
+        var d = new Date(iso);
+        return isNaN(d) ? '' : d.toLocaleString();
+    }
+
+    function showConflicts() {
+        conflictListEl.innerHTML = '';
+        conflicts.forEach(function (c, index) {
+            var item = document.createElement('div');
+            item.className = 'conflict-item';
+
+            var title = document.createElement('div');
+            title.className = 'conflict-title';
+            title.textContent = c.local.title || c.server.title || 'Untitled';
+            item.appendChild(title);
+
+            var versions = document.createElement('div');
+            versions.className = 'conflict-versions';
+            [['This device', c.local.title, c.local.content, c.local.localUpdatedAt],
+             ['Elsewhere', c.server.title, c.server.content, c.server.updated_at]
+            ].forEach(function (v) {
+                var box = document.createElement('div');
+                box.className = 'conflict-version';
+                var h = document.createElement('h3'); h.textContent = v[0];
+                var when = document.createElement('div');
+                when.className = 'conflict-when'; when.textContent = whenLabel(v[3]);
+                var body = document.createElement('div');
+                body.className = 'conflict-excerpt'; body.textContent = excerpt(v[2]);
+                box.appendChild(h); box.appendChild(when); box.appendChild(body);
+                versions.appendChild(box);
+            });
+            item.appendChild(versions);
+
+            var actions = document.createElement('div');
+            actions.className = 'conflict-actions';
+            [['Keep this device’s', 'mine'],
+             ['Keep the other', 'theirs'],
+             ['Keep both', 'both']].forEach(function (pair) {
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = pair[0];
+                btn.addEventListener('click', function () { resolveConflict(index, pair[1]); });
+                actions.appendChild(btn);
+            });
+            item.appendChild(actions);
+            conflictListEl.appendChild(item);
+        });
+        conflictBackdrop.hidden = conflicts.length === 0;
+    }
+
+    async function resolveConflict(index, choice) {
+        var c = conflicts[index];
+        if (!c) return;
+        try {
+            if (choice === 'mine') {
+                var out = await (await api('/admin/blog/drafts/' + c.server.id + '/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payloadFrom(c.local))
+                })).json();
+                markSynced(c.server.id, out.updated_at);
+                Object.assign(byId(c.server.id) || {}, {
+                    title: c.local.title, content: c.local.content, date_posted: c.local.date_posted
+                });
+            } else if (choice === 'theirs') {
+                var store = loadStore();
+                store[c.server.id] = recordFor(c.server, store);
+                saveStore(store);
+                var post = byId(c.server.id);
+                if (post) {
+                    post.title = c.server.title;
+                    post.content = c.server.content;
+                    post.date_posted = c.server.date_posted;
+                    post.updated_at = c.server.updated_at;
+                }
+            } else {
+                // Keep both: the other version stays put, mine arrives as its own draft.
+                var made = await (await api('/admin/blog/drafts', { method: 'POST' })).json();
+                await api('/admin/blog/drafts/' + made.id + '/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: (c.local.title || 'Untitled') + ' (offline copy)',
+                        content: c.local.content,
+                        date_posted: c.local.date_posted
+                    })
+                });
+                var store2 = loadStore();
+                store2[c.server.id] = recordFor(c.server, store2);
+                saveStore(store2);
+            }
+        } catch (e) {
+            renderBanner();
+            return;   // leave it unresolved rather than half-applied
+        }
+
+        conflicts.splice(index, 1);
+        if (conflicts.length) {
+            showConflicts();
+        } else {
+            conflictBackdrop.hidden = true;
+            await sync();
+        }
+        renderList();
+        if (currentId !== null && byId(currentId)) renderEditor();
+        renderBanner();
+    }
+
+    document.getElementById('conflict-later').addEventListener('click', function () {
+        conflictBackdrop.hidden = true;   // stays dirty and unpushed
+        renderBanner();
+    });
+
     /* ---- left pane ---- */
 
     function sortedGroups() {
         var drafts = posts.filter(function (p) { return p.status !== 'published'; });
-        var published = posts.filter(function (p) { return p.status === 'published'; });
+        // Offline the store only mirrors drafts, so published posts would be
+        // whatever the cached page happened to hold. Show drafts only.
+        var published = (online && !authExpired)
+            ? posts.filter(function (p) { return p.status === 'published'; })
+            : [];
         drafts.sort(function (a, b) { return (b.updated_at || '').localeCompare(a.updated_at || ''); });
         published.sort(function (a, b) {
             return (b.published_at || b.updated_at || '').localeCompare(a.published_at || a.updated_at || '');
@@ -550,7 +1150,9 @@
             });
         });
 
-        countEl.textContent = posts.length + (posts.length === 1 ? ' post' : ' posts');
+        // Count what is actually on screen — offline that is drafts only.
+        var shown = groups.reduce(function (n, g) { return n + g.items.length; }, 0);
+        countEl.textContent = shown + (shown === 1 ? ' post' : ' posts');
         var hasPosts = posts.length > 0;
         editorEl.hidden = !hasPosts || currentId === null;
         previewEl.hidden = editorEl.hidden;
@@ -713,6 +1315,9 @@
         post.title = titleEl.value;
         post.date_posted = dateEl.value || null;
         post.content = bodyEl.value;
+        // Written to the device on every keystroke's worth of change, before any
+        // attempt to reach the server. Nothing typed depends on the network.
+        rememberLocally(post);
         markDirty(post.id);
     }
 
@@ -744,6 +1349,11 @@
         for (var i = 0; i < ids.length; i++) {
             var post = byId(ids[i]);
             if (!post) continue;
+            // Drafts created offline have no server row yet; sync creates them.
+            // Conflicted ones stay put until the prompt is answered.
+            if (isLocalId(post.id) || isConflicted(post.id) || !online || authExpired) {
+                dirtyIds.add(post.id); failed = true; continue;
+            }
             try {
                 var res = await fetch('/admin/blog/drafts/' + post.id + '/save', {
                     method: 'POST',
@@ -751,9 +1361,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payloadFor(post))
                 });
+                if (res.status === 401) { authExpired = true; throw new Error('auth'); }
                 if (!res.ok) throw new Error('save failed');
                 var data = await res.json();
                 post.updated_at = data.updated_at;
+                markSynced(post.id, data.updated_at);
             } catch (err) {
                 dirtyIds.add(post.id);  // keep it dirty and try again shortly
                 failed = true;
@@ -762,11 +1374,18 @@
 
         saving = false;
         if (failed) {
-            setStatus('Couldn’t save — retrying', true);
-            scheduleSave(4000);
+            // Not an error any more. It is already on the device, which is the
+            // whole point — say so rather than crying about the network.
+            if (!authExpired) goOffline();
+            setStatus('Saved on this device');
+            renderList();   // the title in the list still has to follow the text
+            renderBanner();
+            scheduleSave(15000);
         } else {
+            online = true;
             setStatus('Saved ' + clockString());
             renderList();
+            renderBanner();
         }
     }
 
@@ -774,7 +1393,10 @@
     function beaconSave() {
         dirtyIds.forEach(function (id) {
             var post = byId(id);
-            if (!post) return;
+            // Local-only drafts have no row to save into, and conflicted ones
+            // must not be pushed behind the prompt's back. Both are already
+            // safe in localStorage.
+            if (!post || isLocalId(id) || isConflicted(id)) return;
             var blob = new Blob([JSON.stringify(payloadFor(post))], { type: 'application/json' });
             navigator.sendBeacon('/admin/blog/drafts/' + post.id + '/save', blob);
         });
@@ -808,6 +1430,10 @@
 
     async function uploadImage(file) {
         if (currentId === null) return;
+        if (!online || authExpired) {
+            setStatus('Images need a connection — this one wasn’t added', true);
+            return;
+        }
         var id = currentId;
         var marker = '[uploading ' + (++uploadSeq) + '…]';
 
@@ -864,18 +1490,42 @@
 
     /* ---- actions ---- */
 
+    function blankDraft(id) {
+        return {
+            id: id, title: '', content: '', date_posted: null, date_label: '',
+            slug: null, status: 'draft', updated_at: new Date().toISOString(),
+            published_at: null, images: []
+        };
+    }
+
     async function createDraft() {
         await flushSaves();
+        if (!online || authExpired) {
+            // Offline the draft gets a local id and picks up a real one at sync.
+            var local = blankDraft('local-' + Math.random().toString(36).slice(2, 10));
+            posts.unshift(local);
+            rememberLocally(local);
+            currentId = null;
+            selectPost(local.id);
+            titleEl.focus();
+            renderBanner();
+            return;
+        }
         try {
             var res = await fetch('/admin/blog/drafts', { method: 'POST', credentials: 'same-origin' });
             if (!res.ok) throw new Error('Could not create a draft.');
             var post = await res.json();
             posts.unshift(post);
+            var store = loadStore();
+            store[post.id] = recordFor(post, store);
+            saveStore(store);
             currentId = null;       // force selectPost to run its side effects
             selectPost(post.id);
             titleEl.focus();
         } catch (err) {
-            setStatus(err.message, true);
+            goOffline();
+            renderBanner();
+            createDraft();          // fall through to the offline path
         }
     }
 
@@ -883,6 +1533,10 @@
         var post = byId(currentId);
         if (!post || publishing) return;
 
+        if (!online || authExpired) {
+            setStatus('Publishing needs a connection — it’s saved on this device', true);
+            return;
+        }
         syncFromFields();
         if (!post.title.trim()) {
             setStatus('Give the post a title first.', true);
@@ -928,6 +1582,25 @@
         if (!post) return;
         var label = post.title || 'this untitled draft';
         if (!window.confirm('Delete ' + label + '? This cannot be undone.')) return;
+
+        // A draft that only exists here never reached the server, so it just goes.
+        if (isLocalId(post.id)) {
+            var store = loadStore();
+            delete store[post.id];
+            saveStore(store);
+            dirtyIds.delete(post.id);
+            posts = posts.filter(function (p) { return p.id !== post.id; });
+            currentId = posts.length ? posts[0].id : null;
+            if (currentId !== null) renderEditor();
+            renderList();
+            renderBanner();
+            setStatus('Deleted.');
+            return;
+        }
+        if (!online || authExpired) {
+            setStatus('Deleting needs a connection', true);
+            return;
+        }
 
         try {
             var res = await fetch('/admin/blog/drafts/' + post.id + '/delete', {
@@ -1044,12 +1717,37 @@
 
     /* ---- boot ---- */
 
+    var params = new URLSearchParams(window.location.search);
+
+    // Escape hatch. A service worker is sticky, so if a bad one ever ships there
+    // has to be a way to get rid of it without devtools.
+    if (params.get('sw') === 'off') {
+        if (navigator.serviceWorker) {
+            navigator.serviceWorker.getRegistrations().then(function (regs) {
+                regs.forEach(function (r) { r.unregister(); });
+            });
+        }
+        if (window.caches) {
+            caches.keys().then(function (keys) { keys.forEach(function (k) { caches.delete(k); }); });
+        }
+        setStatus('Offline support switched off for this browser');
+    } else if (navigator.serviceWorker) {
+        // Registration failing is not fatal — it only costs offline support.
+        navigator.serviceWorker.register('/admin/sw.js', { scope: '/admin/' })
+            .catch(function () {});
+    }
+
     var storedHidden = '';
     try { storedHidden = localStorage.getItem(PREVIEW_HIDDEN_KEY) || ''; } catch (e) {}
     notesEl.classList.toggle('no-preview', !!storedHidden);
 
-    var requested = parseInt(new URLSearchParams(window.location.search).get('draft'), 10);
-    var initial = byId(requested);
+    // The page may have come from the service worker's cache, in which case the
+    // JSON Jinja embedded is however old that copy is. Overlay whatever this
+    // device holds; sync() below settles what is actually true.
+    hydrateFromStore();
+
+    var requested = parseInt(params.get('draft'), 10);
+    var initial = byId(requested) || byId(params.get('draft'));
     if (!initial) {
         initial = posts.filter(function (p) { return p.status !== 'published'; })
             .sort(function (a, b) { return (b.updated_at || '').localeCompare(a.updated_at || ''); })[0]
@@ -1065,6 +1763,19 @@
         renderList();
         createDraft();
     }
+
+    renderBanner();
+    sync();
+
+    // The events are only hints — a reachable router is not a reachable server —
+    // so coming back online triggers a sync attempt rather than a state change.
+    window.addEventListener('online', function () { sync(); });
+    window.addEventListener('offline', goOffline);
+    // Catches the case the events miss entirely, like a captive portal letting go.
+    setInterval(function () {
+        if ((!online || unsyncedCount()) && !conflicts.length) sync();
+    }, 30000);
+    bannerRetryEl.addEventListener('click', function () { sync(); });
 
     // Keep the relative timestamps in the list honest.
     setInterval(renderList, 60000);

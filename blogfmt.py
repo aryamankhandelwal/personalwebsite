@@ -111,6 +111,15 @@ def _tweet_card(tweet, base: str) -> str:
         '<img class="tweet-avatar" src="{}/blogtweets/{}/avatar" alt="" '
         'width="44" height="44" loading="lazy">'
     ).format(base, tweet.tweet_id) if tweet.has_avatar else ''
+    # Sits alongside .tweet-head rather than inside it — anchors cannot nest.
+    # Inline SVG so it costs no request and takes its colour from CSS.
+    logo = (
+        '<a class="tweet-logo" href="{url}" target="_blank" rel="noopener" aria-label="View on X">'
+        '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">'
+        '<path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.58-6.64 7.58H.47'
+        'l8.6-9.83L0 1.15h7.59l5.25 6.93ZM17.61 20.64h2.04L6.49 3.24H4.3Z"/>'
+        '</svg></a>'
+    )
     return (
         '<div class="tweet">'
         '<a class="tweet-head" href="{url}" target="_blank" rel="noopener">'
@@ -120,6 +129,7 @@ def _tweet_card(tweet, base: str) -> str:
         '<span class="tweet-handle">@{handle}</span>'
         '</span>'
         '</a>'
+        + logo +
         '<div class="tweet-text">{body}</div>'
         '<a class="tweet-date" href="{url}" target="_blank" rel="noopener">{date}</a>'
         '</div>'

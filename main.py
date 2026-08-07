@@ -560,6 +560,42 @@ ADMIN_FAVICON = os.path.join(os.path.dirname(__file__), 'images', 'favicon-32.pn
 def admin_favicon():
     return FileResponse(ADMIN_FAVICON, media_type="image/png")
 
+
+# Served from here rather than as a Vercel static file so it is same-origin
+# under the /admin/:path* rewrite, which is what gives it scope over /admin/.
+ADMIN_SW = os.path.join(os.path.dirname(__file__), 'static', 'sw.js')
+
+
+@app.get("/admin/sw.js", include_in_schema=False)
+def admin_service_worker():
+    return FileResponse(
+        ADMIN_SW,
+        media_type="application/javascript",
+        # The worker script itself must never be served stale, or a fix to it
+        # could never reach a browser that already has the broken one.
+        headers={"Cache-Control": "no-cache"},
+    )
+
+
+@app.get("/admin/manifest.json", include_in_schema=False)
+def admin_manifest():
+    return JSONResponse({
+        "name": "Blog — Aryaman Khandelwal",
+        "short_name": "Blog",
+        "description": "Write and publish blog posts, online or off.",
+        "start_url": "/admin/blog",
+        "scope": "/admin/",
+        "display": "standalone",
+        "background_color": "#1a1a1a",
+        "theme_color": "#1a1a1a",
+        "icons": [
+            {"src": "/images/app-icon-192.png", "sizes": "192x192", "type": "image/png"},
+            {"src": "/images/app-icon-512.png", "sizes": "512x512", "type": "image/png"},
+            {"src": "/images/app-icon-maskable-512.png", "sizes": "512x512",
+             "type": "image/png", "purpose": "maskable"},
+        ],
+    })
+
 def _admin_banner(request: Request) -> Optional[str]:
     return {
         "created": "Company added.",
@@ -653,6 +689,18 @@ async def admin_blog(request: Request, db: AsyncSession = Depends(get_db)):
         "admin_blog.html",
         {"tab": "blog", "posts": posts, "banner": _admin_banner(request)},
     )
+
+
+@app.get("/admin/blog/drafts.json", include_in_schema=False)
+async def admin_blog_drafts_json(
+    db: AsyncSession = Depends(get_db),
+    _=Depends(require_admin_session),
+):
+    """Current server state for the sync pass, without re-rendering the page."""
+    result = await db.execute(
+        select(BlogPost).order_by(BlogPost.updated_at.desc(), BlogPost.id.desc())
+    )
+    return [_blogpost_json(p) for p in result.scalars().all()]
 
 
 async def _get_blogpost_or_404(db: AsyncSession, post_id: int) -> BlogPost:

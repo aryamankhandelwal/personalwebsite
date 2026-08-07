@@ -179,10 +179,21 @@
   /* Embedded tweets. Rendered from our own copy of the tweet — no third-party
      script, no tracking, and the card survives the tweet being deleted. */
   .blog-content .tweet {
+    position: relative;
     border: 1px solid var(--border); border-radius: 10px;
     padding: 14px 16px; margin: 22px 0;
     background: rgba(255,255,255,0.02);
   }
+  .blog-content .tweet-logo {
+    position: absolute; top: 14px; right: 16px;
+    display: block; width: 15px; height: 15px;
+    color: var(--muted); border-bottom: none;
+    transition: color .2s ease;
+  }
+  .blog-content .tweet-logo svg { display: block; width: 100%; height: 100%; }
+  .blog-content .tweet-logo:hover { color: var(--foreground); }
+  /* Keep the handle clear of the mark on a narrow column. */
+  .blog-content .tweet-head { padding-right: 26px; }
   .blog-content .tweet-head {
     display: flex; align-items: center; gap: 10px;
     text-decoration: none; border-bottom: none; margin-bottom: 10px;
